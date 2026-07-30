@@ -38,7 +38,11 @@ test("server-renders the Zugfolge operations console", async () => {
   assert.match(html, /SPNV/);
   assert.match(html, /Simuliert/);
   assert.match(html, /OpenStreetMap/);
-  assert.match(html, /Nicht autoritative UI-Demo/);
+  assert.match(html, /Synthetische lokale Demodaten/);
+  assert.match(html, /keine OSM-Daten geladen/);
+  assert.match(html, /SYNTH/);
+  assert.doesNotMatch(html, /Ziel-Datengrundlage/);
+  assert.doesNotMatch(html, />● A\/B</);
   assert.equal(
     [...html.matchAll(/class="mode-switch" role="group" aria-labelledby=/g)]
       .length,

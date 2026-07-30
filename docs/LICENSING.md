@@ -1,110 +1,156 @@
 # Lizenzentscheidung für Zugfolge
 
-**Status:** Entscheidungsvorlage, keine Rechtsberatung  
-**Stand:** 30. Juli 2026  
-**Entscheidung:** noch offen
+**Status:** Entscheidungsvorlage, keine Rechtsberatung
 
-Bis zur Entscheidung ist das Repository technisch als `UNLICENSED`
-gekennzeichnet. Damit gilt keine Open-Source-Freigabe; sämtliche Rechte bleiben
-vorbehalten.
+**Stand:** 30. Juli 2026
 
-## Kurzempfehlung
+**Entscheidung:** offen; Repository bleibt `UNLICENSED`
 
-Wenn Zugfolge als echtes Open-Source-Projekt entwickelt werden soll, ist
-**AGPL-3.0-or-later** für den selbst entwickelten Programmcode die passendste
-Ausgangslage. Die AGPL wurde gerade für netzwerkbasierte Software entworfen:
-Betreiber einer öffentlich zugänglichen, veränderten Fassung müssen den
-interagierenden Nutzern den korrespondierenden Quellcode dieser Fassung
-anbieten.
+Diese Datei empfiehlt eine Richtung. Sie erteilt keine Lizenz und ersetzt weder
+die Rechtekettenprüfung noch eine qualifizierte juristische Freigabe.
 
-Das passt zu einem Browsergame mit großem Serveranteil besser als GPL oder MIT.
-Die AGPL erlaubt weiterhin kommerzielle Nutzung, Bezahlabos, Hosting und
-Support. Sie verhindert jedoch **nicht**, dass Dritte einen eigenen Zugfolge-Fork
-hosten. Markenrechte, Community, Datenqualität und offizieller Betrieb bleiben
-daher eigenständige Schutz- und Differenzierungsfaktoren.
+## Aktueller Zustand
 
-Offizielle Grundlage:
+Es gibt bewusst keine Root-`LICENSE`. Sämtliche Paketmetadaten bleiben
+`UNLICENSED`, externe Beiträge sind geschlossen, und kein Kandidat im
+[Rechte- und Quellenregister](../compliance/rights-register.yaml) ist durch die
+Projektseite freigegeben.
+
+Das ist wichtig, weil eine später wirksam veröffentlichte Open-Source-Lizenz für
+bereits empfangene Fassungen nicht einfach rückwirkend zurückgenommen werden
+kann. Vor dem ersten lizenzierten Commit müssen daher Rechteinhaber,
+KI-/Drittcode-Provenienz, Beitragssystem und Lizenzumfang feststehen.
+
+## Empfohlene Richtung
+
+Wenn der Projekteigner erlaubt, dass Dritte Zugfolge kommerziell hosten, sofern
+sie Änderungen an öffentlich angebotenen Fassungen wieder offenlegen, ist
+**`AGPL-3.0-or-later`** die passendste Kernlizenz.
+
+Die AGPL adressiert Netzwerksoftware: Wer eine veränderte Fassung über ein Netz
+zur Nutzung anbietet, muss interagierenden Nutzern den korrespondierenden
+Quellcode anbieten. Sie erlaubt kommerzielle Nutzung, Abonnements, Support und
+Hosting. Sie verbietet jedoch keinen konkurrierenden Dienst, wenn dieser die
+Lizenz einhält.
+
+Offizielle Grundlagen:
 
 - [GNU Affero General Public License 3.0](https://www.gnu.org/licenses/agpl-3.0.html)
-- [GNU-Hinweise zur eindeutigen SPDX-Bezeichnung](https://www.gnu.org/licenses/identify-licenses-clearly.html)
+- [GNU FAQ zu Netzwerkinteraktion und AGPL](https://www.gnu.org/licenses/gpl-faq.en.html)
+- [SPDX `AGPL-3.0-or-later`](https://spdx.org/licenses/AGPL-3.0-or-later.html)
 
-## Empfohlenes Lizenzmosaik
+Die Versionsfrage ist eine bewusste Eigentümerentscheidung:
+`AGPL-3.0-or-later` erlaubt Empfängern die Nutzung späterer AGPL-Versionen;
+`AGPL-3.0-only` hält jede spätere Versionsfreigabe beim Rechteinhaber.
 
-| Bestandteil | Empfehlung | Begründung |
+## Empfohlenes Lizenzmosaik nach Freigabe
+
+| Bestandteil | Kandidat | Noch erforderliches Gate |
 |---|---|---|
-| eigener Programmcode | `AGPL-3.0-or-later` | Netzwerk-Copyleft für Web-, Game- und Simulationsserver |
-| Block-Z, Wortmarke, Name, Logos | kein pauschaler Open-Content-Grant; separate Markennutzungsregeln | verhindert Verwechslung mit dem offiziellen Dienst |
-| Projektdokumentation | optional `CC-BY-SA-4.0` | erlaubt Wiederverwendung mit Namensnennung und Share-alike |
-| originale Test-Fixtures | AGPL oder `CC0-1.0`, je Herkunft | maschinenlesbar und unkompliziert; nur für selbst erzeugte Inhalte |
-| OSM-abgeleitete Datenbank | `ODbL-1.0` plus Attribution | OSM-Daten stehen unter ODbL, nicht unter der Code-Lizenz |
-| Drittanbieter-Feeds | jeweilige Lizenz/Vertrag | dürfen nicht pauschal unter die Projektlizenz gestellt werden |
-| Soundtrack/Kosmetik/Illustrationen | separate Asset-Lizenz | kommerzielle Rechte und Contributor-Rechte sauber trennen |
+| Webclient, Game-Server, Simulation, Datenpipeline, Live-Gateway, Odoo-Bridge | `AGPL-3.0-or-later` | Rechteinhaber und Softwarelizenzprüfung |
+| öffentliche OpenAPI-/AsyncAPI-/JSON-Schema-Verträge und SDKs | `Apache-2.0` | klare Abgrenzung zum Kern und Patent-/Notice-Prüfung |
+| Specs, ADRs, Planung und originale Dokumentation | `CC-BY-4.0` | Rechteinhaber und eindeutige Codebeispiel-Regel |
+| rein synthetische, eigens erzeugte und geprüfte Fixtures | optional `CC0-1.0` | Herkunft und menschliche Freigabe jedes Fixtures |
+| OSM-abgeleitete Infrastruktur-Datenbank | `ODbL-1.0` | Datenbankklassifikation, Attribution und Bereitstellungsprozess |
+| eigener Kartenstil und Rendering-Code | Kernlizenz; Marke ausgenommen | Asset-/Abhängigkeitsprüfung |
+| Zugfolge, Block-Z, Claim, Logos, Kosmetik, Soundtrack | alle Rechte vorbehalten; separate Marken-/Asset-Regel | Eigentum, Marken- und Assetprüfung |
+| Spieler-, Welt-, Ledger- und Accountdaten | Betriebsdaten, nicht Teil der Code-Lizenz | AGB-, Datenschutz- und Vertragsprüfung |
+| Drittanbieter-Feeds, Fonts und Medien | jeweilige Lizenz oder Vertrag | Einzelentscheidung im Register |
 
-Die Open Database License betrifft die Datenbank, nicht automatisch die
-Software, die sie verarbeitet. OpenStreetMap verlangt Attribution und bei
-öffentlich verbreiteten abgeleiteten Datenbanken grundsätzlich Share-alike.
-Siehe [OpenStreetMap Copyright and License](https://www.openstreetmap.org/copyright)
-und den vollständigen
-[ODbL-1.0-Lizenztext](https://opendatacommons.org/licenses/odbl/1-0/).
+Apache-2.0 ist für öffentliche Integrationsverträge geeignet, weil sie
+permissiv ist und einen ausdrücklichen Patentgrant enthält:
+[offizieller Apache-2.0-Text](https://www.apache.org/licenses/LICENSE-2.0.txt).
 
-## Alternativen
+Creative Commons empfiehlt ihre Lizenzen nicht als Softwarelizenz. Für
+Dokumentation ist CC BY 4.0 ein geeigneter Kandidat, erteilt aber keine Patent-
+oder Markenrechte:
+[CC FAQ](https://creativecommons.org/faq/) und
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/legalcode).
 
-### Apache-2.0
+## EUPL-1.2 als EU-orientierte Alternative
 
-Geeignet, wenn maximale Adoption, Integrationen und kommerzielle Forks wichtiger
-sind als die Rückgabe von Serveränderungen. Die Lizenz ist permissiv und enthält
-eine ausdrückliche Patentregelung. Ein Wettbewerber dürfte eine proprietär
-veränderte Instanz betreiben, ohne seine Änderungen zu veröffentlichen.
+**`EUPL-1.2`** ist die stärkste Alternative, falls die deutsche/EU-rechtliche
+Prüfung sie bevorzugt. Sie erfasst die Bereitstellung wesentlicher
+Funktionalität über ein Netz, enthält Patentregeln und existiert in offiziellen
+EU-Sprachfassungen.
 
-### MIT
+Trade-off: Die EUPL ist im internationalen Entwickler- und
+Hosting-Ökosystem weniger geläufig; ihre Kompatibilitätsklausel erfordert eine
+genaue Prüfung kombinierter Werke.
 
-Sehr kurz und permissiv. Für Bibliotheken attraktiv, für den strategischen Kern
-eines daten- und serverintensiven Spiels aber wahrscheinlich zu offen: Auch
-proprietäre Hosting-Forks sind ohne Rückgabepflicht möglich.
+- [Offizieller EUPL-1.2-Text](https://eupl.eu/1.2/en)
+- [Interoperable Europe EUPL-Portal](https://interoperable-europe.ec.europa.eu/licence/european-union-public-licence-version-12-eupl)
 
-### BSL 1.1
+## Proprietär oder Dual Licensing
 
-Eine Option, wenn der Quelltext sichtbar sein, ein konkurrierender
-Produktionsbetrieb aber zunächst eingeschränkt werden soll. Die Business Source
-License wird erst am definierten Change Date zu einer Open-Source-Lizenz. Bis
-dahin ist sie **source-available, nicht Open Source**. Nutzungsgrenze,
-Change-Date und Change-License müssen exakt formuliert werden. Das erschwert
-Beiträge, Distributionen und manche Abhängigkeiten.
+Eine proprietäre Lizenz ist die konsequente Wahl, wenn ausschließlich der
+Rechteinhaber einen öffentlichen oder kommerziellen Zugfolge-Dienst betreiben
+darf. Dann sollte das Entwicklungsrepository privat sein, bevor weitere
+schutzbedürftige Inhalte entstehen. Öffentliche Kopien oder Forks, die bereits
+im Rahmen der GitHub-Nutzungsfunktionen entstanden sind, verschwinden durch eine
+spätere Privatisierung nicht automatisch.
 
-Offizielle Einführung:
-[MariaDB Business Source License FAQ](https://mariadb.com/bsl-faq-adopting/).
+Dual Licensing – beispielsweise AGPL plus kommerzielle OEM-Lizenz – ist erst
+sinnvoll, wenn ein echtes Self-hosting-/OEM-Geschäft existiert. Dafür muss der
+Rechteinhaber Relizenzierungsrechte an allen Beiträgen kontrollieren. Ein DCO
+allein genügt dafür typischerweise nicht; vor dem ersten externen Beitrag wäre
+ein anwaltlich gestaltetes Individual-/Corporate-CLA erforderlich.
 
-### Proprietär
+Eine source-available Lizenz wie BSL kann konkurrierendes Hosting zeitweise
+einschränken, ist aber bis zum Change Date keine Open-Source-Lizenz. Sie sollte
+nicht gewählt werden, wenn Zugfolge glaubwürdig als Open Source auftreten soll.
 
-Am stärksten kontrollierbar, aber mit weniger externen Beiträgen, geringerer
-Auditierbarkeit und weniger Vertrauen in ein KI-first-Projekt. Eine
-spätere Öffnung bleibt möglich, sofern alle Contributor-Rechte zentral geklärt
-sind.
+## OSM ist eine getrennte Datenentscheidung
 
-## Entscheidungsfragen
+OSM-Daten stehen unter ODbL, nicht unter der Code-Lizenz. Werden Signale,
+Geschwindigkeiten, Blöcke oder Zugsicherung direkt an OSM-Objekte angefügt, kann
+die angereicherte Datenbank eine ODbL-`Derivative Database` sein. Eine technische
+Tabellentrennung beweist noch keine `Collective Database`.
 
-Vor dem Hinzufügen einer `LICENSE`-Datei sollte der Projekteigner schriftlich
-beantworten:
+Darum müssen OSM-abgeleitete, unabhängige Provider- und operative Spieldaten
+nachvollziehbar getrennt bleiben, bis ein Datenrechtsexperte die Release- und
+Angebotsarchitektur freigibt. Nicht weiterverteilbare Providerdaten dürfen nicht
+in ODbL-Angebote, Tiles, Fixtures oder Exporte durchsickern.
 
-1. Darf ein Dritter einen öffentlichen, kommerziellen Zugfolge-Fork betreiben?
-2. Reicht es, wenn dessen Änderungen wieder als Quellcode verfügbar werden?
-3. Sollen externe Beiträge ohne Contributor License Agreement angenommen
-   werden?
-4. Ist späteres Dual Licensing geplant?
-5. Welche juristische Person hält Urheber-, Marken- und Domainrechte?
-6. Welche Assets sollen außerhalb der Code-Lizenz monetarisiert werden?
+- [OpenStreetMap Copyright and License](https://www.openstreetmap.org/copyright)
+- [ODbL-1.0](https://opendatacommons.org/licenses/odbl/1-0/)
+- [OSMF Attribution Guidelines](https://osmfoundation.org/wiki/Licence/Attribution_Guidelines)
 
-## Konkreter nächster Schritt
+## Beiträge
 
-Wenn Frage 1 mit „ja, sofern Änderungen offen bleiben“ beantwortet wird:
+Für eine reine AGPL-Strategie ist die Ausgangsempfehlung:
 
-1. vollständigen AGPL-3.0-Text als `LICENSE` hinzufügen;
-2. `package.json` und alle Modul-Metadaten auf `AGPL-3.0-or-later` setzen;
-3. im Web-UI einen sichtbaren Link „Quellcode“ und die rechtlichen Hinweise
-   ergänzen;
-4. `TRADEMARKS.md` und eine Asset-Lizenz finalisieren;
-5. Contributor Certificate of Origin oder CLA festlegen;
-6. Lizenzkompatibilität jeder Abhängigkeit automatisiert prüfen.
+- inbound equals outbound;
+- DCO 1.1 mit `Signed-off-by`;
+- Offenlegung von KI-Unterstützung und verantwortlicher menschlicher Prüfung;
+- Bestätigung, dass keine vertraulichen Daten, fremden Assets oder ungeklärten
+  generierten Bestandteile eingereicht werden.
 
-Bis dahin gilt: **keine stillschweigende Nutzungserlaubnis behaupten und keine
-fremden Datensätze oder Assets ohne Quellenregister committen.**
+Der DCO ist eine Herkunftsbestätigung, keine eigene Lizenz und kein Ersatz für
+eine erforderliche Rechteübertragung:
+[Developer Certificate of Origin 1.1](https://www.eclipse.org/legal/dco/).
+
+Bis die Entscheidung umgesetzt und technisch erzwungen ist, werden keine
+externen Beiträge angenommen.
+
+## Verbindliche Human-Gates
+
+Vor einer Root-Lizenz müssen Menschen dokumentiert entscheiden:
+
+1. Wer ist Lizenzgeber, Markeninhaber und Vertragspartner?
+2. Darf ein Dritter einen kommerziellen offenen Fork betreiben?
+3. Reicht die Rechtekette aller bisherigen menschlichen und KI-unterstützten
+   Commits, Texte und Assets?
+4. `AGPL-3.0-or-later`, `AGPL-3.0-only`, EUPL oder proprietär?
+5. DCO oder CLA; Single- oder Dual-Licensing?
+6. Welche Datenbank ist ODbL-Derivative, Collective Database oder nicht
+   veröffentlichbar?
+7. Sind sämtliche Runtime-, Build-, CI-, Font- und Containerlizenzen kompatibel?
+8. Sind Name, Block-Z, Claim und Domain freigabefähig und in wessen Eigentum?
+9. Welche separaten AGB, Datenschutz-, Zahlungs-, Moderations- und API-Regeln
+   benötigt der Dienst?
+
+Die ausführbaren Teilpakete und Rollback-Grenzen stehen im
+[MS-001-Kickoff](../planning/MS-001-KICKOFF.md). Bis alle erforderlichen Gates
+bestanden sind, gilt weiterhin: **`UNLICENSED`, keine externen Beiträge, keine
+Produktivdatenimporte.**

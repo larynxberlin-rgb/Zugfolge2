@@ -35,7 +35,9 @@ MS-002 reproducible toolchains
 ```
 
 `MS-001` proceeds in parallel because code licensing, trademark, domain, data
-rights, and contribution rules need accountable human decisions.
+rights, and contribution rules need accountable human decisions. It clears the
+sources required through `RG-4` and records later sources such as realistic
+disruption feeds as explicit future gates; a deferral is never an approval.
 
 ## How to start one milestone
 

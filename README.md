@@ -56,6 +56,7 @@ Dependency-Audit und CodeQL-SAST.
 /packages/domain             ausführbarer Referenz-Domänenkern
 /spec                        Produktverfassung, Glossar, ADRs, Features
 /planning                    maschinenlesbare Meilensteine, Prompt, Evidenz
+/compliance                  Rechte-, Quellen-, Asset- und Diensteregister
 /tests                       Unit- und Render-Tests
 /build, /worker              Hosting- und Worker-Adapter
 /docs                        Roadmap, Betrieb, Dienste, Lizenzen und Datenquellen
@@ -99,6 +100,13 @@ OpenStreetMap- noch die öffentlichen OpenRailwayMap-Tiles. Eigene Dark-Vector-
 Tiles werden aus genehmigten Daten-Releases erzeugt und mit sichtbarer
 Attribution ausgeliefert.
 
+Der aktuelle externe Demo-Hostingpfad ist ausdrücklich nicht für Accounts,
+Providerdaten, Zahlungen oder autoritative Welten freigegeben. Zielplattform,
+Self-hosting-Grenzen und Einführungsmeilensteine stehen in
+[docs/SERVICES.md](docs/SERVICES.md); der prüfbare Vorbereitungsstatus aller
+Quellen und Dienste steht im
+[Compliance-Register](compliance/rights-register.yaml).
+
 ## Lizenzstatus
 
 Für dieses Repository ist bewusst noch **keine Root-Lizenz** gesetzt. Ein
@@ -108,11 +116,14 @@ bis zur Entscheidung ausdrücklich als `UNLICENSED` markiert; es gilt
 „all rights reserved“.
 
 Die Empfehlung ist **AGPL-3.0-or-later für den Programmcode**, wenn Zugfolge ein
-echtes Open-Source-Projekt werden und auch Änderungen an öffentlich betriebenen
-Servern zurück in die Gemeinschaft zwingen soll. Markenmaterial, Datenbanken
-und Dokumentation brauchen davon getrennte Regeln. Auswirkungen und
+echtes Open-Source-Projekt werden und Betreiber veränderter öffentlicher
+Fassungen den interagierenden Nutzern den korrespondierenden Quellcode anbieten
+sollen. Markenmaterial, Datenbanken und Dokumentation brauchen davon getrennte
+Regeln. Auswirkungen und
 Alternativen sind in [docs/LICENSING.md](docs/LICENSING.md) erläutert. Vor der
-Entscheidung ist eine anwaltliche Prüfung sinnvoll.
+Entscheidung sind eine dokumentierte Rechtekette und qualifizierte
+Lizenz-, Daten- und Markenprüfung erforderlich. Externe Beiträge bleiben bis
+dahin geschlossen.
 
 ## Mitwirken
 
@@ -121,6 +132,11 @@ Format. Bitte zuerst [AGENTS.md](AGENTS.md) und die referenzierten Specs
 vollständig lesen. Neue Provider, Laufzeitabhängigkeiten, Datenquellen oder
 öffentliche Verträge benötigen eine dokumentierte Lizenz-, Sicherheits- und
 Ausfallprüfung.
+
+Externe Pull Requests werden bis zur geprüften Eigentums-, Lizenz- und
+Beitragsentscheidung in `MS-001` noch nicht angenommen. Der aktuelle,
+ausdrücklich geschlossene Zustand ist in
+[CONTRIBUTING.md](CONTRIBUTING.md) dokumentiert.
 
 ## Projektstatus
 
@@ -131,9 +147,10 @@ Ausfallprüfung.
 - Öffentliche Welten: persistent, ausschließlich Spielerzüge, 1:1-Echtzeit
 - Repository-Lizenz: **UNLICENSED**, Entscheidungsvorlage vorhanden
 
-`MS-000` ist abgeschlossen. Parallel bereit sind `MS-001` für Rechte, Lizenz
-und Marke sowie `MS-002` als nächster technischer Meilenstein für die
-reproduzierbare TypeScript-/Kotlin-/Python-Toolchain. Der aktuelle
+`MS-000` ist abgeschlossen. `MS-001` für Rechte, Lizenz, Marke und Quellen ist
+in acht prüfbare Slices vorbereitet und wartet nach dem Vorbereitungsslice auf
+die dokumentierten Human-Gates. `MS-002` ist der parallele technische
+Meilenstein für die reproduzierbare TypeScript-/Kotlin-/Python-Toolchain. Der aktuelle
 Umsetzungsstand, alle Abhängigkeiten und die Exit-Kriterien werden in der
 [Full-Release-Roadmap](docs/ROADMAP.md) und der
 [maschinenlesbaren Planung](planning/milestones.yaml) gepflegt.

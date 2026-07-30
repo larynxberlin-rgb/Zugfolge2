@@ -94,11 +94,12 @@ milestones:
     effort: M
     title: Rights, license, brand, and source clearance
     dependsOn: [MS-000]
-    outcome: Zugfolge has documented owners and permissions for code, brand, domain, launch assets, and every launch-critical railway source.
+    outcome: Zugfolge has documented owners and permissions for code, brand, domain, launch assets, and every source needed through RG-4, while later launch-source gates remain explicit blockers.
     scope:
       - Decide the code, documentation, data, contribution, and asset licensing model.
       - Secure or reject domain, trademark, feed, storage, attribution, and provider permissions.
       - Establish a source register with accountable human approval and renewal dates.
+      - Record RG-5 and Full Release sources such as realistic disruption feeds as named future gates; deferral never counts as approval.
     exitCriteria:
       - LICENSE and related notices match the owner's signed decision, or the repository remains explicitly private and unlicensed.
       - Domain and trademark clearance is recorded without claiming that a search is a legal guarantee.
@@ -277,7 +278,7 @@ milestones:
     outcome: Approved railway sources enter an immutable staging pipeline with complete provenance and no runtime dependency on public data services.
     scope:
       - Implement source approval states, raw-object retention, checksums, schema versions, transformations, confidence, and license manifests.
-      - Import the approved Leipzig–Halle–Erfurt OSM and OpenRailwayMap data subset reproducibly.
+      - Import the approved Leipzig–Halle–Erfurt OSM subset, including reviewed railway tags, reproducibly; OpenRailwayMap remains interpretation documentation rather than a separate dataset.
       - Quarantine malformed, unapproved, or unexpectedly changed input.
     exitCriteria:
       - Reimporting identical approved input produces the same canonical candidate and provenance manifest.

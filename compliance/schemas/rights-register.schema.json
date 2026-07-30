@@ -1,0 +1,1317 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:zugfolge:compliance:rights-register:v1",
+  "title": "Zugfolge rights register",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "statusAsOf",
+    "repositoryStatus",
+    "statusRules",
+    "ownership",
+    "licensing",
+    "brands",
+    "assets",
+    "sources",
+    "services",
+    "releaseCoverage",
+    "privacy"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "statusAsOf": {
+      "$ref": "#/$defs/date"
+    },
+    "repositoryStatus": {
+      "enum": ["PREPARATION", "ACTIVE", "SUSPENDED"]
+    },
+    "statusRules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "productionEligibleSourceStatuses",
+        "resolvedSourceStatuses",
+        "blockingSourceStatuses",
+        "requiredSnapshotFields",
+        "privateEvidencePolicy",
+        "approvalExpiryPolicy"
+      ],
+      "properties": {
+        "productionEligibleSourceStatuses": {
+          "const": ["APPROVED", "APPROVED_WITH_CONDITIONS"]
+        },
+        "resolvedSourceStatuses": {
+          "const": [
+            "APPROVED",
+            "APPROVED_WITH_CONDITIONS",
+            "SUBSTITUTED",
+            "EXCLUDED",
+            "REJECTED"
+          ]
+        },
+        "blockingSourceStatuses": {
+          "const": [
+            "CANDIDATE",
+            "HUMAN_REVIEW_REQUIRED",
+            "CONTRACT_REQUIRED",
+            "EXPIRED"
+          ]
+        },
+        "requiredSnapshotFields": {
+          "const": [
+            "sourceId",
+            "sourceLicenseRevision",
+            "retrievedAt",
+            "sourceValidFrom",
+            "sourceValidTo",
+            "schemaVersion",
+            "checksumSha256",
+            "byteSize",
+            "rawObjectUri",
+            "transformationVersion",
+            "parentSnapshotIds",
+            "fieldProvenance",
+            "confidence",
+            "qualityClass",
+            "approvalStatus"
+          ]
+        },
+        "privateEvidencePolicy": {
+          "const": "REFERENCE_AND_DIGEST_ONLY"
+        },
+        "approvalExpiryPolicy": {
+          "const": "EVALUATE_AT_CI_RUN_DATE"
+        }
+      }
+    },
+    "ownership": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "rightsHolderRole",
+        "externalContributions",
+        "aiAssistedWorkReview",
+        "evidenceRefs",
+        "nextAction"
+      ],
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/decisionStatus"
+        },
+        "rightsHolderRole": {
+          "type": "string",
+          "minLength": 1
+        },
+        "externalContributions": {
+          "enum": ["CLOSED", "PERMITTED_DCO", "PERMITTED_CLA"]
+        },
+        "aiAssistedWorkReview": {
+          "enum": ["PENDING", "COMPLETE"]
+        },
+        "evidenceRefs": {
+          "$ref": "#/$defs/evidenceRefs"
+        },
+        "nextAction": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "licensing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "currentRootLicense",
+        "firstLicensedCommit",
+        "components",
+        "ownerQuestions",
+        "nextAction"
+      ],
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/decisionStatus"
+        },
+        "currentRootLicense": {
+          "const": "UNLICENSED"
+        },
+        "firstLicensedCommit": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["scope", "candidate", "status", "humanGate"],
+            "properties": {
+              "scope": {
+                "type": "string",
+                "minLength": 1
+              },
+              "candidate": {
+                "type": "string",
+                "minLength": 1
+              },
+              "status": {
+                "$ref": "#/$defs/decisionStatus"
+              },
+              "humanGate": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        "ownerQuestions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "nextAction": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "brands": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/brand"
+      }
+    },
+    "assets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/asset"
+      }
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/source"
+      }
+    },
+    "services": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/service"
+      }
+    },
+    "releaseCoverage": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "$ref": "#/$defs/releaseCoverage"
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "ownerRole",
+        "reviewedAt",
+        "reviewAfter",
+        "currentDemoData",
+        "externalHostingData",
+        "productionDataInventory",
+        "legalBasisInventory",
+        "processorInventory",
+        "retentionInventory",
+        "dataSubjectRightsRunbook",
+        "evidenceRefs",
+        "nextAction"
+      ],
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/decisionStatus"
+        },
+        "ownerRole": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reviewedAt": {
+          "$ref": "#/$defs/dateOrNull"
+        },
+        "reviewAfter": {
+          "$ref": "#/$defs/date"
+        },
+        "currentDemoData": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "externalHostingData": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "productionDataInventory": {
+          "enum": ["NOT_STARTED", "IN_PROGRESS", "COMPLETE"]
+        },
+        "legalBasisInventory": {
+          "enum": ["NOT_STARTED", "IN_PROGRESS", "COMPLETE"]
+        },
+        "processorInventory": {
+          "enum": ["NOT_STARTED", "IN_PROGRESS", "COMPLETE"]
+        },
+        "retentionInventory": {
+          "enum": ["NOT_STARTED", "IN_PROGRESS", "COMPLETE"]
+        },
+        "dataSubjectRightsRunbook": {
+          "enum": ["NOT_STARTED", "IN_PROGRESS", "COMPLETE"]
+        },
+        "evidenceRefs": {
+          "$ref": "#/$defs/evidenceRefs"
+        },
+        "nextAction": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  },
+  "$defs": {
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "dateOrNull": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/date"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "stringArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "evidenceRefs": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/evidenceRef"
+      }
+    },
+    "evidenceRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "documentRole",
+        "digestSha256",
+        "decisionDate",
+        "reviewerRole"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "documentRole": {
+          "enum": [
+            "OWNERSHIP",
+            "LICENSE_DECISION",
+            "SOURCE_TERMS",
+            "SOURCE_APPROVAL",
+            "ASSET_PROVENANCE",
+            "BRAND_SEARCH",
+            "SERVICE_REVIEW",
+            "PRIVACY_REVIEW",
+            "OTHER"
+          ]
+        },
+        "digestSha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "decisionDate": {
+          "$ref": "#/$defs/date"
+        },
+        "reviewerRole": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "decisionStatus": {
+      "enum": ["HUMAN_REVIEW_REQUIRED", "APPROVED", "REJECTED"]
+    },
+    "sourceStatus": {
+      "enum": [
+        "CANDIDATE",
+        "HUMAN_REVIEW_REQUIRED",
+        "CONTRACT_REQUIRED",
+        "APPROVED",
+        "APPROVED_WITH_CONDITIONS",
+        "SUBSTITUTED",
+        "EXCLUDED",
+        "REJECTED",
+        "EXPIRED"
+      ]
+    },
+    "permission": {
+      "enum": [
+        "ALLOWED",
+        "CONDITIONAL",
+        "PROHIBITED",
+        "UNKNOWN",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "resolvedPermission": {
+      "enum": [
+        "ALLOWED",
+        "CONDITIONAL",
+        "PROHIBITED",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "finalPermission": {
+      "enum": [
+        "ALLOWED",
+        "PROHIBITED",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "nonApprovedPermission": {
+      "enum": [
+        "CONDITIONAL",
+        "PROHIBITED",
+        "UNKNOWN",
+        "NOT_APPLICABLE"
+      ]
+    },
+    "resolvedPermissions": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/resolvedPermission"
+      }
+    },
+    "finalPermissions": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/finalPermission"
+      }
+    },
+    "nonApprovedPermissions": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/nonApprovedPermission"
+      }
+    },
+    "excludedPermissions": {
+      "type": "object",
+      "additionalProperties": {
+        "enum": ["PROHIBITED", "NOT_APPLICABLE"]
+      }
+    },
+    "brand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "displayName",
+        "status",
+        "ownerRole",
+        "intendedTerritories",
+        "intendedClasses",
+        "searchScope",
+        "searchStatus",
+        "searchOutcome",
+        "searchedAt",
+        "reviewerRole",
+        "reviewedAt",
+        "reviewAfter",
+        "fallback",
+        "renewalOwnerRole",
+        "officialSearchUrls",
+        "evidenceRefs",
+        "nextAction"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "enum": ["WORD_MARK", "DEVICE_MARK", "CLAIM", "DOMAIN"]
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "enum": ["CLEARANCE_REQUIRED", "ACQUISITION_REQUIRED", "CLEARED", "REJECTED"]
+        },
+        "ownerRole": {
+          "type": "string",
+          "minLength": 1
+        },
+        "intendedTerritories": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "intendedClasses": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "searchScope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "searchStatus": {
+          "enum": ["NOT_STARTED", "IN_PROGRESS", "COMPLETE"]
+        },
+        "searchOutcome": {
+          "enum": [
+            "NOT_REVIEWED",
+            "NO_BLOCKER_FOUND",
+            "BLOCKER_FOUND",
+            "INCONCLUSIVE"
+          ]
+        },
+        "searchedAt": {
+          "$ref": "#/$defs/dateOrNull"
+        },
+        "reviewerRole": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reviewedAt": {
+          "$ref": "#/$defs/dateOrNull"
+        },
+        "reviewAfter": {
+          "$ref": "#/$defs/date"
+        },
+        "fallback": {
+          "type": "string",
+          "minLength": 1
+        },
+        "renewalOwnerRole": {
+          "type": "string",
+          "minLength": 1
+        },
+        "officialSearchUrls": {
+          "$ref": "#/$defs/uriArray"
+        },
+        "evidenceRefs": {
+          "$ref": "#/$defs/evidenceRefs"
+        },
+        "nextAction": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "CLEARED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "searchStatus": {
+                "const": "COMPLETE"
+              },
+              "searchOutcome": {
+                "const": "NO_BLOCKER_FOUND"
+              },
+              "searchedAt": {
+                "$ref": "#/$defs/date"
+              },
+              "reviewedAt": {
+                "$ref": "#/$defs/date"
+              },
+              "evidenceRefs": {
+                "type": "array",
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "path",
+        "sha256",
+        "provenanceStatus",
+        "ownerRole",
+        "origin",
+        "aiAssistance",
+        "licenseDecision",
+        "evidenceRefs",
+        "approvedUses",
+        "reviewerRole",
+        "reviewDecision",
+        "reviewedAt",
+        "reviewAfter",
+        "withdrawal",
+        "nextAction"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[A-F0-9]{64}$"
+        },
+        "provenanceStatus": {
+          "enum": ["ORIGIN_REVIEW_REQUIRED", "APPROVED", "REJECTED"]
+        },
+        "ownerRole": {
+          "type": "string",
+          "minLength": 1
+        },
+        "origin": {
+          "type": "string",
+          "minLength": 1
+        },
+        "aiAssistance": {
+          "enum": ["NONE_DECLARED", "AI_ASSISTED", "UNKNOWN"]
+        },
+        "licenseDecision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidenceRefs": {
+          "$ref": "#/$defs/evidenceRefs"
+        },
+        "approvedUses": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "reviewerRole": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reviewDecision": {
+          "enum": ["NOT_REVIEWED", "APPROVED", "REJECTED"]
+        },
+        "reviewedAt": {
+          "$ref": "#/$defs/dateOrNull"
+        },
+        "reviewAfter": {
+          "$ref": "#/$defs/date"
+        },
+        "withdrawal": {
+          "type": "string",
+          "minLength": 1
+        },
+        "nextAction": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "provenanceStatus": {
+                "const": "APPROVED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reviewDecision": {
+                "const": "APPROVED"
+              },
+              "reviewedAt": {
+                "$ref": "#/$defs/date"
+              },
+              "evidenceRefs": {
+                "type": "array",
+                "minItems": 1
+              },
+              "approvedUses": {
+                "type": "array",
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "category",
+        "provider",
+        "dataOwner",
+        "contactRole",
+        "fieldScope",
+        "geographicScope",
+        "sourceSchemaOrProfileVersion",
+        "freshnessPolicy",
+        "sourceValidFrom",
+        "sourceValidTo",
+        "contractExpiresAt",
+        "forbiddenUses",
+        "consumerMilestones",
+        "requiredByRelease",
+        "status",
+        "intendedUse",
+        "currentDecision",
+        "officialUrls",
+        "terms",
+        "access",
+        "permissions",
+        "attribution",
+        "databaseClassification",
+        "privacyClass",
+        "failureBehavior",
+        "fallback",
+        "retention",
+        "deletion",
+        "rollback",
+        "substituteSourceId",
+        "withdrawal",
+        "evidenceRefs",
+        "reviewedAt",
+        "reviewAfter",
+        "decisionOwnerRole",
+        "nextAction"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dataOwner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contactRole": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fieldScope": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "geographicScope": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceSchemaOrProfileVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "freshnessPolicy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sourceValidFrom": {
+          "$ref": "#/$defs/dateOrNull"
+        },
+        "sourceValidTo": {
+          "$ref": "#/$defs/dateOrNull"
+        },
+        "contractExpiresAt": {
+          "$ref": "#/$defs/dateOrNull"
+        },
+        "forbiddenUses": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "consumerMilestones": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "requiredByRelease": {
+          "type": ["string", "null"],
+          "pattern": "^RG-[0-7]$"
+        },
+        "status": {
+          "$ref": "#/$defs/sourceStatus"
+        },
+        "intendedUse": {
+          "type": "string",
+          "minLength": 1
+        },
+        "currentDecision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "officialUrls": {
+          "$ref": "#/$defs/uriArray"
+        },
+        "terms": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "licenseOrPermission",
+            "termsUrl",
+            "termsVersion",
+            "retrievedAt",
+            "archivedEvidenceRef",
+            "archivedEvidenceDigestSha256"
+          ],
+          "properties": {
+            "licenseOrPermission": {
+              "type": "string",
+              "minLength": 1
+            },
+            "termsUrl": {
+              "type": ["string", "null"],
+              "format": "uri"
+            },
+            "termsVersion": {
+              "type": "string",
+              "minLength": 1
+            },
+            "retrievedAt": {
+              "$ref": "#/$defs/date"
+            },
+            "archivedEvidenceRef": {
+              "type": ["string", "null"],
+              "minLength": 1
+            },
+            "archivedEvidenceDigestSha256": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/sha256"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        "access": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "deliveryMode",
+            "endpointOrLocator",
+            "authentication",
+            "rateLimit",
+            "updateCadence",
+            "hotPath"
+          ],
+          "properties": {
+            "deliveryMode": {
+              "type": "string",
+              "minLength": 1
+            },
+            "endpointOrLocator": {
+              "type": "string",
+              "minLength": 1
+            },
+            "authentication": {
+              "type": "string",
+              "minLength": 1
+            },
+            "rateLimit": {
+              "type": "string",
+              "minLength": 1
+            },
+            "updateCadence": {
+              "type": "string",
+              "minLength": 1
+            },
+            "hotPath": {
+              "const": false
+            }
+          }
+        },
+        "permissions": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "commercialUse",
+            "automatedRetrieval",
+            "storage",
+            "transformation",
+            "combination",
+            "display",
+            "redistribution",
+            "archival",
+            "replay",
+            "fixtures"
+          ],
+          "properties": {
+            "commercialUse": {
+              "$ref": "#/$defs/permission"
+            },
+            "automatedRetrieval": {
+              "$ref": "#/$defs/permission"
+            },
+            "storage": {
+              "$ref": "#/$defs/permission"
+            },
+            "transformation": {
+              "$ref": "#/$defs/permission"
+            },
+            "combination": {
+              "$ref": "#/$defs/permission"
+            },
+            "display": {
+              "$ref": "#/$defs/permission"
+            },
+            "redistribution": {
+              "$ref": "#/$defs/permission"
+            },
+            "archival": {
+              "$ref": "#/$defs/permission"
+            },
+            "replay": {
+              "$ref": "#/$defs/permission"
+            },
+            "fixtures": {
+              "$ref": "#/$defs/permission"
+            }
+          }
+        },
+        "attribution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["required", "text", "placement", "licenseUrl"],
+          "properties": {
+            "required": {
+              "type": ["boolean", "null"]
+            },
+            "text": {
+              "type": ["string", "null"],
+              "minLength": 1
+            },
+            "placement": {
+              "type": ["string", "null"],
+              "minLength": 1
+            },
+            "licenseUrl": {
+              "type": ["string", "null"],
+              "format": "uri"
+            }
+          }
+        },
+        "databaseClassification": {
+          "enum": [
+            "NOT_APPLICABLE",
+            "ORIGINAL",
+            "DERIVATIVE_REVIEW_REQUIRED",
+            "COLLECTIVE_REVIEW_REQUIRED",
+            "UNKNOWN"
+          ]
+        },
+        "privacyClass": {
+          "enum": ["PUBLIC_NON_PERSONAL", "PERSONAL_DATA_REVIEW_REQUIRED", "UNKNOWN"]
+        },
+        "failureBehavior": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fallback": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retention": {
+          "type": "string",
+          "minLength": 1
+        },
+        "deletion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rollback": {
+          "type": "string",
+          "minLength": 1
+        },
+        "substituteSourceId": {
+          "type": ["string", "null"],
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "withdrawal": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidenceRefs": {
+          "$ref": "#/$defs/evidenceRefs"
+        },
+        "reviewedAt": {
+          "$ref": "#/$defs/dateOrNull"
+        },
+        "reviewAfter": {
+          "$ref": "#/$defs/date"
+        },
+        "decisionOwnerRole": {
+          "type": "string",
+          "minLength": 1
+        },
+        "nextAction": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "SUBSTITUTED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "substituteSourceId": {
+                "$ref": "#/$defs/id"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": ["APPROVED", "APPROVED_WITH_CONDITIONS"]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "permissions": {
+                "$ref": "#/$defs/resolvedPermissions"
+              },
+              "privacyClass": {
+                "enum": ["PUBLIC_NON_PERSONAL", "PERSONAL_DATA_REVIEW_REQUIRED"]
+              },
+              "reviewedAt": {
+                "$ref": "#/$defs/date"
+              },
+              "evidenceRefs": {
+                "type": "array",
+                "minItems": 1
+              },
+              "terms": {
+                "type": "object",
+                "properties": {
+                  "archivedEvidenceRef": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "archivedEvidenceDigestSha256": {
+                    "$ref": "#/$defs/sha256"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "APPROVED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "permissions": {
+                "$ref": "#/$defs/finalPermissions"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "CANDIDATE",
+                  "HUMAN_REVIEW_REQUIRED",
+                  "CONTRACT_REQUIRED",
+                  "SUBSTITUTED",
+                  "REJECTED",
+                  "EXPIRED"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "permissions": {
+                "$ref": "#/$defs/nonApprovedPermissions"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "EXCLUDED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "permissions": {
+                "$ref": "#/$defs/excludedPermissions"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "service": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "provider",
+        "ownerRole",
+        "hostingModel",
+        "status",
+        "currentUse",
+        "productionUse",
+        "firstConsumerMilestone",
+        "dataClasses",
+        "storesPersonalData",
+        "dataProcessingRole",
+        "termsUrl",
+        "contractExpiresAt",
+        "retention",
+        "deletion",
+        "removable",
+        "removalPath",
+        "failureImpact",
+        "rightsRefs",
+        "evidenceRefs",
+        "reviewedAt",
+        "reviewAfter",
+        "nextAction"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ownerRole": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hostingModel": {
+          "enum": ["SELF_HOSTED", "EXTERNAL_DEMO", "EXTERNAL_PROVIDER"]
+        },
+        "status": {
+          "enum": ["DEVELOPMENT_ONLY", "PLANNED", "HUMAN_REVIEW_REQUIRED", "APPROVED", "REJECTED"]
+        },
+        "currentUse": {
+          "type": "string",
+          "minLength": 1
+        },
+        "productionUse": {
+          "type": "string",
+          "minLength": 1
+        },
+        "firstConsumerMilestone": {
+          "type": "string",
+          "pattern": "^MS-[0-9]{3}$"
+        },
+        "dataClasses": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "storesPersonalData": {
+          "type": ["boolean", "null"]
+        },
+        "dataProcessingRole": {
+          "type": "string",
+          "minLength": 1
+        },
+        "termsUrl": {
+          "type": ["string", "null"],
+          "format": "uri"
+        },
+        "contractExpiresAt": {
+          "$ref": "#/$defs/dateOrNull"
+        },
+        "retention": {
+          "type": "string",
+          "minLength": 1
+        },
+        "deletion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "removable": {
+          "type": "boolean"
+        },
+        "removalPath": {
+          "type": "string",
+          "minLength": 1
+        },
+        "failureImpact": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rightsRefs": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "evidenceRefs": {
+          "$ref": "#/$defs/evidenceRefs"
+        },
+        "reviewedAt": {
+          "$ref": "#/$defs/dateOrNull"
+        },
+        "reviewAfter": {
+          "$ref": "#/$defs/date"
+        },
+        "nextAction": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "APPROVED"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reviewedAt": {
+                "$ref": "#/$defs/date"
+              },
+              "evidenceRefs": {
+                "type": "array",
+                "minItems": 1
+              }
+            }
+          }
+        }
+      ]
+    },
+    "releaseCoverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "release",
+        "milestones",
+        "sourceIds",
+        "serviceIds",
+        "sourceCapabilities",
+        "serviceCapabilities",
+        "status",
+        "openGaps"
+      ],
+      "properties": {
+        "release": {
+          "enum": ["RG-0", "RG-1", "RG-2", "RG-3", "RG-4"]
+        },
+        "milestones": {
+          "$ref": "#/$defs/milestoneArray"
+        },
+        "sourceIds": {
+          "$ref": "#/$defs/idArray"
+        },
+        "serviceIds": {
+          "$ref": "#/$defs/idArray"
+        },
+        "sourceCapabilities": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "serviceCapabilities": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "status": {
+          "enum": ["PREPARATION_INCOMPLETE", "COMPLETE"]
+        },
+        "openGaps": {
+          "$ref": "#/$defs/stringArray"
+        }
+      }
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "idArray": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    },
+    "milestoneArray": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^MS-[0-9]{3}$"
+      }
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[A-F0-9]{64}$"
+    },
+    "uriArray": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "format": "uri"
+      }
+    }
+  }
+}
