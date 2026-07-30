@@ -11,6 +11,26 @@ ist bewusst eine lokale, schematische Darstellung ohne fremde Karten- oder
 Trackingdienste. Sie behauptet weder echte aktuelle Belegungen noch eine
 produktive OSM-Abdeckung.
 
+### Aktuell verbundener Demo-Hostingpfad
+
+Das Repository enthält `.openai/hosting.json` sowie einen
+Cloudflare-kompatiblen vinext-/wrangler-Buildpfad. Diese Verbindung ist
+**ausschließlich Entwicklungs- und Demo-Infrastruktur**, nicht die freigegebene
+Produktionsplattform:
+
+- erlaubt sind öffentlicher Build-Output und die synthetische UI-Fixture;
+- nicht erlaubt sind Spieleraccounts, Providerdaten, Zahlungen, Supportfälle,
+  autoritative Welten oder Produktionspersistenz;
+- der Pfad besitzt noch keine Produktionsfreigabe für Providerrolle,
+  Verarbeitungsregion, Logs, Aufbewahrung, Löschung, DPA, SLO oder Security;
+- sein Ausfall darf nur die Demo betreffen;
+- die Verbindung ist austauschbar und darf niemals Voraussetzung für
+  Simulation, Login, Ledger oder Entitlements werden.
+
+Geheimnisse und die opaque Hosting-Projektkennung werden weder in Doku noch in
+Logs wiederholt. Der sichere öffentliche Eintrag steht im
+[Rechte- und Diensteregister](../compliance/rights-register.yaml).
+
 ## Pflichtdienste für die vollständige Plattform
 
 | Dienst | Aufgabe | Self-host-Vorschlag | Kritikalität |
@@ -24,6 +44,9 @@ produktive OSM-Abdeckung.
 | Game API | REST, Commands, Autorisierung | Kotlin/JVM-21 modularer Monolith | kritisch |
 | Simulation Runtime | regionale Single Writer | Kotlin/JVM-21 Prozess | kritisch |
 | Live Gateway | Snapshot plus Sequenz-Deltas | eigener WebSocket-Dienst | kritisch für Live-UX, nicht für Simulation |
+| Payment | Abos, Kosmetik, private Welten, Refunds und Reconciliation | austauschbarer externer Provider, noch nicht gewählt | neue Käufe degradierbar; bestehende Entitlements unabhängig |
+| Externe Meldungszustellung | optionale E-Mail-/Push-Kopie des kostenlosen Ingame-Postfachs | austauschbarer externer Provider, noch nicht gewählt | vollständig degradierbar |
+| Observability | Metriken, Traces, Logs, SLOs, Alarme und Incident-Evidenz | OpenTelemetry, Prometheus, Grafana, Loki und Tempo | betriebskritisch, nie Source of Truth |
 
 Game-, Infrastruktur- und Odoo-Datenbanken müssen getrennte Credentials,
 Schemas, Backups und Restore-Tests besitzen.
@@ -41,6 +64,7 @@ Skeleton zu installieren. Die aktive
 | `MS-013` | NATS JetStream für den ersten echten Outbox-Consumer; Valkey nur bei gemessenem Cache-/Presence-Bedarf |
 | `MS-022` | Planetiler, PMTiles/MBTiles und optional Martin für die eigene Dark-Map |
 | `MS-052` | Odoo Community und seine getrennte Datenbank |
+| `MS-053` | geprüfter Zahlungsprovider und nur bei Produktbedarf optionale externe Meldungszustellung |
 | `MS-055` | vollständiger OpenTelemetry-/Prometheus-/Grafana-/Loki-/Tempo-Betriebsstack |
 | `MS-061` bis `MS-062` | regionale Prozesse und weitere Skalierungskomponenten nur nach Lastnachweis |
 
@@ -112,19 +136,34 @@ Update-Prozess, Rate Limits und Monitoring einzuplanen:
 
 ## Datenpipeline und externe Quellen
 
-| Quelle/Provider | Geplante Verwendung | Laufzeitabhängigkeit | Freigabebedingung |
-|---|---|---|---|
-| OpenStreetMap/OpenRailwayMap-Tags | Geometrie und offene Bahntags | nein, Release-Import | ODbL, Attribution, Provenienz |
-| RINF/OpenStation/StaDa | Attribute und Betriebsstellen | nein, Release-Import | Nutzungsrecht und Mapping geprüft |
-| pathOS/TPN | Plausibilisierung/zulässige Daten | nein | Vertrag und Speicherrecht geprüft |
-| Trassenfinder | zeitnahe Einzelroute/Plausibilität | nein | Disclaimer und Cachinggrenzen eingehalten |
-| Bau-/Störungsfeeds | nur `REALISTIC`-Welten | asynchron | Vertrag, SLA, Fallback und Audit geklärt |
-| TPS/SPS/APS/INB | versionierte Entgeltregeln | nein | Quelle archiviert, Rechenbeispiele getestet |
+Die technische Nennung einer Quelle ist keine Freigabe. Der verbindliche,
+maschinenlesbare Status steht im
+[Rechte- und Quellenregister](../compliance/rights-register.yaml); die
+Begründungen stehen im
+[Source Risk Memo](legal/SOURCE-RISK-MEMO.md).
+
+| Quelle/Provider | Geplante Verwendung | Vorbereitungsentscheidung |
+|---|---|---|
+| versionierter OpenStreetMap-PBF-Extract | Geometrie und OSM-Railway-Tags | Human-/ODbL-Prüfung erforderlich; Extract-Anbieter offen |
+| OpenRailwayMap-Taggingdokumentation | Interpretation von OSM-Tags | nur Dokumentationshilfe; kein separater Datenprovider |
+| OpenStation | Stationsinfrastruktur | Freigabekandidat; exakte Version, Mobilithek/API-Weg und Feldmapping offen |
+| StaDa | Stationsstammdaten | Freigabekandidat; CC BY 4.0, Marketplace, Abruflimit und OSM-Kombination prüfen |
+| RINF | Infrastrukturattribute | blockiert bis schriftliche Wiederverwendungsentscheidung |
+| pathOS/TPN | keine Produktverwendung | ohne neue Berechtigung und Vertrag ausgeschlossen |
+| Trassenfinder | keine Engine-, Tarif-, Speicher- oder Kalibrierungsverwendung | ausgeschlossen; Disclaimer erlaubt nur zeitnahe Einzelrouten |
+| Bau-/Störungsfeeds | nur `REALISTIC`-Welten | `CONTRACT_REQUIRED`, an `MS-039` und Full Release gebunden |
+| TPS/SPS/APS/INB und Anlagen-/Stationspreise | versionierte Entgeltregeln | Fakten, Formeln, Archivierung, Extraktion und Weitergabe je Periode prüfen |
+| öffentliche OSM-/ORM-Tiles und öffentliches Nominatim | keine Produktverwendung | ausgeschlossen; eigene Tiles, optional eigenes Geocoding |
 
 Jeder Import schreibt `DataProvenance`: Quell-ID, Lizenz/Vertrag,
 Abrufzeitpunkt, Gültigkeit, Schema-Version, Checksumme, Transformation und
 Confidence. Ein Provider-Ausfall darf keinen stillen Wechsel von `REALISTIC` zu
 `SIMULATED` auslösen.
+
+Bis zur Freigabe erfolgt kein Live-Import und keine Providerantwort wird als
+Fixture oder Golden File committed. Der aktuelle Pilot bleibt synthetisch.
+Die maschinenlesbare `releaseCoverage` im Register ordnet zusätzlich jeden
+Meilenstein von `RG-0` bis `RG-4` seinen benötigten Quellen und Diensten zu.
 
 ## Backoffice
 

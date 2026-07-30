@@ -65,8 +65,10 @@ Verbindliches Designsystem:
 - Zeiten, Zugnummern und Betriebswerte: JetBrains Mono.
 - Farbe ist niemals alleiniger Statusträger; Text, Symbol oder Muster ergänzen
   den Status.
-- Vor öffentlicher Markennutzung werden `zugfolge.de` registriert und
-  DPMA-/EUIPO-Ähnlichkeitsrecherchen durchgeführt.
+- Vor weiterer öffentlicher Produktvermarktung oder einem Launch werden
+  Domainkontrolle und DPMA-/EUIPO-Ähnlichkeitsrecherchen dokumentiert; die
+  heutige Nutzung im öffentlichen Entwicklungsrepository bleibt ausdrücklich
+  vorläufig.
 - Die Domainprüfung ist keine Reservierung und wird vor jeder öffentlichen
   Aussage erneut verifiziert.
 
@@ -260,18 +262,39 @@ Fahrplanstichtag in Kraft.
 
 ### 2.7 Datenquellen und Qualitätsklassen
 
-- OSM/OpenRailwayMap-Tags liefern offene Geometrie- und Eisenbahndaten.
-- RINF, OpenStation, StaDa, pathOS/TPN und zulässige InfraGO-Dokumente werden als
-  getrennte Quellen importiert.
-- Öffentliche OpenRailwayMap-Tiles werden nicht produktiv genutzt. Das Spiel
-  erzeugt eigene Dark-Vector-Tiles.
-- Der öffentliche Trassenfinder wird ohne Sondervertrag nur für zeitnahe
-  Einzelrouten und Plausibilitätsprüfungen verwendet. Zugfolge besitzt eine
-  eigene Kapazitäts- und Tarifengine.
-- Entgeltregeln werden aus versionierten TPS-/SPS-/APS-/INB-Quellen
-  implementiert und mit offiziellen Rechenbeispielen geprüft.
+- Ein genehmigter, versionierter OSM-PBF-Extract ist die vorgesehene Basis für
+  Geometrie und OSM-Railway-Tags. OpenRailwayMap ist dabei
+  Interpretationsdokumentation, kein separater Datenprovider.
+- OSM-abgeleitete und unabhängig lizenzierte Fakten bleiben getrennte
+  Datenebenen, bis eine qualifizierte ODbL-Prüfung die
+  Derivative-/Collective-Database- und Bereitstellungspflichten freigibt.
+- OpenStation und StaDa sind Stationsdaten-Kandidaten. Exakte Version,
+  Bereitstellungsweg, Marketplace-Bedingungen, Attribution und Feldmapping
+  müssen vor einem Import genehmigt sein.
+- RINF bleibt bis zu einer schriftlichen Wiederverwendungsentscheidung
+  blockiert. pathOS und TPN sind ohne neue Berechtigung und ausdrücklichen
+  Vertrag als Spiel- oder Validierungsbackend ausgeschlossen.
+- Öffentliche OSM-/OpenRailwayMap-Tiles und öffentliches Nominatim werden nicht
+  produktiv genutzt. Das Spiel erzeugt und hostet eigene Dark-Vector-Tiles.
+- Der Trassenfinder speist weder Planner, Kapazität, Tarif, Kalibrierung noch
+  Fixtures; allgemeine Analyse und nicht zeitnahe Ergebnisspeicherung sind laut
+  Disclaimer ausgeschlossen. Zugfolge besitzt eine eigene Kapazitäts- und
+  Tarifengine.
+- Entgeltregeln aus TPS-/SPS-/APS-/INB- und Anlagen-/Stationspreisquellen
+  werden erst nach einer periodenbezogenen Rechteentscheidung als eigene,
+  versionierte Regeln implementiert und mit zulässigen offiziellen Beispielen
+  geprüft.
+- Reale Baustellen- und Störungsfeeds benötigen einen Vertrag, der kommerziellen
+  Abruf, Speicherung, Ableitung, Kartendarstellung, Replay, Audit, Aufbewahrung
+  und Löschung abdeckt. Bis `MS-039` bleibt `REALISTIC` nicht freigegeben.
 - Jedes importierte Attribut trägt Quelle, Lizenz, Gültigkeit, Checksumme und
   Confidence.
+
+Der maschinenlesbare Vorbereitungsstatus steht in
+[`compliance/rights-register.yaml`](compliance/rights-register.yaml); das
+rechtlich-technische Risikomemo steht in
+[`docs/legal/SOURCE-RISK-MEMO.md`](docs/legal/SOURCE-RISK-MEMO.md). Eine Nennung
+im Plan ist niemals eine Datenfreigabe.
 
 Qualitätsklassen:
 

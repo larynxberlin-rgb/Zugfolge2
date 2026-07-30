@@ -1,0 +1,1900 @@
+schemaVersion: 1
+statusAsOf: "2026-07-30"
+repositoryStatus: PREPARATION
+
+statusRules:
+  productionEligibleSourceStatuses: [APPROVED, APPROVED_WITH_CONDITIONS]
+  resolvedSourceStatuses:
+    - APPROVED
+    - APPROVED_WITH_CONDITIONS
+    - SUBSTITUTED
+    - EXCLUDED
+    - REJECTED
+  blockingSourceStatuses:
+    - CANDIDATE
+    - HUMAN_REVIEW_REQUIRED
+    - CONTRACT_REQUIRED
+    - EXPIRED
+  requiredSnapshotFields:
+    - sourceId
+    - sourceLicenseRevision
+    - retrievedAt
+    - sourceValidFrom
+    - sourceValidTo
+    - schemaVersion
+    - checksumSha256
+    - byteSize
+    - rawObjectUri
+    - transformationVersion
+    - parentSnapshotIds
+    - fieldProvenance
+    - confidence
+    - qualityClass
+    - approvalStatus
+  privateEvidencePolicy: REFERENCE_AND_DIGEST_ONLY
+  approvalExpiryPolicy: EVALUATE_AT_CI_RUN_DATE
+
+ownership:
+  status: HUMAN_REVIEW_REQUIRED
+  rightsHolderRole: PROJECT_OWNER_TO_BE_LEGALLY_IDENTIFIED
+  externalContributions: CLOSED
+  aiAssistedWorkReview: PENDING
+  evidenceRefs: []
+  nextAction: Record the accountable natural or legal person and review the human, AI-assisted, employment, and contractor rights chain outside the public repository.
+
+licensing:
+  status: HUMAN_REVIEW_REQUIRED
+  currentRootLicense: UNLICENSED
+  firstLicensedCommit: null
+  components:
+    - scope: Original runtime code, web client, game server, simulation, data pipeline, live gateway, and Odoo bridge
+      candidate: AGPL-3.0-or-later; EUPL-1.2 is the EU-oriented alternative
+      status: HUMAN_REVIEW_REQUIRED
+      humanGate: Project owner and qualified software-license counsel
+    - scope: Public OpenAPI, AsyncAPI, JSON Schemas, and generated public SDKs
+      candidate: Apache-2.0
+      status: HUMAN_REVIEW_REQUIRED
+      humanGate: Project owner and qualified software-license counsel
+    - scope: Specifications, ADRs, planning, and original documentation
+      candidate: CC-BY-4.0
+      status: HUMAN_REVIEW_REQUIRED
+      humanGate: Project owner and qualified software-license counsel
+    - scope: Original synthetic fixtures explicitly approved for redistribution
+      candidate: CC0-1.0
+      status: HUMAN_REVIEW_REQUIRED
+      humanGate: Rights-holder and asset-provenance review
+    - scope: OSM-derived infrastructure database
+      candidate: ODbL-1.0 with attribution and database-offer obligations
+      status: HUMAN_REVIEW_REQUIRED
+      humanGate: Qualified data-license review
+    - scope: Zugfolge name, Block-Z, claim, logos, cosmetics, soundtrack, and premium art
+      candidate: All rights reserved with a separate trademark and asset policy
+      status: HUMAN_REVIEW_REQUIRED
+      humanGate: Rights-holder and trademark counsel
+  ownerQuestions:
+    - May a third party operate a public commercial fork if it complies with network copyleft?
+    - Is AGPL-3.0-or-later or AGPL-3.0-only intended?
+    - Is a later proprietary or OEM dual-license channel genuinely required?
+    - Which natural or legal person is the licensor, trademark owner, and contracting party?
+    - Will contributions use inbound-equals-outbound plus DCO, or is a CLA required before any external contribution?
+  nextAction: Keep every package UNLICENSED and contributions closed until the owner answers these questions and the rights chain is approved.
+
+brands:
+  - id: zugfolge-word
+    kind: WORD_MARK
+    displayName: Zugfolge
+    status: CLEARANCE_REQUIRED
+    ownerRole: FUTURE_ZUGFOLGE_TRADEMARK_OWNER
+    intendedTerritories:
+      - Germany
+      - European Union decision pending
+    intendedClasses:
+      - TO_BE_SELECTED_BY_TRADEMARK_COUNSEL
+    searchScope: Exact, similarity, phonetic, semantic, and conflicting-prior-rights search for the word mark in the intended classes and territories.
+    searchStatus: NOT_STARTED
+    searchOutcome: NOT_REVIEWED
+    searchedAt: null
+    reviewerRole: QUALIFIED_TRADEMARK_COUNSEL
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    fallback: Rename before public launch; fallback product name is not selected.
+    renewalOwnerRole: FUTURE_BRAND_STEWARD
+    officialSearchUrls:
+      - https://register.dpma.de/DPMAregister/marke/einsteiger
+      - https://www.tmdn.org/tmview/
+      - https://branddb.wipo.int/
+    evidenceRefs: []
+    nextAction: Run and archive a professional similarity search for the intended Nice classes; the technical railway meaning must be considered when assessing distinctiveness.
+  - id: block-z-device
+    kind: DEVICE_MARK
+    displayName: Block-Z
+    status: CLEARANCE_REQUIRED
+    ownerRole: FUTURE_ZUGFOLGE_TRADEMARK_OWNER
+    intendedTerritories:
+      - Germany
+      - European Union decision pending
+    intendedClasses:
+      - TO_BE_SELECTED_BY_TRADEMARK_COUNSEL
+    searchScope: Device, figurative, similarity, and conflicting-prior-rights search for the final Block-Z artwork in the intended classes and territories.
+    searchStatus: NOT_STARTED
+    searchOutcome: NOT_REVIEWED
+    searchedAt: null
+    reviewerRole: QUALIFIED_TRADEMARK_COUNSEL
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    fallback: Use a separately cleared replacement device or launch without a device mark.
+    renewalOwnerRole: FUTURE_BRAND_STEWARD
+    officialSearchUrls:
+      - https://register.dpma.de/DPMAregister/marke/einsteiger
+      - https://www.tmdn.org/tmview/
+      - https://branddb.wipo.int/
+    evidenceRefs: []
+    nextAction: Review the device mark separately and document source files, references, generation tools, human edits, and transfer to the future rights holder.
+  - id: product-claim
+    kind: CLAIM
+    displayName: Plane präzise. Fahre profitabel.
+    status: CLEARANCE_REQUIRED
+    ownerRole: FUTURE_ZUGFOLGE_TRADEMARK_OWNER
+    intendedTerritories:
+      - Germany
+      - European Union decision pending
+    intendedClasses:
+      - TO_BE_SELECTED_BY_TRADEMARK_COUNSEL
+    searchScope: Exact, phrase-similarity, semantic, and conflicting-prior-rights search for the complete claim in the intended classes and territories.
+    searchStatus: NOT_STARTED
+    searchOutcome: NOT_REVIEWED
+    searchedAt: null
+    reviewerRole: QUALIFIED_TRADEMARK_COUNSEL
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    fallback: Omit or replace the claim before public launch.
+    renewalOwnerRole: FUTURE_BRAND_STEWARD
+    officialSearchUrls:
+      - https://register.dpma.de/DPMAregister/marke/einsteiger
+      - https://www.tmdn.org/tmview/
+    evidenceRefs: []
+    nextAction: Search the complete claim and confusingly similar phrases separately from the product name.
+  - id: zugfolge-de-domain
+    kind: DOMAIN
+    displayName: zugfolge.de
+    status: ACQUISITION_REQUIRED
+    ownerRole: FUTURE_ZUGFOLGE_DOMAIN_OWNER
+    intendedTerritories:
+      - Germany
+    intendedClasses:
+      - NOT_APPLICABLE_TO_DOMAIN
+    searchScope: Current registry observation, acquisition, registrant control, renewal ownership, confusing-use, and corresponding trademark risk.
+    searchStatus: IN_PROGRESS
+    searchOutcome: INCONCLUSIVE
+    searchedAt: "2026-07-30"
+    reviewerRole: QUALIFIED_TRADEMARK_COUNSEL_AND_DOMAIN_OWNER
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    fallback: Select and acquire a cleared alternative domain before public launch.
+    renewalOwnerRole: FUTURE_DOMAIN_STEWARD
+    officialSearchUrls:
+      - https://www.denic.de/services/whois-service/rdap-service/
+    evidenceRefs: []
+    nextAction: The 2026-07-30 RDAP observation is not a reservation; the accountable owner must acquire and privately evidence control before public launch.
+
+assets:
+  - id: favicon-block-z
+    path: public/favicon.svg
+    sha256: DCAF777A55D32C905D170F2CBB07EBB9C07831EF11B96A57F0B0BC55CFECB619
+    provenanceStatus: ORIGIN_REVIEW_REQUIRED
+    ownerRole: FUTURE_ZUGFOLGE_ASSET_OWNER
+    origin: Repository-created Block-Z vector asset; creator, tool, references, and rights transfer have not yet been evidenced.
+    aiAssistance: UNKNOWN
+    licenseDecision: UNLICENSED; intended trademark/brand asset treatment requires owner and counsel approval
+    evidenceRefs: []
+    approvedUses: []
+    reviewerRole: ASSET_RIGHTS_REVIEWER
+    reviewDecision: NOT_REVIEWED
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    withdrawal: Replace favicon and every derivative if provenance or mark clearance fails; prior private evidence remains immutable.
+    nextAction: Record private creation evidence and obtain explicit owner approval before relicensing or trademark filing.
+  - id: social-preview
+    path: public/og.png
+    sha256: 3FB461D7C2833060909EFF82E1FF083171D4C8752A5C3AB72E9E87787A0F2961
+    provenanceStatus: ORIGIN_REVIEW_REQUIRED
+    ownerRole: FUTURE_ZUGFOLGE_ASSET_OWNER
+    origin: Repository-created social preview; constituent assets and generation history have not yet been evidenced.
+    aiAssistance: UNKNOWN
+    licenseDecision: UNLICENSED; social-preview distribution and constituent rights require review
+    evidenceRefs: []
+    approvedUses: []
+    reviewerRole: ASSET_RIGHTS_REVIEWER
+    reviewDecision: NOT_REVIEWED
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    withdrawal: Remove or replace the preview and invalidate derived exports if provenance review fails.
+    nextAction: Record source layers, tools, references, and human approval or replace with a provenance-complete render.
+  - id: block-z-component
+    path: app/components/BlockZ.tsx
+    sha256: 414AFFB897241ED7E9F06FEA572E05461DF2BB0C3130FE5B427349C52382DCAC
+    provenanceStatus: ORIGIN_REVIEW_REQUIRED
+    ownerRole: FUTURE_ZUGFOLGE_ASSET_OWNER
+    origin: Repository-authored React rendering of the Block-Z; human authorship and AI-assistance evidence remain open.
+    aiAssistance: AI_ASSISTED
+    licenseDecision: UNLICENSED; future code and trademark boundaries require separate decisions
+    evidenceRefs: []
+    approvedUses: []
+    reviewerRole: ASSET_RIGHTS_REVIEWER
+    reviewDecision: NOT_REVIEWED
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    withdrawal: Replace the component and every derivative render if source or mark clearance fails.
+    nextAction: Link the approved device-mark source and record the responsible human review.
+  - id: synthetic-pilot-fixture
+    path: app/lib/pilot-data.ts
+    sha256: C193FB8B716E6441565CA9F96D542FC141171C4D1CAEAC5A3713D7003115F411
+    provenanceStatus: ORIGIN_REVIEW_REQUIRED
+    ownerRole: FUTURE_ZUGFOLGE_FIXTURE_OWNER
+    origin: Synthetic repository fixture; names, topology, train numbers, and values are illustrative and are not imported from a railway provider.
+    aiAssistance: AI_ASSISTED
+    licenseDecision: UNLICENSED; CC0-1.0 is only a candidate after origin review
+    evidenceRefs: []
+    approvedUses: []
+    reviewerRole: FIXTURE_RIGHTS_REVIEWER
+    reviewDecision: NOT_REVIEWED
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    withdrawal: Replace the fixture, update its checksum, and rerun UI/replay tests; never substitute provider data silently.
+    nextAction: Human-review every value for independent origin and record an explicit test-fixture license decision.
+
+sources:
+  - id: osm-pbf
+    title: OpenStreetMap PBF extract
+    category: RAILWAY_GEOMETRY
+    provider: OpenStreetMap contributors through an extract provider not yet selected
+    dataOwner: OpenStreetMap contributors under OSMF-administered terms
+    contactRole: EXTRACT_PROVIDER_AND_OSMF_LICENSE_CONTACT
+    fieldScope:
+      - Railway geometry
+      - OSM railway tags selected by an approved import profile
+    geographicScope: Leipzig–Halle–Erfurt pilot first; Germany only in a later approved release
+    sourceSchemaOrProfileVersion: Exact OSM PBF extract date and parser profile not selected
+    freshnessPolicy: Immutable timetable-date snapshots; stale snapshots remain traceable and cannot silently update an active world
+    sourceValidFrom: null
+    sourceValidTo: null
+    contractExpiresAt: null
+    forbiddenUses:
+      - Live OSM API or public tile access in simulation or runtime
+      - Combining restricted facts into an OSM-derived feature layer without qualified database classification
+    consumerMilestones: [MS-020, MS-021, MS-022, MS-054, MS-060]
+    requiredByRelease: RG-2
+    status: HUMAN_REVIEW_REQUIRED
+    intendedUse: Versioned, self-hosted import of railway geometry and railway tags into immutable infrastructure releases and own vector tiles.
+    currentDecision: No provider, extract, import, or public release is approved yet.
+    officialUrls:
+      - https://www.openstreetmap.org/copyright
+      - https://osmfoundation.org/wiki/Licence/Attribution_Guidelines
+      - https://osmfoundation.org/wiki/Licence/Community_Guidelines/Horizontal_Map_Layers_-_Guideline
+    terms:
+      licenseOrPermission: ODbL-1.0 candidate rights basis
+      termsUrl: https://opendatacommons.org/licenses/odbl/1-0/
+      termsVersion: ODbL-1.0; extract-provider terms not selected
+      retrievedAt: "2026-07-30"
+      archivedEvidenceRef: null
+      archivedEvidenceDigestSha256: null
+    access:
+      deliveryMode: Versioned PBF file import into a self-hosted pipeline
+      endpointOrLocator: UNSELECTED_APPROVED_EXTRACT_PROVIDER
+      authentication: Provider-specific and not selected
+      rateLimit: Snapshot cadence and provider limits not selected
+      updateCadence: Timetable-date snapshots proposed; exact cadence not selected
+      hotPath: false
+    permissions:
+      commercialUse: CONDITIONAL
+      automatedRetrieval: CONDITIONAL
+      storage: CONDITIONAL
+      transformation: CONDITIONAL
+      combination: CONDITIONAL
+      display: CONDITIONAL
+      redistribution: CONDITIONAL
+      archival: CONDITIONAL
+      replay: CONDITIONAL
+      fixtures: CONDITIONAL
+    attribution:
+      required: true
+      text: OpenStreetMap
+      placement: Near interactive maps and in data-license metadata
+      licenseUrl: https://www.openstreetmap.org/copyright
+    databaseClassification: DERIVATIVE_REVIEW_REQUIRED
+    privacyClass: PUBLIC_NON_PERSONAL
+    failureBehavior: Existing pinned releases remain available; import failure cannot mutate an active world.
+    fallback: Last approved immutable infrastructure release or the synthetic development fixture.
+    retention: Immutable raw snapshots and descendants only under the approved ODbL offer, storage, and withdrawal policy.
+    deletion: Delete or quarantine unapproved extracts and descendants; approved retention and public database-offer duties control any later deletion.
+    rollback: Stop promotion, restore the last approved immutable infrastructure release, and rebuild attribution and database-offer artifacts from its lineage.
+    substituteSourceId: null
+    withdrawal: Stop new imports, identify all descendants by lineage, disable affected candidate releases, and follow the approved offer or removal procedure.
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    decisionOwnerRole: DATA_RIGHTS_COUNSEL
+    nextAction: Select an extract provider and obtain a written Derivative-versus-Collective Database decision before fixing the release schema.
+
+  - id: osm-railway-tagging
+    title: OpenStreetMap railway tagging and OpenRailwayMap tagging documentation
+    category: TAGGING_DOCUMENTATION
+    provider: OpenStreetMap and OpenRailwayMap communities
+    dataOwner: Respective documentation contributors
+    contactRole: DATA_STEWARD
+    fieldScope:
+      - Railway-tag meanings
+      - Public OpenRailwayMap service limitations
+    geographicScope: Global documentation interpreted only for fields present in the approved German OSM extract
+    sourceSchemaOrProfileVersion: Exact OSM tagging and OpenRailwayMap documentation revisions not pinned
+    freshnessPolicy: Parser review is required whenever a pinned tagging reference or supported profile changes
+    sourceValidFrom: null
+    sourceValidTo: null
+    contractExpiresAt: null
+    forbiddenUses:
+      - Treating documentation as a separate operational dataset
+      - Copying public API or tile output into game releases or fixtures
+    consumerMilestones: [MS-020, MS-021]
+    requiredByRelease: RG-2
+    status: HUMAN_REVIEW_REQUIRED
+    intendedUse: Interpretation guidance for railway tags already contained in an approved OSM extract; not a separate operational data feed.
+    currentDecision: Documentation may inform a reviewed parser, but no public ORM API or tile service is authorized.
+    officialUrls:
+      - https://wiki.openstreetmap.org/wiki/OpenRailwayMap/Tagging
+      - https://wiki.openstreetmap.org/wiki/OpenRailwayMap/API
+    terms:
+      licenseOrPermission: Documentation license and OSM contributor terms require review for copied material
+      termsUrl: https://wiki.openstreetmap.org/wiki/OpenRailwayMap/API
+      termsVersion: Web terms observed 2026-07-30
+      retrievedAt: "2026-07-30"
+      archivedEvidenceRef: null
+      archivedEvidenceDigestSha256: null
+    access:
+      deliveryMode: Human-reviewed documentation reference
+      endpointOrLocator: https://wiki.openstreetmap.org/wiki/OpenRailwayMap
+      authentication: None
+      rateLimit: No automated bulk access
+      updateCadence: Pin exact page revisions with each parser profile review
+      hotPath: false
+    permissions:
+      commercialUse: CONDITIONAL
+      automatedRetrieval: PROHIBITED
+      storage: CONDITIONAL
+      transformation: CONDITIONAL
+      combination: CONDITIONAL
+      display: PROHIBITED
+      redistribution: UNKNOWN
+      archival: CONDITIONAL
+      replay: NOT_APPLICABLE
+      fixtures: PROHIBITED
+    attribution:
+      required: null
+      text: null
+      placement: null
+      licenseUrl: null
+    databaseClassification: NOT_APPLICABLE
+    privacyClass: PUBLIC_NON_PERSONAL
+    failureBehavior: Parser documentation remains pinned; runtime never queries the site.
+    fallback: Conservative UNKNOWN mapping for unsupported or ambiguous tags.
+    retention: Retain approved citations and parser decisions; do not mirror the public service.
+    deletion: Remove superseded local documentation excerpts only when evidence retention permits; never delete the parser decision history.
+    rollback: Restore the last approved parser profile and map unsupported tags to UNKNOWN.
+    substituteSourceId: null
+    withdrawal: Stop copying documentation and retain only independently described parser rules after legal review.
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    decisionOwnerRole: DATA_STEWARD
+    nextAction: Pin exact tagging pages and document each parser interpretation without presenting documentation as a provider.
+
+  - id: openstation
+    title: OpenStation
+    category: STATION_INFRASTRUCTURE
+    provider: DB InfraGO AG through DB API Marketplace or Mobilithek
+    dataOwner: DB InfraGO AG
+    contactRole: OPENSTATION_PRODUCT_OWNER
+    fieldScope:
+      - Passenger-station infrastructure
+      - Accessibility assets in the selected NeTEx or SIRI profile
+    geographicScope: Passenger stations operated by DB InfraGO AG in Germany
+    sourceSchemaOrProfileVersion: Exact NeTEx or SIRI profile and delivery version not selected
+    freshnessPolicy: No production freshness threshold until delivery route, profile, and update cadence are approved
+    sourceValidFrom: null
+    sourceValidTo: null
+    contractExpiresAt: null
+    forbiddenUses:
+      - Live lookup in simulation, login, or ledger
+      - Unreviewed field combination with OSM-derived features
+    consumerMilestones: [MS-020, MS-021, MS-054]
+    requiredByRelease: RG-2
+    status: HUMAN_REVIEW_REQUIRED
+    intendedUse: Versioned station-infrastructure enrichment where fields, identifiers, endpoint stability, and provenance are validated.
+    currentDecision: CC0 is a promising rights basis, but the delivery route, exact dataset version, marketplace terms, and field mapping are not approved.
+    officialUrls:
+      - https://developers.deutschebahn.com/db-api-marketplace/apis/product/open-station
+    terms:
+      licenseOrPermission: CC0 stated by provider; marketplace and delivery-route terms also apply
+      termsUrl: https://developers.deutschebahn.com/db-api-marketplace/apis/product/open-station
+      termsVersion: Product page observed 2026-07-30; API version must be pinned at approval
+      retrievedAt: "2026-07-30"
+      archivedEvidenceRef: null
+      archivedEvidenceDigestSha256: null
+    access:
+      deliveryMode: Prefer provider-recommended productive Mobilithek delivery; exact endpoint not selected
+      endpointOrLocator: UNSELECTED_MOBILITHEK_OR_APPROVED_PROVIDER_ENDPOINT
+      authentication: Delivery-route specific
+      rateLimit: Marketplace page states 7500 calls per day for API version 1.2.4; must be reverified
+      updateCadence: Provider-recommended productive snapshot cadence not yet selected
+      hotPath: false
+    permissions:
+      commercialUse: CONDITIONAL
+      automatedRetrieval: CONDITIONAL
+      storage: CONDITIONAL
+      transformation: CONDITIONAL
+      combination: CONDITIONAL
+      display: CONDITIONAL
+      redistribution: CONDITIONAL
+      archival: CONDITIONAL
+      replay: CONDITIONAL
+      fixtures: CONDITIONAL
+    attribution:
+      required: null
+      text: null
+      placement: null
+      licenseUrl: https://creativecommons.org/publicdomain/zero/1.0/
+    databaseClassification: COLLECTIVE_REVIEW_REQUIRED
+    privacyClass: PUBLIC_NON_PERSONAL
+    failureBehavior: Import failure leaves the last approved release unchanged.
+    fallback: OSM-only approved station facts, with unavailable attributes remaining UNKNOWN.
+    retention: Exact snapshot, raw-object, and derived-release retention remain subject to the selected delivery terms.
+    deletion: No payload may survive a rejected review; an approved record must define raw, derived, backup, and evidence deletion separately.
+    rollback: Disable the candidate adapter and return to approved OSM-only station facts with unavailable fields set to UNKNOWN.
+    substituteSourceId: null
+    withdrawal: Disable future imports and trace every derived station fact by source snapshot.
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    decisionOwnerRole: DATA_RIGHTS_COUNSEL
+    nextAction: Select Marketplace or Mobilithek, archive the exact terms, and approve field-level combination with OSM.
+
+  - id: stada
+    title: StaDa Station Data
+    category: STATION_MASTER_DATA
+    provider: DB InfraGO AG through DB API Marketplace
+    dataOwner: DB InfraGO AG
+    contactRole: STADA_PRODUCT_OWNER
+    fieldScope:
+      - Station master data
+      - Accessibility, opening, and facility attributes selected by the approved mapping
+    geographicScope: Stations covered by the approved StaDa release in Germany
+    sourceSchemaOrProfileVersion: Exact StaDa API and response-schema version not selected
+    freshnessPolicy: No production freshness threshold until Marketplace terms and a snapshot cadence are approved
+    sourceValidFrom: null
+    sourceValidTo: null
+    contractExpiresAt: null
+    forbiddenUses:
+      - Sharing API credentials
+      - Unreviewed OSM feature-layer combination or provider-response fixtures
+    consumerMilestones: [MS-020, MS-021, MS-054]
+    requiredByRelease: RG-2
+    status: HUMAN_REVIEW_REQUIRED
+    intendedUse: Versioned enrichment of station master data after field-level mapping and attribution approval.
+    currentDecision: CC-BY-4.0 is stated, but API credentials, marketplace terms, version, call limits, and OSM-combination wording require a signed review.
+    officialUrls:
+      - https://developers.deutschebahn.com/db-api-marketplace/apis/product/stada
+      - https://developers.deutschebahn.com/db-api-marketplace/apis/nutzungsbedingungen
+    terms:
+      licenseOrPermission: CC-BY-4.0 plus DB API Marketplace conditions
+      termsUrl: https://developers.deutschebahn.com/db-api-marketplace/apis/product/stada
+      termsVersion: Product version 2.11.0 observed 2026-07-30
+      retrievedAt: "2026-07-30"
+      archivedEvidenceRef: null
+      archivedEvidenceDigestSha256: null
+    access:
+      deliveryMode: Authenticated REST snapshot import
+      endpointOrLocator: UNSELECTED_STADA_API_ENDPOINT
+      authentication: DB Client ID and API key; secrets must stay outside repository and logs
+      rateLimit: Product text and technical plan appear inconsistent; approval must pin the operative limit
+      updateCadence: Static-data snapshot cadence must follow the resolved provider limit
+      hotPath: false
+    permissions:
+      commercialUse: CONDITIONAL
+      automatedRetrieval: CONDITIONAL
+      storage: CONDITIONAL
+      transformation: CONDITIONAL
+      combination: CONDITIONAL
+      display: CONDITIONAL
+      redistribution: CONDITIONAL
+      archival: CONDITIONAL
+      replay: CONDITIONAL
+      fixtures: CONDITIONAL
+    attribution:
+      required: true
+      text: DB InfraGO AG, licensed under CC BY 4.0
+      placement: Data-license metadata and any additional location required by the approved combination model
+      licenseUrl: https://creativecommons.org/licenses/by/4.0/
+    databaseClassification: COLLECTIVE_REVIEW_REQUIRED
+    privacyClass: PUBLIC_NON_PERSONAL
+    failureBehavior: Import failure leaves the last approved release unchanged.
+    fallback: Approved OpenStation or OSM facts; missing attributes remain UNKNOWN.
+    retention: Raw and derived retention remain blocked until Marketplace and CC BY obligations are approved.
+    deletion: Delete unapproved payloads and derived fixtures; an approved record must define API, cache, backup, and release deletion.
+    rollback: Disable the candidate adapter and return to approved OSM-only station facts with unavailable fields set to UNKNOWN.
+    substituteSourceId: null
+    withdrawal: Revoke API credentials, stop imports, and identify all descendants before release withdrawal or substitution.
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    decisionOwnerRole: DATA_RIGHTS_COUNSEL
+    nextAction: Obtain a terms snapshot and written interpretation of call frequency, storage, redistribution, and OSM combination.
+
+  - id: rinf
+    title: European Register of Infrastructure
+    category: INFRASTRUCTURE_ATTRIBUTES
+    provider: European Union Agency for Railways with Member State and infrastructure-manager submissions
+    dataOwner: Rights and responsibilities are distributed across ERA, Member States, registration entities, and infrastructure managers
+    contactRole: ERA_RINF_AND_DATA_RIGHTS_CONTACT
+    fieldScope:
+      - Route-compatibility infrastructure attributes selected by a future mapping
+    geographicScope: German network coverage within the approved RINF snapshot
+    sourceSchemaOrProfileVersion: Exact RINF application and schema version not selected
+    freshnessPolicy: No import or freshness claim until written reuse and delivery decisions are approved
+    sourceValidFrom: null
+    sourceValidTo: null
+    contractExpiresAt: null
+    forbiddenUses:
+      - Any import, publication, combination, fixture, or redistribution before written reuse approval
+    consumerMilestones: [MS-020, MS-021, MS-060]
+    requiredByRelease: RG-5
+    status: HUMAN_REVIEW_REQUIRED
+    intendedUse: Candidate validation and enrichment of infrastructure compatibility attributes.
+    currentDecision: Public availability and regulatory publication do not by themselves establish all commercial storage, transformation, and redistribution rights needed by Zugfolge.
+    officialUrls:
+      - https://www.era.europa.eu/domains/registers/rinf_en
+      - https://www.era.europa.eu/system/files/2022-11/rinf_terms_of_use_en.pdf
+      - https://eur-lex.europa.eu/eli/reg_impl/2019/777/2023-09-28/eng
+    terms:
+      licenseOrPermission: Terms of use reviewed as risk evidence; reusable grant remains legally unconfirmed
+      termsUrl: https://www.era.europa.eu/system/files/2022-11/rinf_terms_of_use_en.pdf
+      termsVersion: RINF Terms of Use v1.0
+      retrievedAt: "2026-07-30"
+      archivedEvidenceRef: null
+      archivedEvidenceDigestSha256: null
+    access:
+      deliveryMode: No import route approved
+      endpointOrLocator: UNSELECTED_RINF_DELIVERY_ENDPOINT
+      authentication: Unknown
+      rateLimit: Unknown
+      updateCadence: No cadence selected
+      hotPath: false
+    permissions:
+      commercialUse: UNKNOWN
+      automatedRetrieval: UNKNOWN
+      storage: UNKNOWN
+      transformation: UNKNOWN
+      combination: UNKNOWN
+      display: UNKNOWN
+      redistribution: UNKNOWN
+      archival: UNKNOWN
+      replay: UNKNOWN
+      fixtures: PROHIBITED
+    attribution:
+      required: null
+      text: null
+      placement: null
+      licenseUrl: null
+    databaseClassification: UNKNOWN
+    privacyClass: PUBLIC_NON_PERSONAL
+    failureBehavior: RINF is absent from the pipeline until approved.
+    fallback: Approved OSM facts plus conservative virtual infrastructure; missing facts remain UNKNOWN.
+    retention: No RINF payload may be retained until written reuse and retention rights are approved.
+    deletion: Delete any accidental payload and derived artifact unless a separately approved legal-hold record requires preservation.
+    rollback: Remove the RINF layer from release candidates and restore the last approved infrastructure release.
+    substituteSourceId: null
+    withdrawal: No action beyond preserving this decision record because ingestion is prohibited.
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    decisionOwnerRole: DATA_RIGHTS_COUNSEL
+    nextAction: Obtain a written reuse memo or provider confirmation before implementing an adapter.
+
+  - id: pathos-tpn
+    title: pathOS and Trassenportal Netz
+    category: ACCESS_AND_PATH_ORDERING_SYSTEMS
+    provider: DB InfraGO AG
+    dataOwner: DB InfraGO AG and applicable access parties
+    contactRole: DB_INFRAGO_ACCESS_CONTRACT_OWNER
+    fieldScope:
+      - None
+    geographicScope: No Zugfolge access scope
+    sourceSchemaOrProfileVersion: NOT_APPLICABLE_EXCLUDED
+    freshnessPolicy: Not applicable because the systems are excluded
+    sourceValidFrom: null
+    sourceValidTo: null
+    contractExpiresAt: null
+    forbiddenUses:
+      - Fictional path requests
+      - Calibration, validation, storage, display, replay, fixtures, or runtime integration
+    consumerMilestones: []
+    requiredByRelease: null
+    status: EXCLUDED
+    intendedUse: None in the game runtime; these systems are not assumed to be public game-data providers.
+    currentDecision: Excluded from fictional path requests, calibration, validation, and runtime integration without a new contract and eligibility decision.
+    officialUrls:
+      - https://www.dbinfrago.com/resource/blob/13699956/a039c34210a6c9679f1a50a7e753ee12/INB-2027-Anlage-4-2-data.pdf
+    terms:
+      licenseOrPermission: Access requires applicable eligibility and contractual terms; no Zugfolge permission exists
+      termsUrl: https://www.dbinfrago.com/resource/blob/13699956/a039c34210a6c9679f1a50a7e753ee12/INB-2027-Anlage-4-2-data.pdf
+      termsVersion: INB 2027 Annex 4.2 observed 2026-07-30
+      retrievedAt: "2026-07-30"
+      archivedEvidenceRef: null
+      archivedEvidenceDigestSha256: null
+    access:
+      deliveryMode: No access
+      endpointOrLocator: NOT_APPLICABLE_EXCLUDED_PATHOS_TPN
+      authentication: Not authorized
+      rateLimit: Not applicable
+      updateCadence: Not applicable
+      hotPath: false
+    permissions:
+      commercialUse: PROHIBITED
+      automatedRetrieval: PROHIBITED
+      storage: PROHIBITED
+      transformation: PROHIBITED
+      combination: PROHIBITED
+      display: PROHIBITED
+      redistribution: PROHIBITED
+      archival: PROHIBITED
+      replay: PROHIBITED
+      fixtures: PROHIBITED
+    attribution:
+      required: false
+      text: null
+      placement: null
+      licenseUrl: null
+    databaseClassification: NOT_APPLICABLE
+    privacyClass: UNKNOWN
+    failureBehavior: No runtime dependency exists.
+    fallback: Zugfolge's own deterministic planner using approved immutable releases.
+    retention: Retain no payload, credential, or transaction data.
+    deletion: Immediately remove any accidental payload, credential, or transaction trace from permitted stores and rotate exposed credentials.
+    rollback: Keep every pathOS/TPN adapter absent and continue with Zugfolge-owned planning against approved releases.
+    substituteSourceId: null
+    withdrawal: Keep adapters absent and reject any issue that assumes access without reopening MS-001.
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2027-07-30"
+    decisionOwnerRole: DATA_STEWARD
+    nextAction: None unless a future human-approved contract changes product scope.
+
+  - id: trassenfinder
+    title: Trassenfinder OpenAPI
+    category: SINGLE_ROUTE_INFORMATION
+    provider: DB InfraGO AG
+    dataOwner: DB InfraGO AG
+    contactRole: TRASSENFINDER_PRODUCT_OWNER
+    fieldScope:
+      - None for authoritative or stored Zugfolge data
+    geographicScope: No integrated Zugfolge access scope
+    sourceSchemaOrProfileVersion: NOT_APPLICABLE_EXCLUDED
+    freshnessPolicy: Not applicable because automated or stored use is excluded
+    sourceValidFrom: null
+    sourceValidTo: null
+    contractExpiresAt: null
+    forbiddenUses:
+      - Planner, capacity, tariff, calibration, fixture, stored-result, reconstruction, or bulk-analysis input
+      - Any non-immediate result storage
+    consumerMilestones: []
+    requiredByRelease: null
+    status: EXCLUDED
+    intendedUse: At most a time-immediate manual single-route plausibility check after separate approval; never capacity, tariff, calibration, fixture, or engine input.
+    currentDecision: Excluded from automated analysis, reconstruction, result storage, and every authoritative game path.
+    officialUrls:
+      - https://openapi.trassenfinder.de/
+    terms:
+      licenseOrPermission: Disclaimer permits individual route determination only and excludes general analysis and non-immediate result storage
+      termsUrl: https://openapi.trassenfinder.de/
+      termsVersion: Disclaimer observed 2026-07-30
+      retrievedAt: "2026-07-30"
+      archivedEvidenceRef: null
+      archivedEvidenceDigestSha256: null
+    access:
+      deliveryMode: No application integration
+      endpointOrLocator: NOT_APPLICABLE_EXCLUDED_TRASSENFINDER
+      authentication: Not applicable
+      rateLimit: Not applicable because integration is excluded
+      updateCadence: Not applicable
+      hotPath: false
+    permissions:
+      commercialUse: PROHIBITED
+      automatedRetrieval: PROHIBITED
+      storage: PROHIBITED
+      transformation: PROHIBITED
+      combination: PROHIBITED
+      display: PROHIBITED
+      redistribution: PROHIBITED
+      archival: PROHIBITED
+      replay: PROHIBITED
+      fixtures: PROHIBITED
+    attribution:
+      required: false
+      text: null
+      placement: null
+      licenseUrl: null
+    databaseClassification: NOT_APPLICABLE
+    privacyClass: PUBLIC_NON_PERSONAL
+    failureBehavior: No runtime dependency exists.
+    fallback: Zugfolge's own planner and versioned tariff engine.
+    retention: Retain no API result; an accidental response is not evidence or a fixture.
+    deletion: Immediately remove accidental results from caches, logs, tests, fixtures, and artifacts.
+    rollback: Keep the integration absent and use the own planner and tariff engine.
+    substituteSourceId: null
+    withdrawal: Keep all adapters absent and remove any stored response immediately if an accidental call occurs.
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2027-07-30"
+    decisionOwnerRole: DATA_STEWARD
+    nextAction: Preserve the exclusion in planner, economy, test-fixture, and data-pipeline specifications.
+
+  - id: tariff-publications
+    title: TPS, SPS, APS, INB, station, storage, and service-facility publications
+    category: TARIFF_RULES
+    provider: DB InfraGO AG and relevant facility operators
+    dataOwner: Each named infrastructure or facility operator for its exact publication
+    contactRole: TARIFF_PUBLICATION_RIGHTS_OWNER
+    fieldScope:
+      - Price formulas and parameters selected in a separately registered tariff period
+      - Official examples approved for verification
+    geographicScope: Exact German infrastructure, station, storage, or facility scope of each registered publication
+    sourceSchemaOrProfileVersion: One independently reviewed record required per tariff period and publication revision
+    freshnessPolicy: EconomyRelease may use only a pinned, currently reviewed tariff period and its approved corrections
+    sourceValidFrom: null
+    sourceValidTo: null
+    contractExpiresAt: null
+    forbiddenUses:
+      - Unapproved PDF redistribution or automated scraping
+      - Mixing tariff periods or presenting simplified values as binding provider prices
+    consumerMilestones: [MS-030, MS-031, MS-034, MS-035, MS-036, MS-054]
+    requiredByRelease: RG-3
+    status: HUMAN_REVIEW_REQUIRED
+    intendedUse: Human-reviewed, versioned implementation of public pricing rules and official examples without redistributing source documents unless permitted.
+    currentDecision: Facts, formulas, automatic extraction, document archiving, and redistribution each require a written rights decision per tariff period.
+    officialUrls:
+      - https://www.dbinfrago.com/web/schienennetz/netzzugang-und-regulierung/nutzungsbedingungen/INB/inb_allgemein-11918572
+      - https://www.dbinfrago.com/web/schienennetz/leistungen/trassen/trassenpreissystem-2026/schienenpersonennahverkehr-spnv/entgelte-im-spnv-13081376
+      - https://www.dbinfrago.com/web/schienennetz/leistungen/serviceeinrichtungen/anlagenpreise/aps_broschuere-10907660
+      - https://www.dbinfrago.com/web/bahnhoefe/leistungen/stationsnutzung/stationshalt/Stationspreise-10995752
+    terms:
+      licenseOrPermission: Public factual publication; implementation and reuse rights require qualified review
+      termsUrl: https://www.dbinfrago.com/web/schienennetz/netzzugang-und-regulierung/nutzungsbedingungen/INB/inb_allgemein-11918572
+      termsVersion: 2026 and 2027 source families must be registered separately before use
+      retrievedAt: "2026-07-30"
+      archivedEvidenceRef: null
+      archivedEvidenceDigestSha256: null
+    access:
+      deliveryMode: Manual legal and domain review before independent rule implementation
+      endpointOrLocator: ONE_PINNED_PUBLICATION_LOCATOR_REQUIRED_PER_TARIFF_RECORD
+      authentication: Public pages; no automated scraper approved
+      rateLimit: No automated retrieval approved
+      updateCadence: One immutable source record per tariff period and published correction
+      hotPath: false
+    permissions:
+      commercialUse: UNKNOWN
+      automatedRetrieval: PROHIBITED
+      storage: UNKNOWN
+      transformation: UNKNOWN
+      combination: UNKNOWN
+      display: UNKNOWN
+      redistribution: PROHIBITED
+      archival: UNKNOWN
+      replay: CONDITIONAL
+      fixtures: CONDITIONAL
+    attribution:
+      required: null
+      text: null
+      placement: null
+      licenseUrl: null
+    databaseClassification: NOT_APPLICABLE
+    privacyClass: PUBLIC_NON_PERSONAL
+    failureBehavior: Economy release cannot be approved without a complete, reviewed rule source set.
+    fallback: Synthetic economy calibration clearly labelled as synthetic for private development worlds only.
+    retention: Retain only source documents, excerpts, and examples permitted by the period-specific rights decision.
+    deletion: Remove unapproved copies and derived examples while retaining only non-confidential decision metadata and digests allowed by policy.
+    rollback: Withdraw the affected EconomyRelease for new worlds and restore the last approved tariff release.
+    substituteSourceId: null
+    withdrawal: Freeze affected EconomyRelease, prevent new worlds from pinning it, and replace it at an announced timetable date.
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    decisionOwnerRole: DATA_RIGHTS_COUNSEL
+    nextAction: Create one source record per tariff period and obtain a written memo on facts, formulas, examples, extraction, archiving, and redistribution.
+
+  - id: realistic-disruption-feeds
+    title: Planned works and operational incident feeds
+    category: REALTIME_DISRUPTIONS
+    provider: No provider set selected
+    dataOwner: UNCONFIRMED
+    contactRole: FUTURE_DISRUPTION_PROVIDER_CONTRACT_OWNER
+    fieldScope:
+      - Planned-work restrictions
+      - Operational-incident restrictions and validity
+    geographicScope: Exact contracted German infrastructure coverage, not yet selected
+    sourceSchemaOrProfileVersion: Contracted provider schema and mapping profile not selected
+    freshnessPolicy: Contract must define polling or push cadence, stale threshold, last-safe state, and visible confidence
+    sourceValidFrom: null
+    sourceValidTo: null
+    contractExpiresAt: null
+    forbiddenUses:
+      - Scraping websites, LiveMaps, strecken.info, RIS, or BauFplo without written rights
+      - Silent fallback to SIMULATED or use of provider responses as fixtures
+    consumerMilestones: [MS-039, MS-060, MS-063, MS-074]
+    requiredByRelease: RG-5
+    status: CONTRACT_REQUIRED
+    intendedUse: Asynchronous snapshots for REALISTIC worlds with storage, mapping, replay, display, stale-data, and audit rights.
+    currentDecision: Deferred to MS-039 and release-blocking; no verified open feed authorizes Zugfolge's required commercial persistence and replay.
+    officialUrls:
+      - https://www.dbinfrago.com/web/schienennetz/fahren_und_bauen/bauschwerpunkte-11092294
+      - https://www.dbinfrago.com/web/schienennetz/leistungen/neben-und-zusatzleistungen-und-services/unsere-nebenleistungen/db-livemaps-10909360
+      - https://developers.deutschebahn.com/db-api-marketplace/apis/product/ris-disruptions-transporteure
+    terms:
+      licenseOrPermission: Written provider contract required
+      termsUrl: null
+      termsVersion: No qualifying terms selected
+      retrievedAt: "2026-07-30"
+      archivedEvidenceRef: null
+      archivedEvidenceDigestSha256: null
+    access:
+      deliveryMode: No access; future asynchronous snapshot adapter only
+      endpointOrLocator: CONTRACTED_PROVIDER_ENDPOINT_REQUIRED
+      authentication: Contract-specific
+      rateLimit: Contract-specific
+      updateCadence: Contract-specific asynchronous snapshots; never synchronous simulation calls
+      hotPath: false
+    permissions:
+      commercialUse: UNKNOWN
+      automatedRetrieval: UNKNOWN
+      storage: UNKNOWN
+      transformation: UNKNOWN
+      combination: UNKNOWN
+      display: UNKNOWN
+      redistribution: UNKNOWN
+      archival: UNKNOWN
+      replay: UNKNOWN
+      fixtures: PROHIBITED
+    attribution:
+      required: null
+      text: null
+      placement: null
+      licenseUrl: null
+    databaseClassification: UNKNOWN
+    privacyClass: UNKNOWN
+    failureBehavior: REALISTIC remains unavailable; a provider outage must use the last safe approved snapshot and never silently switch to SIMULATED.
+    fallback: Public pilot worlds use SIMULATED or MANUAL until MS-039 is approved; Full Release remains blocked if product scope is unchanged.
+    retention: Contract must define raw, normalized, replay, audit, stale-snapshot, backup, and deletion retention.
+    deletion: No payload may be retained before contract approval; the contract must define deletion across raw, derived, replay, audit, cache, and backup stores.
+    rollback: Disable REALISTIC for new worlds, preserve the last safe visible state as permitted, and never silently change an active world's disruption mode.
+    substituteSourceId: null
+    withdrawal: Disable REALISTIC activation for affected worlds at the next safe boundary, preserve audit evidence as permitted, and publish the configured stale-data state.
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    decisionOwnerRole: DATA_RIGHTS_COUNSEL
+    nextAction: Procure a provider set whose written terms cover commercial retrieval, storage, mapping, derivation, display, replay, retention, audit, and deletion.
+
+  - id: public-osm-tiles
+    title: Public OpenStreetMap tile service
+    category: PUBLIC_TILE_SERVICE
+    provider: OpenStreetMap Foundation
+    dataOwner: OpenStreetMap Foundation service with OpenStreetMap contributor data
+    contactRole: PLATFORM_OWNER
+    fieldScope:
+      - None
+    geographicScope: No production access scope
+    sourceSchemaOrProfileVersion: NOT_APPLICABLE_EXCLUDED
+    freshnessPolicy: Not applicable because the public service is excluded
+    sourceValidFrom: null
+    sourceValidTo: null
+    contractExpiresAt: null
+    forbiddenUses:
+      - Production map backend, bulk retrieval, prefetch, offline packages, or reliability dependency
+    consumerMilestones: []
+    requiredByRelease: null
+    status: EXCLUDED
+    intendedUse: None in production.
+    currentDecision: Excluded as a product backend, bulk source, prefetch source, or offline-package source.
+    officialUrls:
+      - https://operations.osmfoundation.org/policies/tiles/
+    terms:
+      licenseOrPermission: Public tile usage policy does not provide a commercial product SLA or general bulk service
+      termsUrl: https://operations.osmfoundation.org/policies/tiles/
+      termsVersion: Policy observed 2026-07-30
+      retrievedAt: "2026-07-30"
+      archivedEvidenceRef: null
+      archivedEvidenceDigestSha256: null
+    access:
+      deliveryMode: No production access
+      endpointOrLocator: NOT_APPLICABLE_EXCLUDED_PUBLIC_OSM_TILES
+      authentication: Not applicable
+      rateLimit: Not applicable because the service is excluded
+      updateCadence: Not applicable
+      hotPath: false
+    permissions:
+      commercialUse: PROHIBITED
+      automatedRetrieval: PROHIBITED
+      storage: PROHIBITED
+      transformation: PROHIBITED
+      combination: PROHIBITED
+      display: PROHIBITED
+      redistribution: PROHIBITED
+      archival: PROHIBITED
+      replay: PROHIBITED
+      fixtures: PROHIBITED
+    attribution:
+      required: false
+      text: null
+      placement: null
+      licenseUrl: null
+    databaseClassification: NOT_APPLICABLE
+    privacyClass: PUBLIC_NON_PERSONAL
+    failureBehavior: No dependency exists.
+    fallback: Self-hosted versioned tiles generated from an approved OSM extract.
+    retention: Retain no public tile payload.
+    deletion: Remove any accidentally cached, prefetched, or packaged public tile payload.
+    rollback: Keep the public endpoint absent and use only approved self-hosted tiles.
+    substituteSourceId: null
+    withdrawal: Reject configuration that references public OSM tile hosts.
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2027-07-30"
+    decisionOwnerRole: PLATFORM_OWNER
+    nextAction: Enforce the exclusion in MS-022 configuration tests.
+
+  - id: public-orm-tiles
+    title: Public OpenRailwayMap API and tile service
+    category: PUBLIC_TILE_SERVICE
+    provider: OpenRailwayMap volunteer project
+    dataOwner: OpenStreetMap contributors for map data; OpenRailwayMap project for the public service and style
+    contactRole: PLATFORM_OWNER
+    fieldScope:
+      - None
+    geographicScope: No production access scope
+    sourceSchemaOrProfileVersion: NOT_APPLICABLE_EXCLUDED
+    freshnessPolicy: Not applicable because the public service is excluded
+    sourceValidFrom: null
+    sourceValidTo: null
+    contractExpiresAt: null
+    forbiddenUses:
+      - Commercial, registered, private, bulk, or reliability-dependent product use
+    consumerMilestones: []
+    requiredByRelease: null
+    status: EXCLUDED
+    intendedUse: None in production.
+    currentDecision: Excluded for commercial, registered, bulk, private, or reliability-dependent game use.
+    officialUrls:
+      - https://wiki.openstreetmap.org/wiki/OpenRailwayMap/API
+    terms:
+      licenseOrPermission: Public service terms direct commercial users to self-host and allow blocking without notice
+      termsUrl: https://wiki.openstreetmap.org/wiki/OpenRailwayMap/API
+      termsVersion: Terms observed 2026-07-30
+      retrievedAt: "2026-07-30"
+      archivedEvidenceRef: null
+      archivedEvidenceDigestSha256: null
+    access:
+      deliveryMode: No production access
+      endpointOrLocator: NOT_APPLICABLE_EXCLUDED_PUBLIC_ORM_SERVICE
+      authentication: Not applicable
+      rateLimit: Not applicable because the service is excluded
+      updateCadence: Not applicable
+      hotPath: false
+    permissions:
+      commercialUse: PROHIBITED
+      automatedRetrieval: PROHIBITED
+      storage: PROHIBITED
+      transformation: PROHIBITED
+      combination: PROHIBITED
+      display: PROHIBITED
+      redistribution: PROHIBITED
+      archival: PROHIBITED
+      replay: PROHIBITED
+      fixtures: PROHIBITED
+    attribution:
+      required: false
+      text: null
+      placement: null
+      licenseUrl: null
+    databaseClassification: NOT_APPLICABLE
+    privacyClass: PUBLIC_NON_PERSONAL
+    failureBehavior: No dependency exists.
+    fallback: Own MapLibre style and own tiles from approved data releases.
+    retention: Retain no public API or tile payload.
+    deletion: Remove any accidentally cached, prefetched, or packaged public API or tile payload.
+    rollback: Keep the public service absent and use the own approved MapLibre style and tiles.
+    substituteSourceId: null
+    withdrawal: Reject configuration that references public OpenRailwayMap hosts.
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2027-07-30"
+    decisionOwnerRole: PLATFORM_OWNER
+    nextAction: Enforce the exclusion in MS-022 configuration tests.
+
+  - id: public-nominatim
+    title: Public OpenStreetMap Nominatim service
+    category: PUBLIC_GEOCODING_SERVICE
+    provider: OpenStreetMap Foundation
+    dataOwner: OpenStreetMap Foundation service with OpenStreetMap contributor data
+    contactRole: PLATFORM_OWNER
+    fieldScope:
+      - None
+    geographicScope: No production access scope
+    sourceSchemaOrProfileVersion: NOT_APPLICABLE_EXCLUDED
+    freshnessPolicy: Not applicable because the public service is excluded
+    sourceValidFrom: null
+    sourceValidTo: null
+    contractExpiresAt: null
+    forbiddenUses:
+      - Product geocoding backend, bulk queries, autocomplete, or operational-point authority
+    consumerMilestones: []
+    requiredByRelease: null
+    status: EXCLUDED
+    intendedUse: None as a product backend.
+    currentDecision: Excluded; station and operational-point search uses the pinned release index, and optional general geocoding must be self-hosted.
+    officialUrls:
+      - https://operations.osmfoundation.org/policies/nominatim/
+    terms:
+      licenseOrPermission: Public service usage policy is not a general production backend grant
+      termsUrl: https://operations.osmfoundation.org/policies/nominatim/
+      termsVersion: Policy observed 2026-07-30
+      retrievedAt: "2026-07-30"
+      archivedEvidenceRef: null
+      archivedEvidenceDigestSha256: null
+    access:
+      deliveryMode: No production access
+      endpointOrLocator: NOT_APPLICABLE_EXCLUDED_PUBLIC_NOMINATIM
+      authentication: Not applicable
+      rateLimit: Not applicable because the service is excluded
+      updateCadence: Not applicable
+      hotPath: false
+    permissions:
+      commercialUse: PROHIBITED
+      automatedRetrieval: PROHIBITED
+      storage: PROHIBITED
+      transformation: PROHIBITED
+      combination: PROHIBITED
+      display: PROHIBITED
+      redistribution: PROHIBITED
+      archival: PROHIBITED
+      replay: PROHIBITED
+      fixtures: PROHIBITED
+    attribution:
+      required: false
+      text: null
+      placement: null
+      licenseUrl: null
+    databaseClassification: NOT_APPLICABLE
+    privacyClass: UNKNOWN
+    failureBehavior: No dependency exists.
+    fallback: Operational-point index or a separately approved self-hosted geocoder.
+    retention: Retain no public Nominatim response.
+    deletion: Remove accidental responses from caches, logs, fixtures, exports, and artifacts.
+    rollback: Keep the endpoint absent and use the operational-point index or a separately approved self-hosted geocoder.
+    substituteSourceId: null
+    withdrawal: Reject configuration that references the public Nominatim host.
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2027-07-30"
+    decisionOwnerRole: PLATFORM_OWNER
+    nextAction: Keep Nominatim optional and self-hosted in MS-022.
+
+  - id: synthetic-pilot
+    title: Synthetic Leipzig–Halle–Erfurt UI fixture
+    category: SYNTHETIC_DEVELOPMENT_DATA
+    provider: Zugfolge repository
+    dataOwner: Future Zugfolge rights holder after origin review
+    contactRole: PRODUCT_OWNER
+    fieldScope:
+      - Illustrative stations, trains, paths, formations, delays, speeds, and disruption descriptions
+    geographicScope: Schematic names around Leipzig–Halle–Erfurt; not real topology or timetable coverage
+    sourceSchemaOrProfileVersion: app/lib/pilot-data.ts repository fixture revision
+    freshnessPolicy: Immutable per commit; no claim of real-world freshness
+    sourceValidFrom: null
+    sourceValidTo: null
+    contractExpiresAt: null
+    forbiddenUses:
+      - Presenting any value as observed, provider-sourced, quality-validated, or production-ready
+      - Combining provider responses into the fixture without a new source record
+    consumerMilestones: [MS-000, MS-010]
+    requiredByRelease: RG-1
+    status: HUMAN_REVIEW_REQUIRED
+    intendedUse: Local, non-authoritative UI and Walking Skeleton development without any claim of real infrastructure or timetable provenance.
+    currentDecision: Internal development use only pending origin and redistribution review; it must remain visibly labelled synthetic.
+    officialUrls:
+      - https://github.com/larynxberlin-rgb/Zugfolge
+    terms:
+      licenseOrPermission: Repository remains UNLICENSED; fixture license decision pending
+      termsUrl: https://github.com/larynxberlin-rgb/Zugfolge
+      termsVersion: Repository state 2026-07-30
+      retrievedAt: "2026-07-30"
+      archivedEvidenceRef: app/lib/pilot-data.ts
+      archivedEvidenceDigestSha256: C193FB8B716E6441565CA9F96D542FC141171C4D1CAEAC5A3713D7003115F411
+    access:
+      deliveryMode: Versioned local source fixture
+      endpointOrLocator: app/lib/pilot-data.ts
+      authentication: None
+      rateLimit: Not applicable
+      updateCadence: Versioned only through reviewed repository changes
+      hotPath: false
+    permissions:
+      commercialUse: UNKNOWN
+      automatedRetrieval: NOT_APPLICABLE
+      storage: UNKNOWN
+      transformation: CONDITIONAL
+      combination: PROHIBITED
+      display: CONDITIONAL
+      redistribution: UNKNOWN
+      archival: UNKNOWN
+      replay: UNKNOWN
+      fixtures: CONDITIONAL
+    attribution:
+      required: false
+      text: null
+      placement: null
+      licenseUrl: null
+    databaseClassification: ORIGINAL
+    privacyClass: PUBLIC_NON_PERSONAL
+    failureBehavior: Tests fail rather than falling back to a provider.
+    fallback: None; replace only with another approved synthetic fixture.
+    retention: Retain with repository history and the final approved fixture license.
+    deletion: Remove the fixture from future builds if origin review fails while preserving non-confidential historical review evidence.
+    rollback: Restore the last approved synthetic fixture and matching asset checksum; never substitute provider data.
+    substituteSourceId: null
+    withdrawal: Replace the fixture and update its asset hash; never substitute provider responses silently.
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    decisionOwnerRole: PRODUCT_OWNER
+    nextAction: Human-review every value and approve an explicit synthetic-fixture license.
+
+  - id: demand-calibration
+    title: Population, employment, POI, travel-purpose, and seasonality calibration
+    category: DEMAND_CALIBRATION
+    provider: No provider set selected
+    dataOwner: UNCONFIRMED
+    contactRole: FUTURE_DEMAND_DATA_OWNER
+    fieldScope:
+      - Aggregate population, employment, POI, travel-purpose, seasonality, industry, terminal, and goods-flow calibration
+    geographicScope: Germany with pilot-region calibration first; exact sources not selected
+    sourceSchemaOrProfileVersion: No dataset or calibration profile selected
+    freshnessPolicy: No production freshness threshold until every aggregate dataset and calibration period is approved
+    sourceValidFrom: null
+    sourceValidTo: null
+    contractExpiresAt: null
+    forbiddenUses:
+      - Reproducing real individuals or confidential company flows
+      - Using non-aggregate or unlicensed data
+    consumerMilestones: [MS-034, MS-035, MS-036, MS-054]
+    requiredByRelease: RG-3
+    status: CANDIDATE
+    intendedUse: Aggregate non-personal calibration of passenger and freight demand without reproducing real individuals or confidential company flows.
+    currentDecision: No dataset is selected or authorized.
+    officialUrls:
+      - https://www.govdata.de/
+    terms:
+      licenseOrPermission: UNCONFIRMED
+      termsUrl: null
+      termsVersion: No dataset selected
+      retrievedAt: "2026-07-30"
+      archivedEvidenceRef: null
+      archivedEvidenceDigestSha256: null
+    access:
+      deliveryMode: No access
+      endpointOrLocator: UNSELECTED_DEMAND_DATASET
+      authentication: Unknown
+      rateLimit: Unknown
+      updateCadence: No cadence selected
+      hotPath: false
+    permissions:
+      commercialUse: UNKNOWN
+      automatedRetrieval: UNKNOWN
+      storage: UNKNOWN
+      transformation: UNKNOWN
+      combination: UNKNOWN
+      display: UNKNOWN
+      redistribution: UNKNOWN
+      archival: UNKNOWN
+      replay: UNKNOWN
+      fixtures: PROHIBITED
+    attribution:
+      required: null
+      text: null
+      placement: null
+      licenseUrl: null
+    databaseClassification: UNKNOWN
+    privacyClass: PERSONAL_DATA_REVIEW_REQUIRED
+    failureBehavior: Demand milestones remain blocked or use explicitly approved synthetic calibration.
+    fallback: Deterministic synthetic calibration approved for unranked development worlds.
+    retention: No candidate payload may be retained until dataset-specific rights and privacy review pass.
+    deletion: Delete rejected candidate payloads and derived calibration artifacts from active stores, caches, tests, and backups as the approved policy requires.
+    rollback: Withdraw the affected DemandRelease for new worlds and restore the last approved synthetic or aggregate calibration.
+    substituteSourceId: null
+    withdrawal: Disable affected DemandRelease and trace all worlds that pin it.
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    decisionOwnerRole: DATA_PROTECTION_AND_RIGHTS_COUNSEL
+    nextAction: Select named aggregate datasets and record privacy, license, field, geography, and redistribution decisions separately.
+
+  - id: vehicle-catalogue
+    title: Vehicle technical catalogue
+    category: VEHICLE_DATA
+    provider: No provider set selected
+    dataOwner: UNCONFIRMED
+    contactRole: FUTURE_VEHICLE_DATA_OWNER
+    fieldScope:
+      - Technical compatibility, performance, dimensions, capacity, maintenance, and economic parameters
+      - Vehicle images only under a separate asset record
+    geographicScope: Vehicles approved for the German pilot and later national releases
+    sourceSchemaOrProfileVersion: No catalogue schema, manufacturer source, or normalization profile selected
+    freshnessPolicy: Each catalogue release pins its source dates and review state; no synchronous manufacturer dependency
+    sourceValidFrom: null
+    sourceValidTo: null
+    contractExpiresAt: null
+    forbiddenUses:
+      - Scraping manufacturer material or copying protected images/specification layouts
+      - Presenting synthetic values as official manufacturer data
+    consumerMilestones: [MS-023, MS-031, MS-054]
+    requiredByRelease: RG-2
+    status: CANDIDATE
+    intendedUse: Versioned technical parameters for compatibility, running-time, capacity, maintenance, and economics.
+    currentDecision: No catalogue, manufacturer source, image source, or redistribution right is selected.
+    officialUrls:
+      - https://www.eba.bund.de/
+    terms:
+      licenseOrPermission: UNCONFIRMED
+      termsUrl: null
+      termsVersion: No dataset selected
+      retrievedAt: "2026-07-30"
+      archivedEvidenceRef: null
+      archivedEvidenceDigestSha256: null
+    access:
+      deliveryMode: No access
+      endpointOrLocator: UNSELECTED_VEHICLE_DATASET
+      authentication: Unknown
+      rateLimit: Unknown
+      updateCadence: No cadence selected
+      hotPath: false
+    permissions:
+      commercialUse: UNKNOWN
+      automatedRetrieval: UNKNOWN
+      storage: UNKNOWN
+      transformation: UNKNOWN
+      combination: UNKNOWN
+      display: UNKNOWN
+      redistribution: UNKNOWN
+      archival: UNKNOWN
+      replay: UNKNOWN
+      fixtures: PROHIBITED
+    attribution:
+      required: null
+      text: null
+      placement: null
+      licenseUrl: null
+    databaseClassification: UNKNOWN
+    privacyClass: PUBLIC_NON_PERSONAL
+    failureBehavior: Vehicle milestones remain blocked or use an approved synthetic catalogue.
+    fallback: Deterministic synthetic vehicles with no real branding for development worlds.
+    retention: No candidate payload or image may be retained until source-specific review passes.
+    deletion: Delete rejected catalogue payloads, images, and derivatives from active stores, caches, fixtures, and distributable artifacts.
+    rollback: Withdraw the affected catalogue release and restore the last approved synthetic or rights-cleared vehicle set.
+    substituteSourceId: null
+    withdrawal: Disable affected VehicleCatalogRelease and trace all worlds and formations that pin it.
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    decisionOwnerRole: DATA_RIGHTS_COUNSEL
+    nextAction: Select sources for technical facts and images separately and obtain field-level rights decisions.
+
+  - id: energy-macro-calibration
+    title: Energy prices, inflation, interest, and other economy calibration
+    category: ECONOMY_CALIBRATION
+    provider: No provider set selected
+    dataOwner: UNCONFIRMED
+    contactRole: FUTURE_ECONOMY_DATA_OWNER
+    fieldScope:
+      - Electricity and fuel price calibration
+      - Inflation, interest, wage, and maintenance-cost calibration
+    geographicScope: Germany and EUR with exact reference periods not selected
+    sourceSchemaOrProfileVersion: No economic dataset or normalization profile selected
+    freshnessPolicy: Each EconomyRelease pins observation periods and never presents an unpinned value as current
+    sourceValidFrom: null
+    sourceValidTo: null
+    contractExpiresAt: null
+    forbiddenUses:
+      - Presenting volatile public figures as current without a pinned source date
+      - Using proprietary forecasts or market feeds without commercial storage and replay rights
+    consumerMilestones: [MS-030, MS-031, MS-032, MS-033, MS-054]
+    requiredByRelease: RG-3
+    status: CANDIDATE
+    intendedUse: Versioned aggregate calibration of EconomyRelease values, never a synchronous price dependency.
+    currentDecision: No dataset, reference period, normalization method, or commercial reuse right is selected.
+    officialUrls:
+      - https://www.destatis.de/
+      - https://www.smard.de/
+    terms:
+      licenseOrPermission: UNCONFIRMED
+      termsUrl: null
+      termsVersion: No dataset selected
+      retrievedAt: "2026-07-30"
+      archivedEvidenceRef: null
+      archivedEvidenceDigestSha256: null
+    access:
+      deliveryMode: No access
+      endpointOrLocator: UNSELECTED_ECONOMY_DATASET
+      authentication: Unknown
+      rateLimit: Unknown
+      updateCadence: No cadence selected
+      hotPath: false
+    permissions:
+      commercialUse: UNKNOWN
+      automatedRetrieval: UNKNOWN
+      storage: UNKNOWN
+      transformation: UNKNOWN
+      combination: UNKNOWN
+      display: UNKNOWN
+      redistribution: UNKNOWN
+      archival: UNKNOWN
+      replay: UNKNOWN
+      fixtures: PROHIBITED
+    attribution:
+      required: null
+      text: null
+      placement: null
+      licenseUrl: null
+    databaseClassification: UNKNOWN
+    privacyClass: PUBLIC_NON_PERSONAL
+    failureBehavior: Economy milestones remain blocked or use an approved synthetic EconomyRelease.
+    fallback: Deterministic synthetic values visibly marked as synthetic for development and calibration testing.
+    retention: No candidate payload may be retained until the exact dataset and terms are approved.
+    deletion: Delete rejected raw observations and derived calibration artifacts from active stores, caches, tests, and backups as policy requires.
+    rollback: Withdraw the affected EconomyRelease and restore the last approved versioned calibration.
+    substituteSourceId: null
+    withdrawal: Disable affected EconomyRelease for new worlds and trace all worlds that pin it.
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    decisionOwnerRole: DATA_RIGHTS_COUNSEL
+    nextAction: Register each chosen dataset and period separately with formula, units, retrieval, license, attribution, and volatility policy.
+
+  - id: commercial-media-assets
+    title: Music, sound, illustrations, liveries, cosmetics, and premium media
+    category: COMMERCIAL_ASSETS
+    provider: No creator or supplier set selected
+    dataOwner: UNCONFIRMED
+    contactRole: FUTURE_ASSET_RIGHTS_OWNER
+    fieldScope:
+      - Soundtrack and interface sounds
+      - Illustrations, liveries, cosmetics, and presentation assets
+    geographicScope: Global web distribution and commercial monetization
+    sourceSchemaOrProfileVersion: One provenance record required per final media asset and editable source
+    freshnessPolicy: Not time-sensitive; every changed byte requires a new provenance and rights review
+    sourceValidFrom: null
+    sourceValidTo: null
+    contractExpiresAt: null
+    forbiddenUses:
+      - Unreviewed AI output, stock media, reference copying, or unclear training/output terms
+      - Placing premium art or trademark assets under the software or documentation license
+    consumerMilestones: [MS-050, MS-053]
+    requiredByRelease: RG-4
+    status: CANDIDATE
+    intendedUse: Separately licensed original commercial and cosmetic media that never changes competitive outcomes.
+    currentDecision: No asset, creator agreement, AI tool, stock license, performance right, or distribution grant is approved.
+    officialUrls:
+      - https://github.com/larynxberlin-rgb/Zugfolge
+    terms:
+      licenseOrPermission: UNCONFIRMED
+      termsUrl: null
+      termsVersion: No asset or supplier selected
+      retrievedAt: "2026-07-30"
+      archivedEvidenceRef: null
+      archivedEvidenceDigestSha256: null
+    access:
+      deliveryMode: No external asset access
+      endpointOrLocator: NOT_APPLICABLE_UNSELECTED_MEDIA_ASSETS
+      authentication: Not applicable
+      rateLimit: Not applicable
+      updateCadence: Reviewed asset releases only
+      hotPath: false
+    permissions:
+      commercialUse: UNKNOWN
+      automatedRetrieval: PROHIBITED
+      storage: UNKNOWN
+      transformation: UNKNOWN
+      combination: UNKNOWN
+      display: UNKNOWN
+      redistribution: UNKNOWN
+      archival: UNKNOWN
+      replay: NOT_APPLICABLE
+      fixtures: PROHIBITED
+    attribution:
+      required: null
+      text: null
+      placement: null
+      licenseUrl: null
+    databaseClassification: NOT_APPLICABLE
+    privacyClass: PUBLIC_NON_PERSONAL
+    failureBehavior: Omit the asset; gameplay and safety UX use approved non-premium fallbacks.
+    fallback: Text, accessible symbols, and approved original baseline UI assets.
+    retention: Retain only final assets, editable sources, creation evidence, contributor grants, and exact license notices approved for distribution.
+    deletion: Remove rejected media and every distributable derivative while preserving only permitted non-confidential decision evidence.
+    rollback: Replace the asset with an approved accessible baseline without changing competitive state or purchased entitlement value.
+    substituteSourceId: null
+    withdrawal: Remove the affected asset from future builds and entitlements without changing competitive state.
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    decisionOwnerRole: ASSET_RIGHTS_REVIEWER
+    nextAction: Create one asset record per final file with creator, tools, references, AI assistance, human edits, transfer, territories, term, and commercial uses.
+
+  - id: fonts
+    title: Inter, Inter Tight, and JetBrains Mono font files
+    category: FONT_ASSETS
+    provider: Respective upstream font projects
+    dataOwner: Respective upstream font copyright holders
+    contactRole: ASSET_RIGHTS_REVIEWER
+    fieldScope:
+      - Exact approved WOFF2 files and corresponding OFL notices
+    geographicScope: Global web UI distribution
+    sourceSchemaOrProfileVersion: Exact upstream release or commit and WOFF2 checksums not selected
+    freshnessPolicy: Pinned releases only; upstream changes never replace bundled bytes automatically
+    sourceValidFrom: null
+    sourceValidTo: null
+    contractExpiresAt: null
+    forbiddenUses:
+      - Remote font CDN
+      - Bundling an unpinned font file or omitting its exact license notice
+    consumerMilestones: [MS-050]
+    requiredByRelease: RG-4
+    status: CANDIDATE
+    intendedUse: Self-hosted WOFF2 fonts with required OFL notices; no third-party font CDN.
+    currentDecision: The current demo uses CSS fallback names and does not bundle font files; exact upstream versions and notices are not selected.
+    officialUrls:
+      - https://github.com/rsms/inter
+      - https://github.com/googlefonts/inter-gf-tight
+      - https://github.com/JetBrains/JetBrainsMono
+    terms:
+      licenseOrPermission: SIL Open Font License candidates; exact artifact license files must be verified
+      termsUrl: https://openfontlicense.org/
+      termsVersion: Exact font releases not selected
+      retrievedAt: "2026-07-30"
+      archivedEvidenceRef: null
+      archivedEvidenceDigestSha256: null
+    access:
+      deliveryMode: Future pinned repository or release artifacts, self-hosted
+      endpointOrLocator: UNSELECTED_OFFICIAL_FONT_RELEASES
+      authentication: None
+      rateLimit: Not applicable after vendoring approved artifacts
+      updateCadence: Manual pinned release updates only
+      hotPath: false
+    permissions:
+      commercialUse: CONDITIONAL
+      automatedRetrieval: CONDITIONAL
+      storage: CONDITIONAL
+      transformation: CONDITIONAL
+      combination: CONDITIONAL
+      display: CONDITIONAL
+      redistribution: CONDITIONAL
+      archival: CONDITIONAL
+      replay: NOT_APPLICABLE
+      fixtures: NOT_APPLICABLE
+    attribution:
+      required: true
+      text: Exact copyright and OFL notices from the pinned releases
+      placement: Third-party notices distributed with the web application
+      licenseUrl: https://openfontlicense.org/
+    databaseClassification: NOT_APPLICABLE
+    privacyClass: PUBLIC_NON_PERSONAL
+    failureBehavior: UI falls back to system fonts without external requests.
+    fallback: System UI and monospace font stacks.
+    retention: Retain each bundled font with its exact upstream version, checksum, copyright, and OFL text.
+    deletion: Remove unapproved font binaries and their orphaned notices together; keep only permitted decision evidence.
+    rollback: Return to the system UI and monospace fallback stacks without a remote font request.
+    substituteSourceId: null
+    withdrawal: Remove unapproved font files and notices together; no external CDN fallback.
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    decisionOwnerRole: ASSET_RIGHTS_REVIEWER
+    nextAction: Decide whether to replace archived Inter Tight, then pin WOFF2 files, upstream commit or release, checksums, and OFL texts.
+
+services:
+  - id: connected-demo-hosting
+    title: Connected external demo hosting
+    provider: OpenAI Sites connected hosting with a Cloudflare-compatible application build path
+    ownerRole: DEMO_PLATFORM_OWNER
+    hostingModel: EXTERNAL_DEMO
+    status: DEVELOPMENT_ONLY
+    currentUse: Repository contains a connected hosting descriptor and Cloudflare-compatible vinext/wrangler build path for the non-authoritative demo.
+    productionUse: Not approved for player accounts, authoritative worlds, provider data, payments, or production persistence.
+    firstConsumerMilestone: MS-000
+    dataClasses:
+      - Public repository build output
+      - Synthetic UI fixture
+      - Ordinary HTTP request metadata handled by the hosting provider
+    storesPersonalData: null
+    dataProcessingRole: UNCONFIRMED_EXTERNAL_HOST_PROCESSOR
+    termsUrl: null
+    contractExpiresAt: null
+    retention: HTTP request metadata retention, region, deletion, and subprocessor terms are unconfirmed; production data is prohibited.
+    deletion: Remove the deployment and provider-side project data through the approved host offboarding process; no game or provider data may exist there.
+    removable: true
+    removalPath: Remove the connected hosting descriptor only after preserving a local build path; delete the external demo project through its human-controlled console.
+    failureImpact: Demo availability only; no simulation, login, ledger, entitlement, or data-release path may depend on it.
+    rightsRefs:
+      - .openai/hosting.json
+      - package.json
+      - docs/SERVICES.md
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    nextAction: Keep secrets and production data absent; complete provider, privacy, retention, region, DPA, and security review before any expanded use.
+  - id: self-hosted-map-stack
+    title: Self-hosted MapLibre, Planetiler, PMTiles or MBTiles, and optional Martin stack
+    provider: Zugfolge-operated stack using separately pinned open-source projects
+    ownerRole: MAP_PLATFORM_OWNER
+    hostingModel: SELF_HOSTED
+    status: PLANNED
+    currentUse: Not deployed; current map is a local schematic React view.
+    productionUse: Generate and serve versioned dark vector tiles from approved data releases without public OSM or ORM runtime dependencies.
+    firstConsumerMilestone: MS-022
+    dataClasses:
+      - Approved OSM-derived infrastructure release
+      - Own map style
+      - Produced vector-tile archives
+    storesPersonalData: false
+    dataProcessingRole: SELF_HOSTED_OPERATOR
+    termsUrl: null
+    contractExpiresAt: null
+    retention: Versioned source releases, styles, tiles, attribution, and required database offers follow the approved OSM release policy.
+    deletion: Delete superseded tiles only when the pinned source release, attribution, and any required database offer remain reproducible for their retention period.
+    removable: false
+    removalPath: Replace the presentation tier only with an approved self-hosted equivalent; authoritative infrastructure releases remain independent.
+    failureImpact: Map display degrades, but simulation, path allocation, and ledger continue.
+    rightsRefs:
+      - docs/SERVICES.md
+      - osm-pbf
+      - public-osm-tiles
+      - public-orm-tiles
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    nextAction: Pin software versions and licenses only in MS-022 after data-layer rights and attribution are approved.
+  - id: self-hosted-state-platform
+    title: PostgreSQL/PostGIS and S3-compatible object storage
+    provider: Zugfolge-operated components; exact distributions and images not selected
+    ownerRole: STATE_PLATFORM_OWNER
+    hostingModel: SELF_HOSTED
+    status: PLANNED
+    currentUse: Not required by the current demo.
+    productionUse: Authoritative game and infrastructure state, durable outbox records, immutable releases, and snapshots in separated stores.
+    firstConsumerMilestone: MS-004
+    dataClasses:
+      - Game and ledger state
+      - Infrastructure and source snapshots
+      - Durable outbox records and snapshots
+    storesPersonalData: true
+    dataProcessingRole: ZUGFOLGE_CONTROLLER_AND_SELF_HOSTED_OPERATOR
+    termsUrl: null
+    contractExpiresAt: null
+    retention: Not approved; each game, infrastructure, ledger, outbox, source, snapshot, backup, and deletion class requires a policy.
+    deletion: Each data class must define live, replica, backup, object-store, audit, and legal-hold deletion before production.
+    removable: false
+    removalPath: Migrate through a tested export, restore, reconciliation, and rollback plan; never discard authoritative state to remove a component.
+    failureImpact: Component-specific fail-safe, backup, and restore behavior must meet the persistence ADRs.
+    rightsRefs:
+      - docs/SERVICES.md
+      - spec/adr/ADR-0001-contract-first-modular-architecture.md
+      - spec/adr/ADR-0003-versioned-data-provenance.md
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    nextAction: Introduce the databases and object store in MS-004 with pinned images, backups, privacy inventory, and security approval.
+  - id: self-hosted-eventing-cache
+    title: NATS JetStream and optional Valkey
+    provider: Zugfolge-operated components; exact distributions and images not selected
+    ownerRole: EVENTING_PLATFORM_OWNER
+    hostingModel: SELF_HOSTED
+    status: PLANNED
+    currentUse: Not required by the current demo or in-memory Walking Skeleton.
+    productionUse: First real durable-outbox consumer plus measured rate-limit, presence, or short-lived cache needs; never source of truth.
+    firstConsumerMilestone: MS-013
+    dataClasses:
+      - Published game and live-map event envelopes
+      - Short-lived rate-limit, cache, or presence keys
+    storesPersonalData: true
+    dataProcessingRole: ZUGFOLGE_CONTROLLER_AND_SELF_HOSTED_OPERATOR
+    termsUrl: null
+    contractExpiresAt: null
+    retention: Event retention, redelivery window, cache TTLs, presence lifetime, and deletion are not approved.
+    deletion: Expire cache and presence data by approved TTL; purge event streams only after durable consumers and replay evidence no longer require them.
+    removable: false
+    removalPath: Drain consumers to the durable database outbox, verify catch-up and replay, then remove the broker or cache without losing authoritative state.
+    failureImpact: Event consumers catch up from the durable database outbox; cache loss must never lose authoritative state.
+    rightsRefs:
+      - docs/SERVICES.md
+      - spec/adr/ADR-0001-contract-first-modular-architecture.md
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    nextAction: Add NATS only with its first consumer and Valkey only after measured need, each with pins, retention, privacy, and security review.
+  - id: self-hosted-identity
+    title: Keycloak
+    provider: Zugfolge-operated Keycloak distribution; exact version and image not selected
+    ownerRole: IDENTITY_PLATFORM_OWNER
+    hostingModel: SELF_HOSTED
+    status: PLANNED
+    currentUse: Not required by the current demo.
+    productionUse: OIDC, MFA, sessions, and identity claims; the game remains authoritative for world and EVU authorization.
+    firstConsumerMilestone: MS-012
+    dataClasses:
+      - Account identifiers
+      - Authentication factors and session metadata
+    storesPersonalData: true
+    dataProcessingRole: ZUGFOLGE_CONTROLLER_AND_SELF_HOSTED_OPERATOR
+    termsUrl: null
+    contractExpiresAt: null
+    retention: Account, factor, session, audit, backup, deletion, and recovery retention are not approved.
+    deletion: Define account closure, session revocation, factor removal, audit retention, backup expiry, and identity-to-game unlinking before production.
+    removable: false
+    removalPath: Migrate identities through a reviewed OIDC cutover with account mapping, session invalidation, recovery, and rollback; simulation remains independent.
+    failureImpact: New login fails safely while already-running simulation remains independent.
+    rightsRefs:
+      - docs/SERVICES.md
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    nextAction: Complete identity privacy, retention, backup, admin, and DPA decisions before deployment.
+  - id: self-hosted-odoo
+    title: Odoo Community backoffice
+    provider: Zugfolge-operated Odoo Community and pinned OCA modules; exact versions not selected
+    ownerRole: BACKOFFICE_PLATFORM_OWNER
+    hostingModel: SELF_HOSTED
+    status: PLANNED
+    currentUse: Kernel prototype only; not in the game runtime.
+    productionUse: Contacts, billing metadata, CRM, Helpdesk, and read-only game projections through a separated bridge and database.
+    firstConsumerMilestone: MS-052
+    dataClasses:
+      - Contact and invoice-recipient data
+      - Support cases
+      - Billing metadata
+      - Read-only player and world projections
+    storesPersonalData: true
+    dataProcessingRole: ZUGFOLGE_CONTROLLER_AND_SELF_HOSTED_OPERATOR
+    termsUrl: null
+    contractExpiresAt: null
+    retention: Contact, invoice, support, billing, projection, webhook, audit, backup, and deletion retention are not approved.
+    deletion: Define retention and deletion separately for statutory invoices, contacts, support cases, projections, webhooks, audits, and backups.
+    removable: false
+    removalPath: Stop the bridge, reconcile queued commands and entitlements, export required backoffice records, and remove Odoo without touching game tables.
+    failureImpact: Backoffice and new billing operations degrade; login, simulation, live map, ledger, and existing entitlements continue.
+    rightsRefs:
+      - docs/SERVICES.md
+      - spec/adr/ADR-0002-odoo-backoffice-boundary.md
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    nextAction: Pin Odoo and OCA versions and complete privacy, payment, webhook, reconciliation, backup, and access-control review in MS-052.
+  - id: external-payment-provider
+    title: Payment, subscription, refund, and invoice-payment provider
+    provider: No payment provider selected
+    ownerRole: COMMERCE_PLATFORM_OWNER
+    hostingModel: EXTERNAL_PROVIDER
+    status: HUMAN_REVIEW_REQUIRED
+    currentUse: None; the demo has no payment or entitlement integration.
+    productionUse: Create payment intents and signed payment events for subscriptions, cosmetics, and private worlds without changing competitive rules.
+    firstConsumerMilestone: MS-053
+    dataClasses:
+      - Payer and transaction metadata
+      - Subscription, refund, dispute, tax, and reconciliation references
+      - Signed webhook delivery metadata
+    storesPersonalData: true
+    dataProcessingRole: UNCONFIRMED_EXTERNAL_PAYMENT_PROCESSOR
+    termsUrl: null
+    contractExpiresAt: null
+    retention: Provider, accounting, tax, dispute, webhook, audit, backup, and deletion periods are not selected or approved.
+    deletion: Define provider deletion, local minimization, statutory retention, account closure, dispute hold, and backup expiry before integration.
+    removable: true
+    removalPath: Disable new checkout, preserve existing entitlements and required accounting evidence, reconcile outstanding events, then offboard through a tested provider migration.
+    failureImpact: New checkout, refund, and reconciliation operations degrade; login, simulation, live map, ledger, and existing entitlements continue.
+    rightsRefs:
+      - docs/SERVICES.md
+      - spec/adr/ADR-0004-no-pay-to-win-monetization.md
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    nextAction: Select a provider and obtain commercial, security, privacy, regional-processing, webhook, dispute, refund, and reconciliation approval in MS-053.
+  - id: external-notification-provider
+    title: Optional external notification delivery channels
+    provider: No email, push, or other external delivery provider selected
+    ownerRole: NOTIFICATION_PLATFORM_OWNER
+    hostingModel: EXTERNAL_PROVIDER
+    status: HUMAN_REVIEW_REQUIRED
+    currentUse: None; the demo sends no external message.
+    productionUse: Deliver optional copies of messages that remain simultaneously available in the free in-game mailbox.
+    firstConsumerMilestone: MS-053
+    dataClasses:
+      - Delivery destination
+      - Message template and routing metadata
+      - Delivery, bounce, complaint, consent, and suppression state
+    storesPersonalData: true
+    dataProcessingRole: UNCONFIRMED_EXTERNAL_NOTIFICATION_PROCESSOR
+    termsUrl: null
+    contractExpiresAt: null
+    retention: Consent, destination, delivery, bounce, complaint, suppression, log, and backup retention are not selected or approved.
+    deletion: Define destination removal, consent withdrawal, suppression retention, provider deletion, log minimization, and backup expiry before integration.
+    removable: true
+    removalPath: Disable the optional channel, retain the free in-game mailbox, drain or cancel queued deliveries, and delete provider-side recipient data under the approved process.
+    failureImpact: Optional external delivery degrades; every operational message remains available in the game without competitive disadvantage.
+    rightsRefs:
+      - docs/SERVICES.md
+      - PLAN.md
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    nextAction: Select channels only when there is a product need and approve processor, region, consent, template, abuse, retention, and deletion controls.
+  - id: self-hosted-observability
+    title: OpenTelemetry, Prometheus, Grafana, Loki, Tempo, alerting, and status operations
+    provider: Zugfolge-operated components; exact distributions, images, and notification routes not selected
+    ownerRole: RELIABILITY_PLATFORM_OWNER
+    hostingModel: SELF_HOSTED
+    status: PLANNED
+    currentUse: Current repository checks emit local command output only.
+    productionUse: Metrics, traces, logs, alerts, SLOs, error budgets, incident evidence, and safe correlation with opaque identifiers.
+    firstConsumerMilestone: MS-055
+    dataClasses:
+      - Aggregate metrics and SLO measurements
+      - Pseudonymous trace and correlation identifiers
+      - Security and operational logs without secrets or restricted payloads
+    storesPersonalData: true
+    dataProcessingRole: ZUGFOLGE_CONTROLLER_AND_SELF_HOSTED_OPERATOR
+    termsUrl: null
+    contractExpiresAt: null
+    retention: Metric, trace, log, alert, incident, backup, and deletion periods are not approved.
+    deletion: Define per-signal TTLs, user-data erasure propagation, security-evidence holds, log redaction, backup expiry, and incident-record retention before production.
+    removable: false
+    removalPath: Replace one telemetry component only after dual-write or export validation preserves required SLO, alert, incident, and audit evidence.
+    failureImpact: Operational visibility and alerting degrade; authoritative game state continues, while launch or continued operation may be paused by the error-budget policy.
+    rightsRefs:
+      - docs/SERVICES.md
+      - planning/milestones.yaml
+    evidenceRefs: []
+    reviewedAt: null
+    reviewAfter: "2026-08-30"
+    nextAction: Pin distributions and licenses, define signal schemas and retention, and complete privacy and security review in MS-055.
+
+releaseCoverage:
+  - release: RG-0
+    milestones: [MS-000, MS-001, MS-002, MS-003]
+    sourceIds:
+      - synthetic-pilot
+    serviceIds:
+      - connected-demo-hosting
+    sourceCapabilities:
+      - Synthetic non-authoritative repository fixture
+    serviceCapabilities:
+      - Optional public demo build hosting with no production data
+    status: PREPARATION_INCOMPLETE
+    openGaps:
+      - Fixture ownership, AI provenance, licensing, and accountable human review remain open
+      - Demo-host terms, privacy, region, retention, deletion, and offboarding remain open
+  - release: RG-1
+    milestones: [MS-004, MS-010, MS-011, MS-012, MS-013]
+    sourceIds:
+      - synthetic-pilot
+    serviceIds:
+      - self-hosted-state-platform
+      - self-hosted-identity
+      - self-hosted-eventing-cache
+    sourceCapabilities:
+      - Approved immutable synthetic Walking Skeleton fixture
+    serviceCapabilities:
+      - Durable state, object storage, identity, authorization, outbox delivery, live-state integration, cache, and presence
+    status: PREPARATION_INCOMPLETE
+    openGaps:
+      - Synthetic fixture approval and all component version, license, privacy, retention, backup, deletion, and security decisions remain open
+  - release: RG-2
+    milestones: [MS-020, MS-021, MS-022, MS-023, MS-024, MS-025, MS-026]
+    sourceIds:
+      - osm-pbf
+      - osm-railway-tagging
+      - openstation
+      - stada
+      - vehicle-catalogue
+      - public-osm-tiles
+      - public-orm-tiles
+      - public-nominatim
+      - pathos-tpn
+      - trassenfinder
+    serviceIds:
+      - self-hosted-state-platform
+      - self-hosted-eventing-cache
+      - self-hosted-identity
+      - self-hosted-map-stack
+    sourceCapabilities:
+      - Railway geometry and tags
+      - Station facts
+      - Vehicle facts and formation compatibility
+      - Explicitly excluded public tiles, public geocoding, access systems, and route-result backends
+    serviceCapabilities:
+      - Immutable source staging, operational graph releases, own dark vector tiles, allocation, simulation, and live-state delivery
+    status: PREPARATION_INCOMPLETE
+    openGaps:
+      - ODbL layer and database-offer decision, exact extract, station sources, vehicle catalogue, software pins, and data-quality review remain open
+  - release: RG-3
+    milestones: [MS-030, MS-031, MS-032, MS-033, MS-034, MS-035, MS-036, MS-037, MS-038, MS-040]
+    sourceIds:
+      - tariff-publications
+      - demand-calibration
+      - vehicle-catalogue
+      - energy-macro-calibration
+      - synthetic-pilot
+    serviceIds:
+      - self-hosted-state-platform
+      - self-hosted-eventing-cache
+      - self-hosted-identity
+    sourceCapabilities:
+      - Tariffs, station, storage, and facility prices
+      - Passenger demand plus industry, terminal, port, commodity, and goods-flow calibration
+      - Vehicle, energy, wage, interest, inflation, and maintenance-cost calibration
+      - Synthetic manual and simulated disruption calibration
+    serviceCapabilities:
+      - Economy, ledger, asset, personnel, market, contract, disruption, timetable, and operational state
+    status: PREPARATION_INCOMPLETE
+    openGaps:
+      - Dataset-specific field, period, formula, rights, privacy, retention, and calibration approvals remain open
+  - release: RG-4
+    milestones: [MS-050, MS-051, MS-052, MS-053, MS-054, MS-055]
+    sourceIds:
+      - osm-pbf
+      - openstation
+      - stada
+      - tariff-publications
+      - demand-calibration
+      - vehicle-catalogue
+      - energy-macro-calibration
+      - commercial-media-assets
+      - fonts
+      - synthetic-pilot
+    serviceIds:
+      - self-hosted-state-platform
+      - self-hosted-eventing-cache
+      - self-hosted-identity
+      - self-hosted-map-stack
+      - self-hosted-odoo
+      - external-payment-provider
+      - external-notification-provider
+      - self-hosted-observability
+    sourceCapabilities:
+      - Validated pilot infrastructure, vehicles, tariffs, demand, freight, tenders, simulated disruptions, fonts, sound, illustrations, liveries, cosmetics, and presentation assets
+    serviceCapabilities:
+      - Desktop and PWA delivery, world administration, support, billing, optional external notifications, reconciliation, pilot operations, telemetry, alerting, SLOs, and recovery evidence
+    status: PREPARATION_INCOMPLETE
+    openGaps:
+      - Every named source and service remains subject to its human rights, privacy, security, contract, retention, deletion, and operational gate
+      - RINF and realistic disruption feeds remain separate RG-5 and Full Release blockers and are not approved by RG-4 coverage
+
+privacy:
+  status: HUMAN_REVIEW_REQUIRED
+  ownerRole: FUTURE_PRIVACY_OWNER
+  reviewedAt: null
+  reviewAfter: "2026-08-30"
+  currentDemoData:
+    - Synthetic railway and company fixture rendered without authentication
+    - No player account, payment, support, or authoritative game database in this repository slice
+  externalHostingData:
+    - A connected demo host may process ordinary HTTP request metadata; terms, retention, region, and processor roles are not yet approved for production
+  productionDataInventory: NOT_STARTED
+  legalBasisInventory: NOT_STARTED
+  processorInventory: NOT_STARTED
+  retentionInventory: NOT_STARTED
+  dataSubjectRightsRunbook: NOT_STARTED
+  evidenceRefs: []
+  nextAction: Before accounts or telemetry, record purpose, legal basis, data subjects, fields, processors, regions, retention, deletion, access, incident response, and data-protection impact decisions.

@@ -319,7 +319,7 @@ export function OperationsConsole() {
           <section className="rail-map" aria-label="Schematische Livemap des Pilotnetzes">
             <div className="map-meta">
               <span>Pilotnetz · eigene Vector-Tiles geplant</span>
-              <span className="quality-badge">● A/B</span>
+              <span className="quality-badge">◇ SYNTH</span>
             </div>
             <div className="map-controls" aria-label="Kartenzoom">
               <button
@@ -437,7 +437,7 @@ export function OperationsConsole() {
               target="_blank"
               rel="noreferrer"
             >
-              Nicht autoritative UI-Demo · Ziel-Datengrundlage:
+              Synthetische lokale Demodaten · keine OSM-Daten geladen · Ziel:
               OpenStreetMap (ODbL)
             </a>
           </section>

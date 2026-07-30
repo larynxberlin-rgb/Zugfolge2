@@ -12,12 +12,14 @@ product owners, domain specialists, engineers, and AI agents.
 - `features/` contains executable-style feature specifications.
 - `../packages/contracts/` contains the machine-readable v1 interfaces.
 
-Current feature specifications:
+Current feature documents:
 
-- `FEAT-0001` defines the contract-first Walking Skeleton.
+- `FEAT-0001` defines the accepted contract-first Walking Skeleton behavior.
 - `FEAT-0002` proposes the reproducible TypeScript/Kotlin/Python engineering
   baseline for `MS-002`. It remains non-normative until its required human
   security review is recorded.
+- `FEAT-0003` proposes rights, license, brand, and source clearance rules. It
+  grants no rights until its human gate accepts it.
 
 `ADR-0005` records the matching proposed build and supply-chain decision. It is
 not accepted until the same security gate is complete.
