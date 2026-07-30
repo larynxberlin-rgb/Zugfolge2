@@ -1,0 +1,322 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.zugfolge.de/v1/train-run.schema.json",
+  "title": "TrainRun",
+  "description": "Planned and simulated movement of one train through a game world.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "trainRunId",
+    "worldId",
+    "operatorCompanyId",
+    "revision",
+    "serviceClass",
+    "trainNumber",
+    "infrastructureSnapshotId",
+    "status",
+    "plannedStartAt",
+    "plannedEndAt",
+    "path",
+    "plannedCalls",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "trainRunId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "worldId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "operatorCompanyId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "serviceClass": {
+      "$ref": "#/$defs/serviceClass"
+    },
+    "trainNumber": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32
+    },
+    "infrastructureSnapshotId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "vehicleFormationId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "status": {
+      "$ref": "#/$defs/trainRunStatus"
+    },
+    "plannedStartAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "plannedEndAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$",
+      "description": "Application validation requires this timestamp to be later than plannedStartAt."
+    },
+    "actualStartAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "actualEndAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "path": {
+      "$ref": "#/$defs/path"
+    },
+    "plannedCalls": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "$ref": "#/$defs/plannedCall"
+      }
+    },
+    "runtimeState": {
+      "$ref": "#/$defs/runtimeState"
+    },
+    "rejection": {
+      "$ref": "#/$defs/rejection"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "REJECTED"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "rejection"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "rejection"
+          ]
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "serviceClass": {
+      "type": "string",
+      "enum": [
+        "SPFV",
+        "SGV",
+        "SPNV"
+      ]
+    },
+    "trainRunStatus": {
+      "type": "string",
+      "enum": [
+        "DRAFT",
+        "REQUESTED",
+        "ALLOCATED",
+        "READY",
+        "RUNNING",
+        "COMPLETED",
+        "CANCELLED",
+        "REJECTED"
+      ]
+    },
+    "pathResource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sequence",
+        "resourceId",
+        "plannedEnterAt",
+        "plannedExitAt"
+      ],
+      "properties": {
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "resourceId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "plannedEnterAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$"
+        },
+        "plannedExitAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$",
+          "description": "Intervals are half-open; this timestamp must be later than plannedEnterAt."
+        }
+      }
+    },
+    "path": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pathId",
+        "resources"
+      ],
+      "properties": {
+        "pathId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "resources": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/pathResource"
+          },
+          "description": "Application validation requires contiguous sequence numbers and non-decreasing traversal order. Adjacent resource occupations may overlap when train length requires it."
+        }
+      }
+    },
+    "plannedCall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sequence",
+        "operationalPointId"
+      ],
+      "properties": {
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "operationalPointId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "arrivalAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$"
+        },
+        "departureAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$"
+        },
+        "commercialStop": {
+          "type": "boolean"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "arrivalAt"
+          ]
+        },
+        {
+          "required": [
+            "departureAt"
+          ]
+        }
+      ]
+    },
+    "runtimeState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "observedAt",
+        "resourceId",
+        "offsetMetres",
+        "speedKilometresPerHour",
+        "delaySeconds"
+      ],
+      "properties": {
+        "observedAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$"
+        },
+        "resourceId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "offsetMetres": {
+          "type": "number",
+          "minimum": 0
+        },
+        "speedKilometresPerHour": {
+          "type": "number",
+          "minimum": 0
+        },
+        "delaySeconds": {
+          "type": "integer"
+        }
+      }
+    },
+    "rejection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "decidedAt"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "CAPACITY_CONFLICT",
+            "INVALID_PATH",
+            "VEHICLE_INCOMPATIBLE",
+            "DATA_UNAVAILABLE"
+          ]
+        },
+        "decidedAt": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "Z$"
+        },
+        "conflictingResourceIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      }
+    }
+  }
+}

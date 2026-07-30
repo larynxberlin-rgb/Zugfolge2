@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.zugfolge.de/v1/ledger-entry.schema.json",
+  "title": "LedgerEntry",
+  "description": "Immutable, posted, balanced in-game accounting transaction. Application validation requires total debits to equal total credits.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "ledgerEntryId",
+    "worldId",
+    "companyId",
+    "entryType",
+    "status",
+    "currency",
+    "description",
+    "reference",
+    "postings",
+    "idempotencyKey",
+    "occurredAt",
+    "postedAt"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "ledgerEntryId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "worldId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "companyId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "entryType": {
+      "type": "string",
+      "enum": [
+        "CHARGE",
+        "REVENUE",
+        "ADJUSTMENT",
+        "REVERSAL"
+      ]
+    },
+    "status": {
+      "const": "POSTED"
+    },
+    "currency": {
+      "const": "EUR"
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "reference": {
+      "$ref": "#/$defs/reference"
+    },
+    "postings": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "$ref": "#/$defs/posting"
+      }
+    },
+    "idempotencyKey": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128
+    },
+    "reversesEntryId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "occurredAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "postedAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "entryType": {
+            "const": "REVERSAL"
+          }
+        },
+        "required": [
+          "entryType"
+        ]
+      },
+      "then": {
+        "required": [
+          "reversesEntryId"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "reversesEntryId"
+          ]
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "TRAIN_RUN",
+            "PATH_ALLOCATION",
+            "STORAGE",
+            "CONTRACT",
+            "ADJUSTMENT"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "posting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "accountId",
+        "direction",
+        "amountMinor"
+      ],
+      "properties": {
+        "accountId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "direction": {
+          "type": "string",
+          "enum": [
+            "DEBIT",
+            "CREDIT"
+          ]
+        },
+        "amountMinor": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Positive integer amount in euro cents; direction carries the sign."
+        },
+        "memo": {
+          "type": "string",
+          "maxLength": 200
+        }
+      }
+    }
+  }
+}

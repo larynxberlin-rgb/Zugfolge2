@@ -1,0 +1,26 @@
+{
+  "schemaVersion": "1.0",
+  "policyId": "01984f90-6d2e-7d0d-8b50-efb5ae46a201",
+  "revision": 3,
+  "rulesetVersion": "2026.3",
+  "plannedWorksMode": "SIMULATED",
+  "operationalIncidentMode": "REALISTIC",
+  "providerSetId": "pilot-authorized-incidents-v1",
+  "maximumSourceAgeSeconds": 900,
+  "onRealisticProviderUnavailable": "KEEP_LAST_SAFE_STATE",
+  "simulationProfile": {
+    "seed": 20260730,
+    "plannedWorks": {
+      "enabled": true,
+      "meanEventsPerDay": 0.5,
+      "minimumDurationMinutes": 60,
+      "maximumDurationMinutes": 1440,
+      "severityWeights": {
+        "MINOR": 0.5,
+        "MODERATE": 0.3,
+        "MAJOR": 0.15,
+        "CRITICAL": 0.05
+      }
+    }
+  }
+}

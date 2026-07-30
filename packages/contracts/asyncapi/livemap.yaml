@@ -1,0 +1,205 @@
+asyncapi: 3.0.0
+info:
+  title: Zugfolge LiveMap API
+  version: 1.0.0
+  description: |
+    Ordered, at-least-once world event stream used by the shared live map.
+    Clients deduplicate by eventId and apply events in world sequence order.
+    After a gap they replace local state with the OpenAPI live-map snapshot.
+defaultContentType: application/json
+servers:
+  gameWebSocket:
+    host: '{host}'
+    protocol: wss
+    description: Authenticated Zugfolge game WebSocket endpoint.
+    variables:
+      host:
+        default: localhost
+        description: Deployment-specific game API host.
+    security:
+      - $ref: '#/components/securitySchemes/bearerAuth'
+channels:
+  liveMap:
+    address: /api/v1/worlds/{worldId}/live-map
+    description: All authoritative train-run and occupation changes for one world.
+    servers:
+      - $ref: '#/servers/gameWebSocket'
+    parameters:
+      worldId:
+        $ref: '#/components/parameters/worldId'
+    messages:
+      trainRunChanged:
+        $ref: '#/components/messages/TrainRunChanged'
+      occupationChanged:
+        $ref: '#/components/messages/OccupationChanged'
+      resyncRequired:
+        $ref: '#/components/messages/ResyncRequired'
+operations:
+  receiveLiveMapEvents:
+    action: receive
+    summary: Receive ordered live-map changes from the authoritative world.
+    channel:
+      $ref: '#/channels/liveMap'
+    messages:
+      - $ref: '#/channels/liveMap/messages/trainRunChanged'
+      - $ref: '#/channels/liveMap/messages/occupationChanged'
+      - $ref: '#/channels/liveMap/messages/resyncRequired'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Bearer access token supplied as the Authorization header.
+  parameters:
+    worldId:
+      description: UUID of the subscribed game world.
+  messages:
+    TrainRunChanged:
+      name: TrainRunChanged
+      title: Train run changed
+      summary: Full replacement representation for one train-run revision.
+      payload:
+        $ref: '#/components/schemas/TrainRunChangedEnvelope'
+    OccupationChanged:
+      name: OccupationChanged
+      title: Occupation changed
+      summary: Full replacement representation for one occupation revision.
+      payload:
+        $ref: '#/components/schemas/OccupationChangedEnvelope'
+    ResyncRequired:
+      name: ResyncRequired
+      title: Snapshot resynchronization required
+      summary: Consumer must replace local state from the REST snapshot.
+      payload:
+        $ref: '#/components/schemas/ResyncRequiredEnvelope'
+  schemas:
+    TrainRunChangedEnvelope:
+      schemaFormat: application/schema+json;version=draft-2020-12
+      schema:
+        type: object
+        additionalProperties: false
+        required:
+          - schemaVersion
+          - eventId
+          - eventType
+          - worldId
+          - sequence
+          - occurredAt
+          - entityVersion
+          - data
+        properties:
+          schemaVersion:
+            const: '1.0'
+          eventId:
+            type: string
+            format: uuid
+          eventType:
+            const: TRAIN_RUN_CHANGED
+          worldId:
+            type: string
+            format: uuid
+          sequence:
+            type: integer
+            minimum: 1
+            description: Strictly increasing within the world.
+          occurredAt:
+            type: string
+            format: date-time
+            pattern: Z$
+          traceId:
+            type: string
+            minLength: 1
+          entityVersion:
+            type: integer
+            minimum: 1
+          data:
+            $ref: '../json-schema/train-run.schema.json'
+    OccupationChangedEnvelope:
+      schemaFormat: application/schema+json;version=draft-2020-12
+      schema:
+        type: object
+        additionalProperties: false
+        required:
+          - schemaVersion
+          - eventId
+          - eventType
+          - worldId
+          - sequence
+          - occurredAt
+          - entityVersion
+          - data
+        properties:
+          schemaVersion:
+            const: '1.0'
+          eventId:
+            type: string
+            format: uuid
+          eventType:
+            const: OCCUPATION_CHANGED
+          worldId:
+            type: string
+            format: uuid
+          sequence:
+            type: integer
+            minimum: 1
+            description: Strictly increasing within the world.
+          occurredAt:
+            type: string
+            format: date-time
+            pattern: Z$
+          traceId:
+            type: string
+            minLength: 1
+          entityVersion:
+            type: integer
+            minimum: 1
+          data:
+            $ref: '../json-schema/occupation.schema.json'
+    ResyncRequiredEnvelope:
+      schemaFormat: application/schema+json;version=draft-2020-12
+      schema:
+        type: object
+        additionalProperties: false
+        required:
+          - schemaVersion
+          - eventId
+          - eventType
+          - worldId
+          - sequence
+          - occurredAt
+          - reason
+          - snapshotPath
+        properties:
+          schemaVersion:
+            const: '1.0'
+          eventId:
+            type: string
+            format: uuid
+          eventType:
+            const: RESYNC_REQUIRED
+          worldId:
+            type: string
+            format: uuid
+          sequence:
+            type: integer
+            minimum: 1
+            description: Strictly increasing within the world.
+          occurredAt:
+            type: string
+            format: date-time
+            pattern: Z$
+          traceId:
+            type: string
+            minLength: 1
+          reason:
+            type: string
+            enum:
+              - SEQUENCE_GAP
+              - RETENTION_LIMIT
+              - AUTHORITATIVE_RESTART
+          minimumAvailableSequence:
+            type: integer
+            minimum: 0
+          snapshotPath:
+            const: /api/v1/worlds/{worldId}/live-map/snapshot

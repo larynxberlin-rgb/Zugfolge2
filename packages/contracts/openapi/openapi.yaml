@@ -1,0 +1,541 @@
+openapi: 3.1.0
+jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
+info:
+  title: Zugfolge Game API
+  version: 1.0.0
+  summary: Command and snapshot API for Zugfolge game worlds.
+  description: |
+    Normative HTTP contract for FEAT-0001. All timestamps are RFC 3339 UTC
+    timestamps. Write commands are authenticated and retry-safe through an
+    Idempotency-Key. Allocation conflicts are domain outcomes: an accepted
+    submission can later become a REJECTED TrainRun.
+tags:
+  - name: Worlds
+  - name: Companies
+  - name: Train runs
+  - name: Live map
+  - name: Economy
+servers:
+  - url: /api/v1
+    description: Versioned API base path on the current Zugfolge host.
+security:
+  - bearerAuth: []
+paths:
+  /worlds/{worldId}/rules:
+    parameters:
+      - $ref: '#/components/parameters/WorldId'
+    get:
+      tags:
+        - Worlds
+      operationId: getWorldRules
+      summary: Read the active rules revision for a world.
+      responses:
+        '200':
+          description: Active world rules.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorldRules'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /worlds/{worldId}/companies:
+    parameters:
+      - $ref: '#/components/parameters/WorldId'
+    post:
+      tags:
+        - Companies
+      operationId: createCompany
+      summary: Create a player company in the world.
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCompanyRequest'
+      responses:
+        '201':
+          description: Company created. A retry returns the same representation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /worlds/{worldId}/companies/{companyId}:
+    parameters:
+      - $ref: '#/components/parameters/WorldId'
+      - $ref: '#/components/parameters/CompanyId'
+    get:
+      tags:
+        - Companies
+      operationId: getCompany
+      summary: Read a company.
+      responses:
+        '200':
+          description: Company.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Company'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /worlds/{worldId}/train-runs:
+    parameters:
+      - $ref: '#/components/parameters/WorldId'
+    get:
+      tags:
+        - Train runs
+      operationId: listTrainRuns
+      summary: Read a cursor-paginated train-run snapshot.
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: '../json-schema/train-run.schema.json#/$defs/trainRunStatus'
+      responses:
+        '200':
+          description: Train-run page.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrainRunPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    post:
+      tags:
+        - Train runs
+      operationId: createTrainRun
+      summary: Create a draft train run.
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTrainRunRequest'
+      responses:
+        '201':
+          description: DRAFT train run created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrainRun'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /worlds/{worldId}/train-runs/{trainRunId}:
+    parameters:
+      - $ref: '#/components/parameters/WorldId'
+      - $ref: '#/components/parameters/TrainRunId'
+    get:
+      tags:
+        - Train runs
+      operationId: getTrainRun
+      summary: Read one train run.
+      responses:
+        '200':
+          description: Train run.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrainRun'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /worlds/{worldId}/train-runs/{trainRunId}/submit:
+    parameters:
+      - $ref: '#/components/parameters/WorldId'
+      - $ref: '#/components/parameters/TrainRunId'
+    post:
+      tags:
+        - Train runs
+      operationId: submitTrainRun
+      summary: Submit a DRAFT train run for asynchronous path allocation.
+      description: |
+        The immediate result has status REQUESTED. Capacity allocation later
+        changes it to ALLOCATED or REJECTED and emits a live-map event.
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      responses:
+        '202':
+          description: Submission accepted for allocation.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrainRun'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /worlds/{worldId}/live-map/snapshot:
+    parameters:
+      - $ref: '#/components/parameters/WorldId'
+    get:
+      tags:
+        - Live map
+      operationId: getLiveMapSnapshot
+      summary: Read the authoritative live-map recovery snapshot.
+      responses:
+        '200':
+          description: |
+            Snapshot at worldSequence. Clients discard local state, install this
+            snapshot, then apply stream events with a greater sequence.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiveMapSnapshot'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /worlds/{worldId}/companies/{companyId}/ledger-entries:
+    parameters:
+      - $ref: '#/components/parameters/WorldId'
+      - $ref: '#/components/parameters/CompanyId'
+    get:
+      tags:
+        - Economy
+      operationId: listLedgerEntries
+      summary: Read posted in-game ledger entries for a company.
+      parameters:
+        - $ref: '#/components/parameters/Cursor'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Ledger-entry page ordered by posting time and ID.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LedgerEntryPage'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Access token issued by the configured identity boundary.
+  parameters:
+    WorldId:
+      name: worldId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    CompanyId:
+      name: companyId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    TrainRunId:
+      name: trainRunId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: |
+        Stable key for one logical command. Reuse with a different request body
+        returns IDEMPOTENCY_CONFLICT.
+      schema:
+        type: string
+        minLength: 8
+        maxLength: 128
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 512
+    Limit:
+      name: limit
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 200
+        default: 50
+  responses:
+    BadRequest:
+      description: Request validation failed.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Unauthorized:
+      description: Authentication is missing or invalid.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Forbidden:
+      description: The authenticated subject may not perform this action.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: The requested entity does not exist in the addressed world.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    Conflict:
+      description: State, revision, uniqueness, or idempotency conflict.
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    WorldRules:
+      $ref: '../json-schema/world-rules.schema.json'
+    TrainRun:
+      $ref: '../json-schema/train-run.schema.json'
+    Occupation:
+      $ref: '../json-schema/occupation.schema.json'
+    LedgerEntry:
+      $ref: '../json-schema/ledger-entry.schema.json'
+    CreateCompanyRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - code
+      properties:
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        code:
+          type: string
+          pattern: '^[A-Z0-9][A-Z0-9-]{1,11}$'
+          description: World-unique player-facing company code.
+    Company:
+      type: object
+      additionalProperties: false
+      required:
+        - companyId
+        - worldId
+        - revision
+        - name
+        - code
+        - status
+        - createdAt
+        - updatedAt
+      properties:
+        companyId:
+          type: string
+          format: uuid
+        worldId:
+          type: string
+          format: uuid
+        revision:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+          minLength: 2
+          maxLength: 100
+        code:
+          type: string
+          pattern: '^[A-Z0-9][A-Z0-9-]{1,11}$'
+        status:
+          type: string
+          enum:
+            - ACTIVE
+            - SUSPENDED
+            - CLOSED
+        createdAt:
+          type: string
+          format: date-time
+          pattern: Z$
+        updatedAt:
+          type: string
+          format: date-time
+          pattern: Z$
+    CreateTrainRunRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - operatorCompanyId
+        - serviceClass
+        - trainNumber
+        - infrastructureSnapshotId
+        - plannedStartAt
+        - plannedEndAt
+        - path
+        - plannedCalls
+      properties:
+        operatorCompanyId:
+          type: string
+          format: uuid
+        serviceClass:
+          $ref: '../json-schema/train-run.schema.json#/$defs/serviceClass'
+        trainNumber:
+          type: string
+          minLength: 1
+          maxLength: 32
+        infrastructureSnapshotId:
+          type: string
+          format: uuid
+        vehicleFormationId:
+          type: string
+          format: uuid
+        plannedStartAt:
+          type: string
+          format: date-time
+          pattern: Z$
+        plannedEndAt:
+          type: string
+          format: date-time
+          pattern: Z$
+        path:
+          $ref: '../json-schema/train-run.schema.json#/$defs/path'
+        plannedCalls:
+          type: array
+          minItems: 2
+          items:
+            $ref: '../json-schema/train-run.schema.json#/$defs/plannedCall'
+    TrainRunPage:
+      type: object
+      additionalProperties: false
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrainRun'
+        nextCursor:
+          type: string
+    LiveMapSnapshot:
+      type: object
+      additionalProperties: false
+      required:
+        - worldId
+        - worldSequence
+        - generatedAt
+        - trainRuns
+        - occupations
+      properties:
+        worldId:
+          type: string
+          format: uuid
+        worldSequence:
+          type: integer
+          minimum: 0
+        generatedAt:
+          type: string
+          format: date-time
+          pattern: Z$
+        trainRuns:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrainRun'
+        occupations:
+          type: array
+          description: Current RESERVED and ACTIVE occupations needed to reconstruct the map.
+          items:
+            allOf:
+              - $ref: '#/components/schemas/Occupation'
+              - type: object
+                properties:
+                  phase:
+                    type: string
+                    enum:
+                      - RESERVED
+                      - ACTIVE
+    LedgerEntryPage:
+      type: object
+      additionalProperties: false
+      required:
+        - items
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/LedgerEntry'
+        nextCursor:
+          type: string
+    Problem:
+      type: object
+      additionalProperties: true
+      required:
+        - type
+        - title
+        - status
+        - code
+        - traceId
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+          minimum: 400
+          maximum: 599
+        code:
+          type: string
+          pattern: '^[A-Z][A-Z0-9_]*$'
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        traceId:
+          type: string
+          minLength: 1

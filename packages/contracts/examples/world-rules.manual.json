@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "1.0",
+  "worldId": "01984f90-6d2e-7d0d-8b50-efb5ae46a101",
+  "revision": 1,
+  "name": "Mitteldeutschland 2026",
+  "timeZone": "Europe/Berlin",
+  "currency": "EUR",
+  "infrastructureSnapshotId": "01984f90-6d2e-7d0d-8b50-efb5ae46a102",
+  "tariffSnapshotId": "01984f90-6d2e-7d0d-8b50-efb5ae46a103",
+  "enabledBusinessModels": [
+    "SPFV",
+    "SGV",
+    "SPNV"
+  ],
+  "simulation": {
+    "clockMode": "REAL_TIME",
+    "speedMultiplier": 1,
+    "occupationModel": "EXCLUSIVE_INFRASTRUCTURE_RESOURCE_V1"
+  },
+  "disruptionPolicy": {
+    "schemaVersion": "1.0",
+    "policyId": "01984f90-6d2e-7d0d-8b50-efb5ae46a104",
+    "revision": 1,
+    "rulesetVersion": "2026.1",
+    "plannedWorksMode": "MANUAL",
+    "operationalIncidentMode": "MANUAL"
+  },
+  "noPayToWin": true
+}

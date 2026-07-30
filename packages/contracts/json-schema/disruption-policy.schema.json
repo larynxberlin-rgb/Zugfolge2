@@ -1,0 +1,298 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.zugfolge.de/v1/disruption-policy.schema.json",
+  "title": "DisruptionPolicy",
+  "description": "World-level policy selecting the source of planned works and operational incidents independently.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "policyId",
+    "revision",
+    "rulesetVersion",
+    "plannedWorksMode",
+    "operationalIncidentMode"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "policyId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "rulesetVersion": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "plannedWorksMode": {
+      "$ref": "#/$defs/mode"
+    },
+    "operationalIncidentMode": {
+      "$ref": "#/$defs/mode"
+    },
+    "providerSetId": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]+$",
+      "description": "Approved provider-set registry ID. Required when either mode is REALISTIC."
+    },
+    "maximumSourceAgeSeconds": {
+      "type": "integer",
+      "minimum": 60,
+      "description": "Maximum accepted age of the last safe external state."
+    },
+    "onRealisticProviderUnavailable": {
+      "type": "string",
+      "enum": [
+        "KEEP_LAST_SAFE_STATE",
+        "DISABLE_AUTOMATION",
+        "PAUSE_WORLD"
+      ],
+      "description": "Visible fallback. Simulation is intentionally not an option."
+    },
+    "simulationProfile": {
+      "$ref": "#/$defs/simulationProfile"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "anyOf": [
+          {
+            "properties": {
+              "plannedWorksMode": {
+                "const": "REALISTIC"
+              }
+            },
+            "required": [
+              "plannedWorksMode"
+            ]
+          },
+          {
+            "properties": {
+              "operationalIncidentMode": {
+                "const": "REALISTIC"
+              }
+            },
+            "required": [
+              "operationalIncidentMode"
+            ]
+          }
+        ]
+      },
+      "then": {
+        "required": [
+          "providerSetId",
+          "maximumSourceAgeSeconds",
+          "onRealisticProviderUnavailable"
+        ]
+      },
+      "else": {
+        "not": {
+          "anyOf": [
+            {
+              "required": [
+                "providerSetId"
+              ]
+            },
+            {
+              "required": [
+                "maximumSourceAgeSeconds"
+              ]
+            },
+            {
+              "required": [
+                "onRealisticProviderUnavailable"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "anyOf": [
+          {
+            "properties": {
+              "plannedWorksMode": {
+                "const": "SIMULATED"
+              }
+            },
+            "required": [
+              "plannedWorksMode"
+            ]
+          },
+          {
+            "properties": {
+              "operationalIncidentMode": {
+                "const": "SIMULATED"
+              }
+            },
+            "required": [
+              "operationalIncidentMode"
+            ]
+          }
+        ]
+      },
+      "then": {
+        "required": [
+          "simulationProfile"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "simulationProfile"
+          ]
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "plannedWorksMode": {
+            "const": "SIMULATED"
+          }
+        },
+        "required": [
+          "plannedWorksMode"
+        ]
+      },
+      "then": {
+        "properties": {
+          "simulationProfile": {
+            "type": "object",
+            "required": [
+              "plannedWorks"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "operationalIncidentMode": {
+            "const": "SIMULATED"
+          }
+        },
+        "required": [
+          "operationalIncidentMode"
+        ]
+      },
+      "then": {
+        "properties": {
+          "simulationProfile": {
+            "type": "object",
+            "required": [
+              "operationalIncidents"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "mode": {
+      "type": "string",
+      "enum": [
+        "REALISTIC",
+        "SIMULATED",
+        "MANUAL"
+      ]
+    },
+    "severityWeights": {
+      "type": "object",
+      "description": "Application validation requires all weights to sum exactly to 1.",
+      "additionalProperties": false,
+      "required": [
+        "MINOR",
+        "MODERATE",
+        "MAJOR",
+        "CRITICAL"
+      ],
+      "properties": {
+        "MINOR": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "MODERATE": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "MAJOR": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "CRITICAL": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "eventGenerator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "meanEventsPerDay",
+        "minimumDurationMinutes",
+        "maximumDurationMinutes",
+        "severityWeights"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "meanEventsPerDay": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "minimumDurationMinutes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "maximumDurationMinutes": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Application validation requires this to be greater than or equal to minimumDurationMinutes."
+        },
+        "severityWeights": {
+          "$ref": "#/$defs/severityWeights"
+        }
+      }
+    },
+    "simulationProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "seed"
+      ],
+      "properties": {
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        },
+        "plannedWorks": {
+          "$ref": "#/$defs/eventGenerator"
+        },
+        "operationalIncidents": {
+          "$ref": "#/$defs/eventGenerator"
+        }
+      }
+    }
+  }
+}

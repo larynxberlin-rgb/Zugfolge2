@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.zugfolge.de/v1/occupation.schema.json",
+  "title": "Occupation",
+  "description": "Exclusive reservation or actual use of one infrastructure resource by one train run.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "occupationId",
+    "worldId",
+    "trainRunId",
+    "infrastructureSnapshotId",
+    "revision",
+    "resourceId",
+    "resourceKind",
+    "exclusive",
+    "phase",
+    "source",
+    "startAt",
+    "endAt",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "occupationId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "worldId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "trainRunId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "infrastructureSnapshotId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "resourceId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "resourceKind": {
+      "type": "string",
+      "enum": [
+        "BLOCK",
+        "LINE_SECTION",
+        "JUNCTION",
+        "PLATFORM_TRACK",
+        "YARD_TRACK",
+        "OTHER"
+      ]
+    },
+    "exclusive": {
+      "const": true,
+      "description": "V1 occupations are always exclusive."
+    },
+    "phase": {
+      "type": "string",
+      "enum": [
+        "RESERVED",
+        "ACTIVE",
+        "RELEASED",
+        "CANCELLED"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "PATH_ALLOCATION",
+        "SIMULATION",
+        "ADMINISTRATIVE_CORRECTION"
+      ]
+    },
+    "startAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "endAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$",
+      "description": "Exclusive upper bound; application validation requires endAt to be later than startAt."
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "Z$"
+    }
+  }
+}

@@ -1,0 +1,35 @@
+# Zugfolge specifications
+
+This directory defines the intended behavior of Zugfolge. It is written for
+product owners, domain specialists, engineers, and AI agents.
+
+## Document map
+
+- `00-product-constitution.md` contains immutable product principles and
+  cross-cutting invariants.
+- `glossary.md` defines canonical railway and game terminology.
+- `adr/` records accepted architecture decisions and their trade-offs.
+- `features/` contains executable-style feature specifications.
+- `../packages/contracts/` contains the machine-readable v1 interfaces.
+
+## Change rules
+
+- A document is normative when its status is `Accepted`.
+- Accepted behavior is changed by editing the relevant specification and
+  recording the rationale. Architecture decisions are superseded by a new ADR,
+  not rewritten to conceal earlier decisions.
+- Every normative statement uses the terms MUST, MUST NOT, SHOULD, SHOULD NOT,
+  or MAY with their ordinary RFC 2119 meaning.
+- Examples clarify a rule but do not override normative text.
+- Unresolved product decisions are marked `OPEN` and block dependent
+  implementation. There are no open decisions in the Walking Skeleton.
+
+## Identifiers
+
+- Product rules: `CONST-nnn`
+- Architecture decisions: `ADR-nnnn`
+- Feature specifications: `FEAT-nnnn`
+- Acceptance scenarios: `AC-nnn`
+- Public contract version: `v1`
+
+If documents conflict, follow the precedence in the repository `AGENTS.md`.

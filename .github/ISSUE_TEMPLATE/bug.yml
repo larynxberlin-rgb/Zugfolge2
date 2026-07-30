@@ -1,0 +1,70 @@
+name: Bug report
+description: Capture a reproducible divergence from an accepted specification.
+title: "[Bug] "
+body:
+  - type: input
+    id: specification
+    attributes:
+      label: Violated specification or invariant
+      description: Link exact CONST, FEAT, AC, ADR, or contract identifiers.
+      placeholder: "CONST-003 / FEAT-0001 AC-005"
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - Critical — safety, integrity, auth, or unrecoverable data loss
+        - High — competitive outcome or core loop is wrong
+        - Medium — degraded behavior with a workaround
+        - Low — minor behavior or presentation defect
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behavior
+      description: Include timestamps, opaque IDs, revisions, and world sequence where available. Remove secrets and personal data.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal deterministic reproduction
+      description: Identify snapshot, ordered events/commands, seed, and software version.
+      placeholder: |
+        Initial snapshot:
+        Commands/events:
+        Seed:
+        Version:
+        Steps:
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Sanitized logs, traces, screenshots, replay hashes, or failing tests.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Scope and integrity impact
+      description: State affected worlds, players, occupations, ledger entries, contracts, and data provenance.
+    validations:
+      required: true
+  - type: textarea
+    id: containment
+    attributes:
+      label: Safe containment and rollback
+      description: Describe a reversible mitigation; do not overwrite authoritative history.
+    validations:
+      required: true

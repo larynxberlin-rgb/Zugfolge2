@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.zugfolge.de/v1/world-rules.schema.json",
+  "title": "WorldRules",
+  "description": "Immutable revision of the competitive and simulation rules pinned by one game world.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "worldId",
+    "revision",
+    "name",
+    "timeZone",
+    "currency",
+    "infrastructureSnapshotId",
+    "tariffSnapshotId",
+    "enabledBusinessModels",
+    "simulation",
+    "disruptionPolicy",
+    "noPayToWin"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "worldId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100
+    },
+    "timeZone": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "description": "IANA time-zone identifier used only for display and timetable input; transport timestamps remain UTC."
+    },
+    "currency": {
+      "const": "EUR"
+    },
+    "infrastructureSnapshotId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "tariffSnapshotId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "enabledBusinessModels": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "SPFV",
+          "SGV",
+          "SPNV"
+        ]
+      }
+    },
+    "simulation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "clockMode",
+        "speedMultiplier",
+        "occupationModel"
+      ],
+      "properties": {
+        "clockMode": {
+          "const": "REAL_TIME"
+        },
+        "speedMultiplier": {
+          "const": 1
+        },
+        "occupationModel": {
+          "const": "EXCLUSIVE_INFRASTRUCTURE_RESOURCE_V1"
+        }
+      }
+    },
+    "disruptionPolicy": {
+      "$ref": "./disruption-policy.schema.json"
+    },
+    "noPayToWin": {
+      "const": true
+    }
+  }
+}

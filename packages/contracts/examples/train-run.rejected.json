@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "1.0",
+  "trainRunId": "01984f90-6d2e-7d0d-8b50-efb5ae46b001",
+  "worldId": "01984f90-6d2e-7d0d-8b50-efb5ae46a101",
+  "operatorCompanyId": "01984f90-6d2e-7d0d-8b50-efb5ae46b002",
+  "revision": 3,
+  "serviceClass": "SPFV",
+  "trainNumber": "ICE 1008",
+  "infrastructureSnapshotId": "01984f90-6d2e-7d0d-8b50-efb5ae46a102",
+  "status": "REJECTED",
+  "plannedStartAt": "2026-07-30T12:30:00Z",
+  "plannedEndAt": "2026-07-30T13:12:00Z",
+  "path": {
+    "pathId": "01984f90-6d2e-7d0d-8b50-efb5ae46b003",
+    "resources": [
+      {
+        "sequence": 0,
+        "resourceId": "01984f90-6d2e-7d0d-8b50-efb5ae46b004",
+        "plannedEnterAt": "2026-07-30T12:30:00Z",
+        "plannedExitAt": "2026-07-30T12:34:00Z"
+      }
+    ]
+  },
+  "plannedCalls": [
+    {
+      "sequence": 0,
+      "operationalPointId": "01984f90-6d2e-7d0d-8b50-efb5ae46b005",
+      "departureAt": "2026-07-30T12:30:00Z",
+      "commercialStop": true
+    },
+    {
+      "sequence": 1,
+      "operationalPointId": "01984f90-6d2e-7d0d-8b50-efb5ae46b006",
+      "arrivalAt": "2026-07-30T13:12:00Z",
+      "commercialStop": true
+    }
+  ],
+  "rejection": {
+    "code": "CAPACITY_CONFLICT",
+    "decidedAt": "2026-07-30T11:05:00Z",
+    "conflictingResourceIds": [
+      "01984f90-6d2e-7d0d-8b50-efb5ae46b004"
+    ]
+  },
+  "createdAt": "2026-07-30T11:00:00Z",
+  "updatedAt": "2026-07-30T11:05:00Z"
+}

@@ -1,0 +1,103 @@
+name: Feature slice
+description: Specify a bounded, testable vertical product slice.
+title: "[Feature] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not ask an implementation agent to invent product behavior. Link the
+        accepted specification or create a specification-change issue first.
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome and user value
+      description: Describe the observable outcome, not the proposed code.
+    validations:
+      required: true
+  - type: textarea
+    id: source_of_truth
+    attributes:
+      label: Authoritative specifications and ADRs
+      description: List exact CONST, FEAT, AC, and ADR identifiers.
+      placeholder: "FEAT-0001, AC-003, ADR-0001"
+    validations:
+      required: true
+  - type: dropdown
+    id: risk
+    attributes:
+      label: Risk class
+      options:
+        - R0 — documentation or generated artifact
+        - R1 — isolated UI or internal behavior
+        - R2 — domain logic, contract, migration, or data import
+        - R3 — auth, payment, simulation invariant, CI/security, or production data
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: In scope and out of scope
+      placeholder: |
+        In scope:
+        -
+        Out of scope:
+        -
+    validations:
+      required: true
+  - type: textarea
+    id: path_bounds
+    attributes:
+      label: Allowed paths and forbidden changes
+      description: Bound the agent's write scope. Call out shared contracts explicitly.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance scenarios
+      description: Provide Given/When/Then scenarios, including failures and retries.
+      placeholder: |
+        Given ...
+        When ...
+        Then ...
+    validations:
+      required: true
+  - type: textarea
+    id: contracts
+    attributes:
+      label: Contract, schema, and migration impact
+      description: State "none" only after checking OpenAPI, AsyncAPI, JSON Schema, persistence, and replay compatibility.
+    validations:
+      required: true
+  - type: textarea
+    id: failure
+    attributes:
+      label: Failure, rollback, and observability
+      description: Define retries, idempotency, degradation, rollback, metrics, and logs.
+    validations:
+      required: true
+  - type: textarea
+    id: test_plan
+    attributes:
+      label: Required verification
+      description: List invariant, unit/property, contract, integration, and end-to-end checks.
+    validations:
+      required: true
+  - type: textarea
+    id: security
+    attributes:
+      label: Security, privacy, data provenance, and monetization
+      description: Identify trust boundaries, data sources/licenses, secrets, personal data, and no-pay-to-win implications.
+    validations:
+      required: true
+  - type: checkboxes
+    id: ready
+    attributes:
+      label: Ready for an implementation agent
+      options:
+        - label: No unresolved product decision is delegated to the implementation agent.
+          required: true
+        - label: Acceptance criteria are externally observable and testable.
+          required: true
+        - label: The proposed write scope is bounded.
+          required: true

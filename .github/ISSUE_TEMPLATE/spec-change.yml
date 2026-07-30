@@ -1,0 +1,55 @@
+name: Specification or ADR change
+description: Decide product, domain, architecture, or public-contract behavior before implementation.
+title: "[Spec] "
+body:
+  - type: textarea
+    id: decision
+    attributes:
+      label: Decision required
+      description: State one concrete decision and why the existing source of truth is insufficient.
+    validations:
+      required: true
+  - type: textarea
+    id: affected
+    attributes:
+      label: Affected sources of truth
+      description: List CONST, FEAT, AC, ADR, OpenAPI, AsyncAPI, and schema identifiers/files.
+    validations:
+      required: true
+  - type: textarea
+    id: options
+    attributes:
+      label: Options and trade-offs
+      description: Include the status quo and consequences for realism, fairness, operability, and AI implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: proposed
+    attributes:
+      label: Proposed normative behavior
+      description: Use MUST/MUST NOT/SHOULD language and resolve edge cases.
+    validations:
+      required: true
+  - type: textarea
+    id: compatibility
+    attributes:
+      label: Compatibility, migration, and replay impact
+      description: Explain existing worlds, events, clients, data snapshots, and rollback.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance and verification
+      description: Provide Given/When/Then examples and required invariant/contract tests.
+    validations:
+      required: true
+  - type: checkboxes
+    id: approvals
+    attributes:
+      label: Required review
+      options:
+        - label: Product/domain owner review is identified.
+          required: true
+        - label: Architecture/security/data/economy review is identified where applicable.
+          required: true
