@@ -9,6 +9,8 @@ implemented, and accepted one milestone at a time.
 - [`MILESTONE_PROMPT.md`](MILESTONE_PROMPT.md) is the required kickoff prompt.
 - [`EVIDENCE_TEMPLATE.yaml`](EVIDENCE_TEMPLATE.yaml) defines the completion record.
 - [`../docs/ROADMAP.md`](../docs/ROADMAP.md) explains the plan for humans.
+- [`MS-002-KICKOFF.md`](MS-002-KICKOFF.md) records the active preparation
+  package for the next technical milestone, including its human security gate.
 
 The delivery plan schedules work. It does not define product behavior and never
 overrides `AGENTS.md`, the product constitution, accepted specifications, ADRs,

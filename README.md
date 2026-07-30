@@ -137,3 +137,8 @@ reproduzierbare TypeScript-/Kotlin-/Python-Toolchain. Der aktuelle
 Umsetzungsstand, alle Abhängigkeiten und die Exit-Kriterien werden in der
 [Full-Release-Roadmap](docs/ROADMAP.md) und der
 [maschinenlesbaren Planung](planning/milestones.yaml) gepflegt.
+
+Die technische Vorbereitung für `MS-002` ist in
+[planning/MS-002-KICKOFF.md](planning/MS-002-KICKOFF.md) in acht einzeln
+mergefähige Slices zerlegt. Abhängigkeits- und CI-Änderungen beginnen erst nach
+der dort verlangten menschlichen Security-Freigabe.
