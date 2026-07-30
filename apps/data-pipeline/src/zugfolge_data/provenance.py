@@ -166,6 +166,64 @@ class InfrastructureRelease:
     attributes: Mapping[str, Mapping[str, AttributeValue]]
     manifest_sha256: str
 
+    def __post_init__(self) -> None:
+        if not self.release_id.strip() or not self.ruleset_version.strip():
+            raise ValueError("release_id and ruleset_version are required")
+        if not self.attributes:
+            raise ValueError("an infrastructure release cannot be empty")
+
+        frozen_attributes: dict[str, Mapping[str, AttributeValue]] = {}
+        for entity_id, attributes in self.attributes.items():
+            if not isinstance(entity_id, str) or not entity_id.strip():
+                raise ValueError("entity IDs must be non-empty strings")
+            if not attributes:
+                raise ValueError(f"entity {entity_id} must contain attributes")
+            frozen_entity: dict[str, AttributeValue] = {}
+            for name, attribute in attributes.items():
+                if not isinstance(name, str) or not name.strip():
+                    raise ValueError("attribute names must be non-empty strings")
+                if not isinstance(attribute, AttributeValue):
+                    raise TypeError("release attributes must be AttributeValue instances")
+                frozen_entity[name] = attribute
+            frozen_attributes[entity_id] = MappingProxyType(frozen_entity)
+
+        frozen_release = MappingProxyType(frozen_attributes)
+        expected_manifest = _release_manifest_sha256(
+            release_id=self.release_id,
+            ruleset_version=self.ruleset_version,
+            attributes=frozen_release,
+        )
+        if self.manifest_sha256 != expected_manifest:
+            raise ValueError("manifest_sha256 does not match release contents")
+        object.__setattr__(self, "attributes", frozen_release)
+
+
+def _release_manifest_sha256(
+    *,
+    release_id: str,
+    ruleset_version: str,
+    attributes: Mapping[str, Mapping[str, AttributeValue]],
+) -> str:
+    canonical_attributes = {
+        entity_id: {
+            name: value.canonical_dict()
+            for name, value in sorted(entity_attributes.items())
+        }
+        for entity_id, entity_attributes in sorted(attributes.items())
+    }
+    canonical_manifest = {
+        "releaseId": release_id,
+        "rulesetVersion": ruleset_version,
+        "attributes": canonical_attributes,
+    }
+    encoded = json.dumps(
+        canonical_manifest,
+        ensure_ascii=False,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("utf-8")
+    return sha256(encoded).hexdigest()
+
 
 class InfrastructureReleaseBuilder:
     def __init__(self, *, release_id: str, ruleset_version: str) -> None:
@@ -201,34 +259,14 @@ class InfrastructureReleaseBuilder:
             raise ValueError("an infrastructure release cannot be empty")
         self._built = True
 
-        canonical_attributes = {
-            entity_id: {
-                name: value.canonical_dict()
-                for name, value in sorted(attributes.items())
-            }
-            for entity_id, attributes in sorted(self._attributes.items())
-        }
-        canonical_manifest = {
-            "releaseId": self._release_id,
-            "rulesetVersion": self._ruleset_version,
-            "attributes": canonical_attributes,
-        }
-        encoded = json.dumps(
-            canonical_manifest,
-            ensure_ascii=False,
-            separators=(",", ":"),
-            sort_keys=True,
-        ).encode("utf-8")
-
-        frozen_attributes = MappingProxyType(
-            {
-                entity_id: MappingProxyType(dict(attributes))
-                for entity_id, attributes in self._attributes.items()
-            }
+        manifest_sha256 = _release_manifest_sha256(
+            release_id=self._release_id,
+            ruleset_version=self._ruleset_version,
+            attributes=self._attributes,
         )
         return InfrastructureRelease(
             release_id=self._release_id,
             ruleset_version=self._ruleset_version,
-            attributes=frozen_attributes,
-            manifest_sha256=sha256(encoded).hexdigest(),
+            attributes=self._attributes,
+            manifest_sha256=manifest_sha256,
         )

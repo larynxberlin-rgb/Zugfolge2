@@ -9,6 +9,7 @@ sys.path.insert(0, str(MODULE_ROOT))
 from zugfolge_data import (  # noqa: E402
     AttributeValue,
     DataProvenance,
+    InfrastructureRelease,
     InfrastructureReleaseBuilder,
     QualityClass,
 )
@@ -111,6 +112,44 @@ class ProvenanceTest(unittest.TestCase):
         self.assertEqual(frozen_signals[0]["system"], "Ks")
         with self.assertRaises(TypeError):
             frozen_signals[0]["system"] = "Hp"
+
+    def test_direct_release_construction_cannot_bypass_immutability(self) -> None:
+        attribute = AttributeValue(
+            {"systems": ["ETCS", "PZB"]},
+            QualityClass.A_VALIDATED,
+            provenance(b"systems"),
+        )
+        builder = InfrastructureReleaseBuilder(
+            release_id="pilot-2026.1", ruleset_version="1"
+        )
+        builder.add_attribute(
+            entity_id="edge-1",
+            attribute_name="trainProtection",
+            attribute=attribute,
+        )
+        canonical_release = builder.build()
+
+        mutable_attributes = {
+            "edge-1": {"trainProtection": attribute},
+        }
+        direct_release = InfrastructureRelease(
+            release_id="pilot-2026.1",
+            ruleset_version="1",
+            attributes=mutable_attributes,
+            manifest_sha256=canonical_release.manifest_sha256,
+        )
+        mutable_attributes["edge-1"].clear()
+
+        self.assertIn("trainProtection", direct_release.attributes["edge-1"])
+        with self.assertRaises(TypeError):
+            direct_release.attributes["edge-1"]["new"] = attribute
+        with self.assertRaisesRegex(ValueError, "does not match"):
+            InfrastructureRelease(
+                release_id="pilot-2026.1",
+                ruleset_version="1",
+                attributes={"edge-1": {"trainProtection": attribute}},
+                manifest_sha256="0" * 64,
+            )
 
 
 if __name__ == "__main__":
