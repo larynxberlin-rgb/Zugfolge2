@@ -12,6 +12,11 @@ product owners, domain specialists, engineers, and AI agents.
 - `features/` contains executable-style feature specifications.
 - `../packages/contracts/` contains the machine-readable v1 interfaces.
 
+Delivery order and completion evidence live under `../planning/`. A milestone
+may schedule specification work, but it is not itself a product rule and cannot
+override an accepted specification, ADR, contract, or the precedence in
+`AGENTS.md`.
+
 ## Change rules
 
 - A document is normative when its status is `Accepted`.

@@ -1,0 +1,90 @@
+name: Milestone execution
+description: Start one approved milestone from planning/milestones.yaml.
+title: "[Milestone] MS-"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue coordinates one milestone; implementation happens in bounded
+        child feature issues. Copy no product rule from chat. Use
+        `planning/MILESTONE_PROMPT.md` and link repository evidence.
+  - type: input
+    id: milestone
+    attributes:
+      label: Milestone ID
+      description: Exact ID from planning/milestones.yaml.
+      placeholder: MS-010
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Outcome and release gate
+      description: Copy the outcome and release gate reference without changing them.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependency evidence
+      description: Link each completed dependency and its evidence manifest.
+      placeholder: |
+        - MS-003: planning/evidence/MS-003.yaml
+    validations:
+      required: true
+  - type: textarea
+    id: preparation
+    attributes:
+      label: Preparation package
+      description: Link accepted specs, ADRs, contracts, human decisions, and the kickoff review.
+      placeholder: |
+        Specs:
+        ADRs:
+        Contracts:
+        Human gates:
+        Open decisions:
+    validations:
+      required: true
+  - type: textarea
+    id: slices
+    attributes:
+      label: Bounded child issues
+      description: List feature issues in dependency order, including risk and allowed paths.
+      placeholder: |
+        - [ ] #123 — R2 — outcome
+    validations:
+      required: true
+  - type: textarea
+    id: exit
+    attributes:
+      label: Exit criteria and verification
+      description: Copy every exit criterion and attach the planned verification evidence.
+    validations:
+      required: true
+  - type: textarea
+    id: operations
+    attributes:
+      label: Migration, rollback, observability, and security
+      description: Define operational behavior before implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: approval
+    attributes:
+      label: Independent and human approvals
+      description: Name roles, not personal data. Link approvals when obtained.
+    validations:
+      required: true
+  - type: checkboxes
+    id: ready
+    attributes:
+      label: Preparation gate
+      options:
+        - label: Every dependency is completed with repository evidence.
+          required: true
+        - label: No unresolved product, provider, legal, data, or architecture choice is delegated to an implementation agent.
+          required: true
+        - label: The milestone is split into bounded feature issues and is no larger than effort band L.
+          required: true
+        - label: Rollback, observability, verification, and required human gates are explicit.
+          required: true

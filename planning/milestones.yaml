@@ -1,0 +1,1022 @@
+schemaVersion: 1
+statusAsOf: "2026-07-30"
+fullReleaseMilestone: MS-074
+
+releases:
+  - id: RG-0
+    title: Foundation
+    outcome: The product, governance, rights path, reproducible toolchain, and Walking Skeleton runtime rules are decision-ready.
+    dependsOnMilestones: [MS-000, MS-001, MS-002, MS-003]
+    exitCriteria:
+      - Product invariants, delivery rules, legal ownership, and architecture boundaries are explicit.
+      - A fresh machine can build and test the approved TypeScript, Kotlin, and Python toolchains reproducibly.
+  - id: RG-1
+    title: Technical Alpha
+    outcome: One authenticated player can complete the authoritative Walking Skeleton through the real API.
+    dependsOnMilestones: [MS-010, MS-004, MS-011, MS-012, MS-013]
+    exitCriteria:
+      - FEAT-0001 passes end to end with durable recovery and an identical replay hash.
+      - The browser can recover its live state after a sequence gap without becoming authoritative.
+  - id: RG-2
+    title: Operational Alpha
+    outcome: The pilot region supports data-backed, conflict-safe multi-train railway operation.
+    dependsOnMilestones: [MS-020, MS-021, MS-022, MS-023, MS-024, MS-025, MS-026]
+    exitCriteria:
+      - A pinned Leipzig–Halle–Erfurt release can plan and simulate multiple compatible trains.
+      - Infrastructure gaps are visible, provenance is complete, and no unsafe occupation is accepted.
+  - id: RG-3
+    title: Game Alpha
+    outcome: The complete enterprise loop is playable in SPFV, SGV, and SPNV with manual and simulated disruptions.
+    dependsOnMilestones: [MS-030, MS-031, MS-032, MS-033, MS-034, MS-035, MS-036, MS-037, MS-038, MS-040]
+    exitCriteria:
+      - Each business model completes market, planning, operation, settlement, and consequence flows.
+      - Vehicle, personnel, finance, disruption, and disposition constraints prevent infeasible operation.
+  - id: RG-4
+    title: Pilot Beta
+    outcome: A supported, monetizable, accessible closed pilot can run safely for several weeks.
+    dependsOnMilestones: [MS-050, MS-051, MS-052, MS-053, MS-054, MS-055]
+    exitCriteria:
+      - The closed pilot meets its SLO, restore, accessibility, support, and no-pay-to-win gates.
+      - No incompatible double occupation or unbalanced ledger state occurs during the acceptance period.
+  - id: RG-5
+    title: Germany Beta
+    outcome: Germany-wide data and regional runtime scaling support a controlled public beta.
+    dependsOnMilestones: [MS-039, MS-060, MS-061, MS-062, MS-063, MS-064]
+    exitCriteria:
+      - National releases, regional handovers, planning, and live-map load meet documented targets.
+      - Timetable-date updates and rollbacks are rehearsed without an unannounced world mutation.
+  - id: RG-6
+    title: Release Candidate
+    outcome: Product, operations, security, legal, and supply-chain evidence are ready for launch approval.
+    dependsOnMilestones: [MS-070, MS-071, MS-072, MS-073]
+    exitCriteria:
+      - All launch-blocking findings are closed or explicitly accepted by the accountable human owner.
+      - A production-like go-live and rollback rehearsal passes from signed artifacts and restored data.
+  - id: RG-7
+    title: Full Release 1.0
+    outcome: Zugfolge operates a persistent public Germany world as a supported production service.
+    dependsOnMilestones: [MS-074]
+    exitCriteria:
+      - SPFV, SGV, SPNV, and REALISTIC, SIMULATED, and MANUAL disruption modes are production-ready.
+      - The first public world completes its stabilization window within approved error and SLO budgets.
+
+milestones:
+  - id: MS-000
+    release: RG-0
+    status: completed
+    risk: R0
+    effort: S
+    title: Repository and product foundation
+    dependsOn: []
+    outcome: The repository contains the shared product language, invariants, first contracts, and a demonstrable product direction.
+    scope:
+      - Product constitution, glossary, initial ADRs, contract-first Walking Skeleton specification.
+      - Dark operations-console demo, reference domain kernel, CI, service map, and licensing brief.
+    exitCriteria:
+      - The repository builds and its current automated checks pass from a clean checkout.
+      - AGENTS.md defines precedence, invariants, review rules, and definition of done.
+      - FEAT-0001 and its v1 OpenAPI, AsyncAPI, and JSON Schemas are versioned.
+    verification:
+      - npm test
+      - GitHub Actions CI and CodeQL are green for the foundation commit.
+    humanGate:
+      - none
+    evidence:
+      - AGENTS.md
+      - spec/00-product-constitution.md
+      - spec/features/FEAT-0001-walking-skeleton.md
+      - packages/contracts
+
+  - id: MS-001
+    release: RG-0
+    status: ready
+    risk: R3
+    effort: M
+    title: Rights, license, brand, and source clearance
+    dependsOn: [MS-000]
+    outcome: Zugfolge has documented owners and permissions for code, brand, domain, launch assets, and every launch-critical railway source.
+    scope:
+      - Decide the code, documentation, data, contribution, and asset licensing model.
+      - Secure or reject domain, trademark, feed, storage, attribution, and provider permissions.
+      - Establish a source register with accountable human approval and renewal dates.
+    exitCriteria:
+      - LICENSE and related notices match the owner's signed decision, or the repository remains explicitly private and unlicensed.
+      - Domain and trademark clearance is recorded without claiming that a search is a legal guarantee.
+      - Every source needed through RG-4 is approved, substituted, or explicitly excluded.
+    verification:
+      - Legal/license manifest review and automated dependency-license scan.
+      - Human review of trademark, data rights, attribution, and contributor terms.
+    humanGate:
+      - Project owner chooses the licensing and contribution model.
+      - Qualified legal review approves trademark, data, privacy, and commercial-use assumptions.
+
+  - id: MS-002
+    release: RG-0
+    status: ready
+    risk: R3
+    effort: M
+    title: Reproducible polyglot engineering baseline
+    dependsOn: [MS-000]
+    outcome: TypeScript, Kotlin/JVM 21, and Python modules share one reproducible local and CI workflow.
+    scope:
+      - Introduce pnpm workspaces, Gradle Kotlin DSL and wrapper, uv lockfiles, toolchain pinning, and module boundaries.
+      - Add schema/spec lint, coverage foundations, dependency review, secret scan, SBOM generation, and artifact retention.
+      - Document supported developer platforms and exact bootstrap commands.
+    exitCriteria:
+      - A clean supported machine builds and tests all three language stacks with one documented command sequence.
+      - Dependency versions and CI actions are pinned and license/security purpose is recorded.
+      - Generated output and caches are excluded while lockfiles and wrappers are versioned.
+    verification:
+      - Fresh-checkout build on Windows and Linux CI.
+      - Repository-policy, dependency, secret, and reproducibility checks.
+    humanGate:
+      - Security reviewer approves new CI permissions and dependency policy.
+
+  - id: MS-003
+    release: RG-0
+    status: planned
+    risk: R3
+    effort: S
+    title: Walking Skeleton runtime and determinism architecture
+    dependsOn: [MS-002]
+    outcome: FEAT-0001 implementation agents have accepted rules for the JVM runtime, module boundaries, in-memory transactions, canonical replay, clock, and identifiers.
+    scope:
+      - Record ADRs for the HTTP and JSON runtime, module boundaries, world transaction port, command ordering, and deterministic in-memory adapter.
+      - Define clock, deterministic IDs, world and live sequence separation, canonical serialization, and state hashing.
+      - Explicitly defer production persistence, broker, identity, and deployment choices to their just-in-time milestones.
+    exitCriteria:
+      - No FEAT-0001 runtime, transaction-port, replay, time, or identifier choice remains delegated to implementation code.
+      - Submit remains the contracted REQUESTED response; allocation, tick, and charge remain separate internal commands.
+      - Production persistence and messaging are marked unresolved and cannot leak into the in-memory implementation.
+      - Public contracts remain compatible or receive an explicit versioned migration.
+    verification:
+      - Independent architecture and domain review against ADR-0001 and FEAT-0001.
+      - Threat-boundary and dependency-license review.
+    humanGate:
+      - Human architecture approval for the Walking Skeleton runtime and determinism rules.
+
+  - id: MS-010
+    release: RG-1
+    status: planned
+    risk: R3
+    effort: M
+    title: JVM Walking Skeleton domain and API
+    dependsOn: [MS-003]
+    outcome: FEAT-0001 runs as an executable Kotlin/JVM 21 service through contract-compatible commands and deterministic in-memory adapters.
+    scope:
+      - Implement world rules, idempotent company creation, train-run draft and submission, atomic occupations, path charge, events, snapshot, and replay hash.
+      - Keep allocation, simulation tick, and accounting as explicit internal commands; submission returns REQUESTED as contracted.
+      - Emit structured correlation, conflict, tick, sequence-gap, reconciliation, and replay-divergence telemetry.
+    exitCriteria:
+      - AC-001 through AC-011 pass without live providers or production persistence.
+      - A conflicting allocation creates no partial occupation and retries create neither duplicate companies nor charges.
+      - Two complete replays produce byte-identical canonical state hashes.
+    verification:
+      - Contract, unit, property, invariant, HTTP-adapter, and deterministic replay tests.
+      - Independent simulation and ledger review.
+    humanGate:
+      - Railway-domain review of the deliberately simplified exclusive-resource model.
+
+  - id: MS-004
+    release: RG-1
+    status: planned
+    risk: R3
+    effort: M
+    title: Persistence decisions and self-hosted local state platform
+    dependsOn: [MS-003, MS-010]
+    outcome: Proven domain rules gain accepted production persistence decisions and the smallest just-in-time self-hosted state platform.
+    scope:
+      - Record ADRs for PostgreSQL transactions, migrations, journal, snapshots, idempotency, durable outbox, and event delivery boundaries.
+      - Provide pinned local PostgreSQL/PostGIS and S3-compatible object-store profiles with health checks, secrets, volumes, reset guidance, and resource budgets.
+      - Add NATS, Valkey, Keycloak, map, and backoffice services only in the milestone that first has a real consumer.
+    exitCriteria:
+      - Transaction, migration, snapshot, outbox, event-delivery, failure, and rollback choices are accepted before their adapters are implemented.
+      - The local state profile starts healthy, survives a normal restart, and can be recreated from documented commands.
+      - No example secret is accepted in production; every introduced service has an owner, purpose, failure mode, backup class, and version pin.
+    verification:
+      - Independent architecture review plus automated compose smoke and container vulnerability tests.
+      - Manual clean-environment and normal-restart check.
+    humanGate:
+      - Architecture approval of persistence and event-delivery ADRs.
+      - Security review of ports, credentials, images, and local-production separation.
+
+  - id: MS-011
+    release: RG-1
+    status: planned
+    risk: R3
+    effort: M
+    title: Durable state, outbox, snapshots, and recovery
+    dependsOn: [MS-004, MS-010]
+    outcome: The Walking Skeleton survives retries, process crashes, database restarts, and event redelivery without changing authoritative results.
+    scope:
+      - Implement approved PostgreSQL migrations, optimistic versions, world-scoped constraints, idempotency records, ledger transactions, and outbox.
+      - Persist snapshots and ordered events with retention, compatibility, and restoration metadata.
+      - Expose the durable outbox through an approved publisher port without introducing a broker before its first external consumer.
+    exitCriteria:
+      - Crash injection at every write boundary produces either the whole committed outcome or no outcome.
+      - Snapshot plus event log restores the same state hash, world sequence, occupations, and ledger.
+      - Duplicate and out-of-order outbox processing cannot duplicate state or money.
+    verification:
+      - Migration, transaction, integration, fault-injection, restore, and replay tests.
+      - Database constraint proof for exclusive occupations and balanced ledger postings.
+    humanGate:
+      - Database/reliability review of migrations, backup class, and rollback plan.
+
+  - id: MS-012
+    release: RG-1
+    status: planned
+    risk: R3
+    effort: M
+    title: Identity, authorization, and world isolation
+    dependsOn: [MS-004, MS-011]
+    outcome: Keycloak authenticates users while the game authoritatively enforces memberships, roles, EVU ownership, and world isolation.
+    scope:
+      - Add a pinned, isolated Keycloak development profile plus OIDC login, token validation, session handling, world membership, company roles, and administrative audit.
+      - Enforce world_id on every query, command, event, cache key, snapshot, and object-store path.
+      - Define four-eyes approval for high-risk administrative commands.
+    exitCriteria:
+      - Cross-world and cross-company access attempts fail without leaking hidden competitive data.
+      - Keycloak outage blocks new login as documented but does not stop simulation or corrupt active state.
+      - Authorization decisions are server-side, auditable, and covered by negative tests.
+    verification:
+      - OIDC integration, tenancy property, permission-matrix, audit, and abuse tests.
+      - Threat-model review and security test suite.
+    humanGate:
+      - Security and privacy approval of identity claims, roles, audit retention, and admin powers.
+
+  - id: MS-013
+    release: RG-1
+    status: planned
+    risk: R2
+    effort: M
+    title: Browser API and live-state integration
+    dependsOn: [MS-010, MS-011, MS-012]
+    outcome: The browser replaces pilot state mutations with generated API clients and sequence-safe live updates.
+    scope:
+      - Generate typed clients from OpenAPI, AsyncAPI, and JSON Schema and integrate authenticated commands.
+      - Connect the durable outbox to a pinned local NATS JetStream publisher and implement initial snapshot, ordered deltas, deduplication, gap detection, reconnect, and REST resync.
+      - Introduce Valkey or Redis only for measured presence, rate-limit, or short-lived cache needs; never as source of truth.
+      - Keep explicit fixture/demo mode for development without confusing it with an authoritative world.
+    exitCriteria:
+      - A user creates an EVU and completes the FEAT-0001 journey in the browser against the real service.
+      - Disconnect, duplicate event, and sequence-gap scenarios converge to the authoritative snapshot.
+      - Hidden company, contract, and ledger details never enter shared live-map payloads.
+    verification:
+      - Generated-client compatibility, browser integration, WebSocket recovery, and end-to-end tests.
+      - Keyboard and reduced-motion regression checks for the integrated flow.
+    humanGate:
+      - Product-owner acceptance of the Technical Alpha user journey.
+
+  - id: MS-020
+    release: RG-2
+    status: planned
+    risk: R3
+    effort: M
+    title: Approved source registry and pilot ingest
+    dependsOn: [MS-001, MS-002, MS-004]
+    outcome: Approved railway sources enter an immutable staging pipeline with complete provenance and no runtime dependency on public data services.
+    scope:
+      - Implement source approval states, raw-object retention, checksums, schema versions, transformations, confidence, and license manifests.
+      - Import the approved Leipzig–Halle–Erfurt OSM and OpenRailwayMap data subset reproducibly.
+      - Quarantine malformed, unapproved, or unexpectedly changed input.
+    exitCriteria:
+      - Reimporting identical approved input produces the same canonical candidate and provenance manifest.
+      - Unknown railway values remain unknown and are never silently guessed into source facts.
+      - A blocked source cannot be promoted into an infrastructure release.
+    verification:
+      - Import idempotency, parser fuzzing, checksum, provenance, quarantine, and license-manifest tests.
+      - Human review of source terms, attribution, storage, and derived-database obligations.
+    humanGate:
+      - Data-rights approval for every included source and transformation.
+
+  - id: MS-021
+    release: RG-2
+    status: planned
+    risk: R3
+    effort: L
+    title: Pilot operational graph and quality classes
+    dependsOn: [MS-020]
+    outcome: The pilot geometry becomes a deterministic operational graph with explicit railway semantics and A/B/C quality.
+    scope:
+      - Model operational points, directed track edges, speeds, direction, electrification, train protection, signals, platforms, and declared unknowns.
+      - Derive or validate blocks, routes, points, crossing movements, opposing single-track movements, station throats, overlaps, and clearance times.
+      - Implement visible conservative virtual resources and A/B/C promotion workflow.
+    exitCriteria:
+      - Graph references are consistent and every attribute traces to source data or an explicit reviewed derivation.
+      - Class C resources cannot receive path orders; Class B assumptions are visible; Class A has audit evidence.
+      - Property tests cover block, route, platform, station-throat, opposing movement, clearance, and overlap incompatibilities.
+    verification:
+      - Deterministic graph build, topology/property, quality-gate, regression, and expert-reference tests.
+      - Independent railway operations review of selected critical nodes.
+    humanGate:
+      - Qualified railway-domain approval for Class A resources and conservative derivation rules.
+
+  - id: MS-022
+    release: RG-2
+    status: planned
+    risk: R2
+    effort: M
+    title: Infrastructure release and self-hosted dark map
+    dependsOn: [MS-004, MS-020, MS-021]
+    outcome: Immutable infrastructure bundles and matching dark vector tiles can be validated, promoted, pinned, displayed, and rolled back.
+    scope:
+      - Build signed release manifests with graph, geometry, tiles, provenance, license, compatibility, and validity metadata.
+      - Generate versioned PMTiles or MBTiles with Planetiler and serve them from the object store, optionally through Martin.
+      - Add release diff, promotion, timetable-date activation, rollback, MapLibre style, and visible attribution.
+    exitCriteria:
+      - A world cannot mutate its pinned release silently or between announced timetable dates.
+      - The pilot map runs without public OSM or OpenRailwayMap tile services.
+      - Upgrade and rollback preserve references or reject incompatible schedules before activation.
+    verification:
+      - Release reproducibility, manifest, signature, compatibility, tile, offline, attribution, and rollback tests.
+      - Visual review of the dark map at supported zoom levels and reduced-motion settings.
+    humanGate:
+      - Data/license review of the produced database, tiles, and attribution.
+
+  - id: MS-023
+    release: RG-2
+    status: planned
+    risk: R2
+    effort: M
+    title: Vehicle catalogue and formation compatibility
+    dependsOn: [MS-020, MS-021]
+    outcome: Versioned vehicle data and formations determine whether a proposed train is physically and legally compatible with a route.
+    scope:
+      - Model series, propulsion, length, mass, power, maximum speed, train protection, approval, and data provenance.
+      - Build formations and validate length, platform, electrification, axle or route class, protection, and directional constraints.
+      - Keep catalogue templates separate from later individually owned vehicle assets.
+    exitCriteria:
+      - An incompatible or unknown-critical formation cannot be released for a path request.
+      - Identical catalogue and formation inputs produce identical compatibility results.
+      - Every catalogue value is sourced, licensed, derived transparently, or unknown.
+    verification:
+      - Schema, compatibility matrix, boundary, property, provenance, and regression tests.
+      - Railway rolling-stock domain review of the pilot catalogue.
+    humanGate:
+      - Vehicle-data rights and railway-domain approval.
+
+  - id: MS-024
+    release: RG-2
+    status: planned
+    risk: R3
+    effort: L
+    title: Deterministic path, running time, and occupation profiles
+    dependsOn: [MS-021, MS-023]
+    outcome: The planner produces reproducible route candidates, running times, and complete relative occupation profiles for the pilot graph.
+    scope:
+      - Implement route search, dwell and reversal handling, speed profiles, formation dynamics, margins, and ordered operational points.
+      - Produce relative resource occupations including routes, platforms, clearance, minimum headway, and overlap resources.
+      - Explain unavailable, incompatible, and data-quality-limited paths without inventing missing facts.
+    exitCriteria:
+      - Same release, formation, request, rules, and seed produce the same candidates, times, and profile ordering.
+      - Reference journeys fall within explicitly approved tolerances and use no Class C resource.
+      - Every accepted candidate contains all resources required by the reviewed safety model.
+    verification:
+      - Golden-reference, property, metamorphic, performance, and canonical-serialization tests.
+      - Independent railway and simulation review of running-time and occupation assumptions.
+    humanGate:
+      - Human approval of reference cases, tolerances, and safety margins.
+
+  - id: MS-025
+    release: RG-2
+    status: planned
+    risk: R3
+    effort: L
+    title: Capacity allocation, alternatives, and fair planning
+    dependsOn: [MS-011, MS-024]
+    outcome: Ad-hoc and regular path requests receive an atomic allocation, a feasible alternative, or a precise and fair rejection.
+    scope:
+      - Allocate half-open occupations atomically across blocks, routes, points, platforms, opposing movements, clearances, and overlaps.
+      - Implement ad-hoc use of remaining capacity and deterministic joint PlanningRun windows.
+      - Publish machine-readable conflict causes, alternatives, timetable-view data, and rotating-seed tie breaking.
+    exitCriteria:
+      - No rejected or interrupted request leaves partial occupations.
+      - Input order and payment status do not affect a regular planning result; identical seed and inputs replay identically.
+      - Every offer, alternative, and rejection explains the decisive resources and allowed next actions.
+    verification:
+      - Database/in-memory equivalence, property, fuzz, concurrency, fairness, replay, and solver performance tests.
+      - No-pay-to-win equivalence review and adversarial allocation review.
+    humanGate:
+      - Product and railway-domain approval of fairness and tie-break rules.
+
+  - id: MS-026
+    release: RG-2
+    status: planned
+    risk: R3
+    effort: L
+    title: Event-driven simulation, live map, and safe dispatch kernel
+    dependsOn: [MS-013, MS-025]
+    outcome: Multiple trains run deterministically in the pilot region while every player receives the same safe operational picture.
+    scope:
+      - Materialize 48–72 hours of TrainRuns from ServicePatterns and advance analytical positions through authoritative events.
+      - Apply atomic occupation transitions, delay propagation, cancellation, reversal, connections, and safe offline defaults.
+      - Scale snapshot and sequence-delta delivery with backpressure, resync, privacy filtering, and replay diagnostics.
+    exitCriteria:
+      - Multi-train property, fuzz, and soak runs contain no incompatible committed double occupation.
+      - Snapshot plus event log reproduces positions, delay, occupations, sequence, and state hash exactly.
+      - Local live-map freshness meets p95 under two seconds for the declared pilot load.
+    verification:
+      - Deterministic replay, clock/DST, fault-injection, backpressure, privacy, load, and end-to-end tests.
+      - Independent railway, simulation, and security review.
+    humanGate:
+      - Railway-domain acceptance of dispatch safety rules and visible operational status.
+
+  - id: MS-030
+    release: RG-3
+    status: planned
+    risk: R3
+    effort: L
+    title: Tariff engine, ledger, and economy releases
+    dependsOn: [MS-011, MS-020, MS-025]
+    outcome: Versioned railway charges and common operating costs post exactly once into an immutable, balanced company ledger.
+    scope:
+      - Expand the account model, postings, reversals, cost centres, currency rules, and idempotent settlement.
+      - Implement approved TPS, SPS, APS, INB, energy, station, storage, and facility rules as versioned EconomyReleases.
+      - Pin source version and calculation explanation to each charge without synchronously calling an external provider.
+    exitCriteria:
+      - Every posted entry balances per currency in integer minor units and is corrected only by reversal.
+      - Official or approved reference calculations pass and every result explains its rule and release.
+      - Retry, refund, process crash, and reconciliation cannot create or lose money.
+    verification:
+      - Golden tariff, property, mutation, transaction, reconciliation, migration, and replay tests.
+      - Independent finance, railway tariff, and data-rights review.
+    humanGate:
+      - Finance and railway-tariff approval of accounts, sources, and reference examples.
+
+  - id: MS-031
+    release: RG-3
+    status: planned
+    risk: R2
+    effort: L
+    title: Fleet assets, maintenance, storage, and financing
+    dependsOn: [MS-023, MS-030]
+    outcome: Individually owned or leased vehicles form exclusive operational assets with realistic availability and lifecycle costs.
+    scope:
+      - Add purchase, lease, financing, ownership transfer, formation assignment, and disposal.
+      - Model mileage or time-based maintenance, workshop capacity, deadlines, defects, storage, service tracks, and vehicle rotations.
+      - Make asset and ledger transitions atomic and preserve their catalogue and rule release.
+    exitCriteria:
+      - One vehicle cannot be sold, financed, maintained, stored, or operated incompatibly at the same time.
+      - Overdue, defective, unapproved, or unavailable vehicles prevent release of an affected service.
+      - Restart, retry, and cancellation preserve exact asset and financial history.
+    verification:
+      - Asset-state property, rotation, maintenance, capacity, ledger-atomicity, migration, and replay tests.
+      - Rolling-stock and finance domain review.
+    humanGate:
+      - Product, rolling-stock, and finance approval of the v1 lifecycle model.
+
+  - id: MS-032
+    release: RG-3
+    status: planned
+    risk: R2
+    effort: M
+    title: Regional personnel and qualification capacity
+    dependsOn: [MS-012, MS-026, MS-030]
+    outcome: Regional qualification and duty pools constrain services without simulating individual employee biographies.
+    scope:
+      - Model role, region, route or vehicle qualification, duty capacity, availability horizon, cost, and reserve.
+      - Allocate personnel capacity across service patterns and TrainRuns with safe offline behavior.
+      - Explain shortages and allowed corrective actions.
+    exitCriteria:
+      - A run lacking required qualified capacity cannot be released or silently operated.
+      - Replanning and cancellation return capacity exactly once.
+      - No personal employee data or fabricated biography is required.
+    verification:
+      - Capacity, qualification, concurrency, cancellation, privacy, and replay tests.
+      - Railway operations and labor-model product review.
+    humanGate:
+      - Railway-domain and privacy approval of the abstraction and duty assumptions.
+
+  - id: MS-033
+    release: RG-3
+    status: planned
+    risk: R3
+    effort: M
+    title: Liquidity, credit, restructuring, and controlled insolvency
+    dependsOn: [MS-030, MS-031, MS-032]
+    outcome: Companies can finance growth, breach obligations, restructure, or fail without corrupting the world or deleting the player account.
+    scope:
+      - Add cash-flow projections, loans, interest, collateral references, covenants, arrears, restructuring, and insolvency case states.
+      - Define treatment of vehicles, personnel capacity, accepted paths, contracts, and abandoned services.
+      - Add anti-abuse controls for restarts, related accounts, and asset transfers.
+    exitCriteria:
+      - Insolvency closes or transfers company obligations deterministically while retaining ledger and audit history.
+      - The user account survives company failure and receives an explicitly governed restart path.
+      - No restart, transfer, or premium entitlement bypasses debt or market rules.
+    verification:
+      - Ledger, state-machine, default cascade, asset, contract, abuse, migration, and replay tests.
+      - Finance, product, security, and legal review.
+    humanGate:
+      - Product owner and finance/legal reviewer approve failure, restart, and consumer-facing consequences.
+
+  - id: MS-034
+    release: RG-3
+    status: planned
+    risk: R3
+    effort: L
+    title: SPFV end to end
+    dependsOn: [MS-026, MS-030, MS-031, MS-032]
+    outcome: A player can identify, plan, operate, and settle an eigenwirtschaftlich long-distance passenger offer with full revenue risk.
+    scope:
+      - Build versioned zone demand from approved population, employment, POI, occasion, season, and time inputs.
+      - Model service offer, stops, cadence, fare, comfort, distribution, generalized cost, mode and train choice, and revenue.
+      - Apply reliability, missed connections, cancellation, capacity, cost, and competition effects.
+    exitCriteria:
+      - One complete market-to-ledger SPFV loop is playable with no NPC train operator.
+      - Demand is deterministic for a pinned release and does not model identifiable real persons.
+      - Fare, timetable, comfort, reliability, and competing player services influence choice as specified.
+    verification:
+      - Calibration, choice-model, property, competition, capacity, settlement, replay, and end-to-end tests.
+      - Transport economics, privacy, balance, and no-pay-to-win review.
+    humanGate:
+      - Product owner and transport-economics expert approve demand calibration and player-facing risk.
+
+  - id: MS-035
+    release: RG-3
+    status: planned
+    risk: R3
+    effort: L
+    title: SGV end to end
+    dependsOn: [MS-026, MS-030, MS-031, MS-032]
+    outcome: A player can win, assemble, operate, and settle freight work with terminals, wagons, empty movements, and delivery quality.
+    scope:
+      - Generate approved industry, terminal, port, commodity-flow, spot, and long-term shipper markets.
+      - Model consignment, wagon requirements and cycles, train formation, terminal slots, loading, unloading, empty runs, due dates, and confidentiality.
+      - Settle revenue, cost, quality, lateness, loss, cancellation, and contractual penalties.
+    exitCriteria:
+      - One shipper contract completes from offer through loaded and empty operations to immutable settlement.
+      - Terminal, wagon, vehicle, personnel, path, and deadline conflicts prevent infeasible promises.
+      - Competitors never receive protected cargo, price, or contract details through shared APIs.
+    verification:
+      - Market generation, terminal/wagon capacity, contract, confidentiality, penalty, replay, and end-to-end tests.
+      - Freight railway, security, and balance review.
+    humanGate:
+      - Product owner and freight-domain expert approve market and delivery-quality rules.
+
+  - id: MS-036
+    release: RG-3
+    status: planned
+    risk: R3
+    effort: L
+    title: SPNV end to end
+    dependsOn: [MS-025, MS-026, MS-030, MS-031, MS-032]
+    outcome: Simulated contracting authorities tender services and players bid, mobilize, operate, and settle transport contracts.
+    scope:
+      - Model service specifications, qualification, deadlines, questions, bids, deterministic scoring, tie breaks, award, and challenge state.
+      - Model mobilization, fleet and personnel commitments, timetable delivery, quality KPIs, bonuses, penalties, and contract completion.
+      - Keep contracting authorities as market actors and never as train operators.
+    exitCriteria:
+      - An identical bid set and published seed produce the same explainable award independent of arrival order and payment tier.
+      - One award completes mobilization, operation, KPI measurement, bonus or penalty, and settlement.
+      - Missing resources or mobilization deadlines cause defined consequences rather than hidden correction.
+    verification:
+      - Scoring fairness, bid confidentiality, deadline, mobilization, KPI, contract, replay, and end-to-end tests.
+      - Public-transport procurement, product, security, and no-pay-to-win review.
+    humanGate:
+      - Product owner and SPNV/procurement expert approve the fictional tender model and disclosures.
+
+  - id: MS-037
+    release: RG-3
+    status: planned
+    risk: R3
+    effort: M
+    title: Manual construction works and incidents
+    dependsOn: [MS-012, MS-021, MS-026]
+    outcome: Authorized world staff can create auditable planned works and operational incidents while MANUAL mode remains inert otherwise.
+    scope:
+      - Implement restriction and incident effects, required start and end, cause, affected resources, severity, capacity or speed impact, and audit.
+      - Separate plannedWorksMode from operationalIncidentMode and validate timetable-date policy changes.
+      - Provide preview, authorization, four-eyes option, edit, cancellation, and propagation.
+    exitCriteria:
+      - No automatic event appears in MANUAL mode and every manual change has actor, reason, version, and before/after state.
+      - Invalid scope or time is rejected before it can alter simulation.
+      - Active effects change planning and operation deterministically and are fully reversible at their defined end.
+    verification:
+      - Authorization, audit, temporal, effect, propagation, rollback, and replay tests.
+      - Railway and security review of admin capabilities.
+    humanGate:
+      - Railway-domain and security approval of effects and privileged workflow.
+
+  - id: MS-038
+    release: RG-3
+    status: planned
+    risk: R3
+    effort: M
+    title: Deterministic simulated construction works and incidents
+    dependsOn: [MS-037]
+    outcome: Worlds can generate calibrated disruptions from a versioned, configurable, replay-safe simulation profile.
+    scope:
+      - Model frequency, severity, duration, notice, region, infrastructure type, load dependence, correlation, and world seed.
+      - Generate planned works and operational incidents independently and publish player-visible causes and confidence.
+      - Calibrate the pilot profile against approved aggregate 2026 evidence without copying the real timetable.
+    exitCriteria:
+      - Same seed, profile, releases, ordered events, and software version produce identical disruptions and consequences.
+      - Every supported parameter is world-configurable and becomes effective only under published rules.
+      - Frequency and severity calibration stays within approved bounds in long deterministic runs.
+    verification:
+      - Statistical, seed, replay, boundary, propagation, performance, and long-run tests.
+      - Railway-domain and balance review of calibration.
+    humanGate:
+      - Product owner and railway-domain expert approve the pilot simulation profile.
+
+  - id: MS-039
+    release: RG-5
+    status: planned
+    risk: R3
+    effort: L
+    title: Authorized realistic disruption feeds
+    dependsOn: [MS-001, MS-020, MS-037]
+    outcome: A REALISTIC world consumes at least one explicitly authorized planned-works and incident provider set without putting providers in the hot path.
+    scope:
+      - Implement approved provider adapters, asynchronous ingestion, provenance, confidence, mapping, deduplication, correction, and stale-state visibility.
+      - Retain last-known-safe state on outage and prohibit silent fallback to simulation.
+      - Audit manual corrections and protect restricted source payloads from public or persistent reuse beyond permission.
+    exitCriteria:
+      - An approved provider set maps representative events to conflict resources with measured precision and reviewed exceptions.
+      - Provider outage, malformed input, revocation, and delayed update do not stop simulation or corrupt historical replay.
+      - UI and API expose source, retrieval, validity, confidence, and staleness as permitted.
+    verification:
+      - Contract, mapping, provenance, outage, malformed-input, revocation, retention, and replay tests.
+      - Legal, data-protection, railway, and security approval.
+    humanGate:
+      - Signed provider/data-rights clearance.
+      - Railway expert approves mapping quality; privacy reviewer approves retention and exposure.
+
+  - id: MS-040
+    release: RG-3
+    status: planned
+    risk: R3
+    effort: L
+    title: Integrated timetable and operations control
+    dependsOn: [MS-026, MS-031, MS-032, MS-034, MS-035, MS-036, MS-037, MS-038]
+    outcome: A dispatcher can understand and safely resolve live timetable, connection, rotation, resource, and disruption consequences across all business models.
+    scope:
+      - Provide dispatch decisions for wait, hold, reroute, skip, short turn, cancel, substitute formation, and connection handling.
+      - Check path, vehicle, maintenance, storage, personnel, contract, and passenger or freight consequences before commit.
+      - Define free safe defaults for offline operators and explain every automated safety action.
+    exitCriteria:
+      - Representative delay cascades converge deterministically without violating occupations or hidden commercial data.
+      - The system rejects unsafe or infeasible decisions with decisive resources and next actions.
+      - Free and Plus operators receive identical safety, warning, and state-changing dispatch capability in public worlds.
+    verification:
+      - Scenario, property, cascade, concurrency, offline, contract-consequence, replay, and no-pay-to-win tests.
+      - Independent railway operations, product, and security review.
+    humanGate:
+      - Railway operations and product-owner approval of dispatch decisions and defaults.
+
+  - id: MS-050
+    release: RG-4
+    status: planned
+    risk: R2
+    effort: L
+    title: Complete desktop UX, PWA, and accessibility
+    dependsOn: [MS-013, MS-022, MS-030, MS-031, MS-032, MS-033, MS-034, MS-035, MS-036, MS-040]
+    outcome: Every core game loop is understandable and operable in the modern dark desktop application, with safe mobile companion functions.
+    scope:
+      - Complete live situation, timetable and path workspace, operations centre, markets, fleet, personnel, finance, mailbox, and company views.
+      - Add generated API state, loading and error recovery, information architecture, saved views, notifications, and PWA install or offline shell.
+      - Meet keyboard, screen-reader, contrast, zoom, reduced-motion, touch-target, and non-colour status requirements.
+    exitCriteria:
+      - A new test player can found an EVU and complete one SPFV, SGV, or SPNV loop without developer tools.
+      - Complex timetable work remains desktop-first while mobile supports live map, messages, approvals, and bounded safe dispatch.
+      - Independent WCAG 2.2 AA and supported-browser audits have no open blocker.
+    verification:
+      - Component, contract, visual-regression, browser end-to-end, accessibility, performance, and recovery tests.
+      - Moderated usability sessions across novice and railway-expert participants.
+    humanGate:
+      - Product, design, and accessibility approval.
+
+  - id: MS-051
+    release: RG-4
+    status: planned
+    risk: R3
+    effort: L
+    title: World lifecycle, administration, private worlds, and tutorial
+    dependsOn: [MS-012, MS-013, MS-030, MS-040, MS-050]
+    outcome: Authorized operators can create, configure, advance, update, suspend, archive, and recover isolated worlds under explicit public, private, and tutorial rules.
+    scope:
+      - Model world lifecycle, release sets, timetable dates, disruption policy, time multiplier, membership, capacity, visibility, archive, and shutdown.
+      - Add audited administration, four-eyes high-risk commands, account recovery, moderation, sanctions, appeals, and abandoned-company handling.
+      - Support accelerated tutorial and private unranked worlds while public worlds remain persistent, 1:1, and player-train-only.
+    exitCriteria:
+      - World changes occur only at allowed transitions and never leak data, events, caches, or resources between worlds.
+      - One user cannot own multiple EVUs in the same public world; private automations cannot affect public results.
+      - Empty-world, inactive-player, abandoned-EVU, suspension, archive, and restore behavior is specified and tested without NPC operators.
+    verification:
+      - Lifecycle model, tenancy, authorization, moderation, time-scale, migration, archive, restore, abuse, and end-to-end tests.
+      - Product, security, privacy, support, and SRE review.
+    humanGate:
+      - Product owner approves cold-start, inactivity, moderation, and world-lifecycle rules.
+      - Security/privacy reviewer approves administrative and account-recovery powers.
+
+  - id: MS-052
+    release: RG-4
+    status: planned
+    risk: R3
+    effort: M
+    title: Odoo backoffice, support, and reconciliation
+    dependsOn: [MS-004, MS-011, MS-012, MS-030, MS-051]
+    outcome: Self-hosted Odoo Community supports contacts, CRM, helpdesk, products, and read-only projections without entering the game hot path.
+    scope:
+      - Implement Game Outbox to bridge, signed Odoo webhooks to queue, narrowed command or entitlement endpoints, and nightly reconciliation.
+      - Pin reviewed Odoo/OCA versions and isolate database, credentials, backup, permissions, and retention.
+      - Provide support identity linking and audited administrative request workflows.
+    exitCriteria:
+      - Odoo cannot write game tables or directly change paths, simulation, ledger, or authorization.
+      - Odoo outage, delayed webhook, duplicate message, and lost-message reconciliation leave login, simulation, live map, and existing entitlements available.
+      - Every backoffice command is authenticated, authorized, idempotent, rate-limited, and audited.
+    verification:
+      - Contract, signature, retry, duplicate, loss, reconciliation, outage, authorization, and data-isolation tests.
+      - Security, privacy, support, and SRE review.
+    humanGate:
+      - Security and privacy approval of the backoffice trust boundary and retained personal data.
+
+  - id: MS-053
+    release: RG-4
+    status: planned
+    risk: R3
+    effort: L
+    title: Billing, Zugfolge Plus, cosmetics, and fair entitlements
+    dependsOn: [MS-001, MS-030, MS-034, MS-035, MS-036, MS-050, MS-052]
+    outcome: The approved payment provider sells subscriptions, cosmetics, and private worlds while competitive public-world outcomes remain identical.
+    scope:
+      - Implement products, checkout, subscription, renewal, cancellation, refund, chargeback, invoice references, tax handling, and entitlement reconciliation.
+      - Deliver Plus world slots, visual layouts, profiles, liveries, replays, delivery channels, reports, and support priority.
+      - Enforce one public-world EVU per player, free safety and state-changing automation, and no real-money game currency.
+    exitCriteria:
+      - Real-money records stay outside the game ledger and converge under retry, reordered webhook, refund, and provider outage.
+      - Free and Plus produce identical capacity, price, demand, tender, asset performance, simulation priority, warning, and public dispatch results.
+      - Cosmetic assets and user-generated names or logos have approved rights and moderation paths.
+    verification:
+      - Provider sandbox, webhook, idempotency, reconciliation, refund, chargeback, tax, entitlement, abuse, and no-pay-to-win differential tests.
+      - Finance, legal, privacy, security, product, and accessibility review.
+    humanGate:
+      - Project owner selects the payment provider and commercial terms.
+      - Finance/legal/privacy reviewers approve tax, consumer, billing, refund, and retention behavior.
+
+  - id: MS-054
+    release: RG-4
+    status: planned
+    risk: R3
+    effort: L
+    title: Validated pilot world and calibrated game releases
+    dependsOn: [MS-022, MS-025, MS-030, MS-031, MS-032, MS-034, MS-035, MS-036, MS-038, MS-040, MS-050]
+    outcome: Leipzig–Halle–Erfurt is released as a documented, playable pilot with reviewed infrastructure, vehicles, tariffs, demand, freight, tenders, and disruption calibration.
+    scope:
+      - Validate advertised nodes, blocks, routes, platforms, station throats, and reference running times.
+      - Publish coverage, quality, known limitations, source rights, release hashes, and rollback candidates.
+      - Calibrate EconomyRelease, demand, freight, tenders, fleet supply, personnel, and simulated disruptions together.
+    exitCriteria:
+      - Every advertised path is Class A or explicitly visible Class B; Class C cannot be ordered.
+      - Multi-business-model golden scenarios remain viable without guaranteeing profit or masking scarcity.
+      - The exact release set passes deterministic rebuild, upgrade, rollback, and expert-review gates.
+    verification:
+      - Coverage, golden journey, economy, competition, data-quality, release, replay, and integrated end-to-end tests.
+      - Railway, transport-economics, data-rights, product, and balance review.
+    humanGate:
+      - Qualified railway experts approve the advertised operational coverage.
+      - Product owner approves the calibrated release without presenting it as a replica of the real timetable.
+
+  - id: MS-055
+    release: RG-4
+    status: planned
+    risk: R3
+    effort: L
+    title: Closed pilot, SRE baseline, and pilot exit
+    dependsOn: [MS-004, MS-050, MS-051, MS-052, MS-053, MS-054]
+    outcome: A real invited player cohort operates the 1:1 pilot long enough to prove recovery, support, fairness, and invariant stability.
+    scope:
+      - Deploy observability with OpenTelemetry, Prometheus, Grafana, Loki, Tempo, alerting, dashboards, trace correlation, SLOs, and runbooks.
+      - Exercise support, moderation, billing sandbox, provider and Odoo outage, backup, restore, rollback, incident response, and economy monitoring.
+      - Collect privacy-safe telemetry and structured feedback under predeclared pilot success and stop criteria.
+    exitCriteria:
+      - At least four continuous weeks and the declared pilot workload complete without incompatible double occupation, unbalanced ledger, data loss, or unresolved severity-one defect.
+      - API and live map meet the pilot SLO and at least one full restore and rollback exercise passes.
+      - Pilot evidence records planner latency, support load, abuse, retention, economy health, and no-pay-to-win results with owner sign-off.
+    verification:
+      - Soak, fault, restore, rollback, provider/Odoo outage, SLO, billing-sandbox, security, and player-journey evidence.
+      - Independent pilot exit review using a versioned evidence manifest.
+    humanGate:
+      - Product, railway, SRE, security, privacy, finance, and support go/no-go.
+
+  - id: MS-060
+    release: RG-5
+    status: planned
+    risk: R3
+    effort: L
+    title: Germany-wide data and release pipeline
+    dependsOn: [MS-054, MS-055]
+    outcome: Approved national data can be rebuilt and released in reviewable regional tranches with explicit operational quality.
+    scope:
+      - Scale raw ingest, topology, railway semantics, quality queues, tariffs, vehicles, demand calibration, freight, tenders, provenance, and dark tiles to Germany.
+      - Publish regional A/B/C coverage, critical-node review, known limitations, release calendar, cost, and license dashboards.
+      - Promote regions independently; prohibit a big-bang orderable network and keep Class C display-only.
+    exitCriteria:
+      - Every advertised orderable relation uses only A/B resources and has current source, quality, license, and regression evidence.
+      - A complete national release rebuild is deterministic from retained approved inputs and pinned transforms.
+      - Regional promotion, timetable-date activation, withdrawal, and rollback are automated and rehearsed.
+    verification:
+      - National topology, data-quality, provenance, license, release, tile, performance, cost, and rollback tests.
+      - Regional railway-domain sampling and accountable coverage approval.
+    humanGate:
+      - Legal/data-rights approval for national processing and publication.
+      - Railway experts approve each advertised regional tranche.
+
+  - id: MS-061
+    release: RG-5
+    status: planned
+    risk: R3
+    effort: L
+    title: Regional simulation ownership and handover
+    dependsOn: [MS-026, MS-055, MS-060]
+    outcome: Regional single writers scale simulation while confirmed handovers preserve exclusive ownership under failure.
+    scope:
+      - Define region partitioning, leases, fencing tokens, ownership, handover intent, acceptance, timeout, retry, recovery, and rebalancing.
+      - Keep one logical writer per conflict resource and separate world isolation from regional partitioning.
+      - Add rolling deployment and region evacuation without introducing a source of truth outside approved durable state.
+    exitCriteria:
+      - A train crosses a region only after the next writer confirms ownership; old writers are safely fenced.
+      - Crash, pause, network partition, retry, and rolling upgrade create neither lost train nor duplicate resource ownership.
+      - Same regional event history converges to the same canonical world state.
+    verification:
+      - Model, property, concurrency, partition, crash, fencing, handover, rebalancing, replay, and chaos tests.
+      - Distributed-systems, SRE, security, and railway review.
+    humanGate:
+      - Architecture and SRE approval after measurements demonstrate that regionalization is required.
+      - Railway expert approves boundary semantics.
+
+  - id: MS-062
+    release: RG-5
+    status: planned
+    risk: R3
+    effort: L
+    title: Nationwide planner, multiworld, and live-map scale
+    dependsOn: [MS-051, MS-060, MS-061]
+    outcome: Large public and private worlds meet planning and live-state targets without cross-world leakage or premature platform complexity.
+    scope:
+      - Scale planning windows, ad-hoc queries, snapshots, deltas, spatial aggregation, search, caching, presence, backpressure, and reconnect.
+      - Validate 2,000 EVUs, 200,000 TrainRuns per day, 20,000 active trains, and 10,000 concurrent live-map users per target world.
+      - Introduce ClickHouse or Kubernetes only when measured bottlenecks and an accepted ADR justify them.
+    exitCriteria:
+      - Regular planning completes under 15 minutes with 30-minute hard limit; simple ad-hoc p95 is under 5 seconds and complex under 30 seconds.
+      - Local live-map freshness p95 is under two seconds and national overview is under ten seconds for the declared workload.
+      - Load, cache eviction, region failure, and broker redelivery reveal no hidden data or cross-world state.
+    verification:
+      - Representative workload, solver, soak, backpressure, cache, broker, tenancy, failover, cost, and capacity tests.
+      - Independent performance, security, and SRE review.
+    humanGate:
+      - Product and SRE approve the workload model, cost envelope, and any new scaling platform.
+
+  - id: MS-063
+    release: RG-5
+    status: planned
+    risk: R3
+    effort: L
+    title: Controlled public beta and launch economy
+    dependsOn: [MS-039, MS-053, MS-055, MS-060, MS-061, MS-062]
+    outcome: A controlled public cohort proves registration, cold start, competition, abuse controls, billing, support, and long-running balance at national scale.
+    scope:
+      - Stage registration and regional availability with published capacity, queue, invitation, rollback, and communication rules.
+      - Exercise empty-world startup, inactive players, insolvencies, abandoned services, market concentration, support, moderation, refunds, and chargebacks.
+      - Measure retention, company survival, service supply, planner scarcity, business-model viability, fairness, and infrastructure cost.
+    exitCriteria:
+      - At least six continuous weeks remain within approved error and support budgets with no invariant breach, data loss, or unreconciled ledger defect.
+      - Each business model is viable under documented assumptions without guaranteed profit, NPC train operators, or paid competitive advantage.
+      - Abuse, moderation, account recovery, billing, provider outage, and world cold-start runbooks have real evidence.
+    verification:
+      - Production-like SLO, economy, competition, security, abuse, billing, support, privacy, recovery, and player-journey evidence.
+      - Independent beta exit and no-pay-to-win audit.
+    humanGate:
+      - Product, finance, railway, security, privacy, SRE, and support go/no-go.
+
+  - id: MS-064
+    release: RG-5
+    status: planned
+    risk: R3
+    effort: M
+    title: Timetable-date cutover and persistent-world operations
+    dependsOn: [MS-060, MS-061, MS-062, MS-063]
+    outcome: Persistent worlds adopt infrastructure, tariff, demand, vehicle, and rule releases only through announced, reversible timetable-date operations.
+    scope:
+      - Implement preview, compatibility analysis, player notice, freeze, migration, activation, validation, abort, rollback, and retained replay support.
+      - Define treatment of active services, accepted paths, contracts, assets, disruptions, and historical calculations across release boundaries.
+      - Provide archive, retention, world shutdown, and recovery operations without routine wipes.
+    exitCriteria:
+      - A production-scale world completes a full release-set cutover and rollback rehearsal without silent mutation, lost state, or changed historical settlement.
+      - Old replay and audit evidence remain interpretable under the documented compatibility window.
+      - Players receive actionable notice and incompatibility reports before the published cutoff.
+    verification:
+      - Migration, compatibility, replay, active-service, rollback, notification, archive, retention, and performance tests.
+      - Railway, product, SRE, finance, and privacy review.
+    humanGate:
+      - Product and operations approve timetable dates, player notice, retention, and abort authority.
+
+  - id: MS-070
+    release: RG-6
+    status: planned
+    risk: R3
+    effort: L
+    title: Security, privacy, legal, and abuse hardening
+    dependsOn: [MS-001, MS-012, MS-039, MS-051, MS-053, MS-063, MS-064]
+    outcome: Launch trust boundaries, personal data, community operations, provider rights, commerce, and abuse controls receive complete evidence and external review.
+    scope:
+      - Finalize threat and abuse models, rate limits, anti-bot, privilege controls, secret rotation, incident response, and external penetration test.
+      - Finalize data inventory, legal bases, consent, retention, export, deletion, moderation, appeals, terms, privacy, imprint, and provider agreements.
+      - Test attacks against auth, worlds, planner windows, tenders, markets, admin, Odoo, billing, webhooks, and live data.
+    exitCriteria:
+      - No critical or high security, privacy, data-rights, consumer, or trademark finding remains unresolved.
+      - Access, export, correction, deletion, retention, appeal, and incident workflows pass on production-like data.
+      - Every launch source, asset, mark, provider, and user-generated-content path has accountable approval.
+    verification:
+      - External penetration test, privacy and legal audit, DSAR drills, abuse simulations, authorization tests, and remediation evidence.
+      - Re-test of every closed critical or high finding.
+    humanGate:
+      - Qualified security, privacy, legal, finance, support, and project-owner sign-off.
+
+  - id: MS-071
+    release: RG-6
+    status: planned
+    risk: R3
+    effort: L
+    title: Supply chain, disaster recovery, and availability
+    dependsOn: [MS-062, MS-064, MS-070]
+    outcome: Signed reproducible artifacts, monitored production services, and rehearsed recovery satisfy the launch supply-chain and reliability targets.
+    scope:
+      - Enforce specification and schema lint, coverage, mutation, SAST, secret, dependency, container, and license gates.
+      - Produce CycloneDX SBOMs, build provenance, signed OCI images and releases, verified deployment, canary, rollback, and artifact retention.
+      - Exercise offsite backup, point-in-time recovery, object/event restore, regional loss, provider/Odoo outage, secret rotation, and on-call response.
+    exitCriteria:
+      - A fresh isolated build reproduces verified artifacts and deployment accepts only approved signatures.
+      - A production-scale world restores within RPO at most five minutes and RTO at most thirty minutes with identical reconciled state.
+      - Game API and live map demonstrate 99.9 percent monthly SLO measurement, actionable alerts, and approved error-budget policy.
+    verification:
+      - Reproducibility, SBOM, signature, vulnerability, license, restore, chaos, failover, canary, rollback, and on-call exercises.
+      - Independent supply-chain, security, and SRE audit.
+    humanGate:
+      - Security and SRE production-readiness approval.
+
+  - id: MS-072
+    release: RG-6
+    status: planned
+    risk: R3
+    effort: M
+    title: External railway, accessibility, and launch-content audit
+    dependsOn: [MS-050, MS-054, MS-060, MS-063, MS-070]
+    outcome: Independent specialists validate operational claims, accessible use, public wording, attribution, and documented limitations on the exact release candidate.
+    scope:
+      - Audit representative infrastructure, conflict, running-time, path, dispatch, tariff, disruption, and player-information scenarios.
+      - Audit WCAG 2.2 AA, keyboard, screen reader, zoom, contrast, reduced motion, error recovery, and supported devices.
+      - Review claims, tutorials, legal pages, source attribution, known limitations, support content, and launch communications.
+    exitCriteria:
+      - No launch-blocking railway safety-model, misleading-claim, accessibility, attribution, or content finding remains.
+      - Known limitations are visible and do not describe Class B assumptions as observed facts.
+      - The exact candidate and evidence are immutable and traceable to fixes.
+    verification:
+      - External audit reports, remediation diffs, targeted regression tests, and signed acceptance records.
+      - Re-test of all launch-blocking findings.
+    humanGate:
+      - Qualified railway, accessibility, legal, product, and support approval.
+
+  - id: MS-073
+    release: RG-6
+    status: planned
+    risk: R3
+    effort: M
+    title: Release candidate freeze and go-live rehearsal
+    dependsOn: [MS-064, MS-070, MS-071, MS-072]
+    outcome: The exact immutable Release Candidate passes a production-like launch, rollback, restore, billing, support, and communication rehearsal.
+    scope:
+      - Freeze code, contracts, data releases, economy, rules, images, migrations, legal text, feature flags, runbooks, and rollback artifacts.
+      - Rehearse canary, world creation, registration, payment, incident, provider outage, support escalation, rollback, restoration, and status communication.
+      - Assemble a single evidence manifest with hashes, checks, accepted risks, approvers, and unresolved non-blocking limitations.
+    exitCriteria:
+      - Every RG-0 through RG-6 exit criterion is linked to current evidence for the exact signed candidate.
+      - Go-live and rollback rehearsal finish inside approved windows without manual database repair or hidden data mutation.
+      - No unresolved launch blocker or expired human approval remains.
+    verification:
+      - Full regression, invariant, replay, load, security, accessibility, billing, restore, and rehearsal evidence.
+      - Independent release-agent verification of artifact and evidence hashes.
+    humanGate:
+      - Formal go/no-go by project owner, product, railway, legal, privacy, finance, security, SRE, accessibility, and support owners.
+
+  - id: MS-074
+    release: RG-7
+    status: planned
+    risk: R3
+    effort: M
+    title: Full Release 1.0 and stabilization
+    dependsOn: [MS-073]
+    outcome: Zugfolge launches and proves its first persistent public Germany world as a supported full-release service.
+    scope:
+      - Execute staged production rollout, capacity guardrails, player communication, support staffing, incident command, and rollback decision windows.
+      - Operate SPFV, SGV, SPNV and REALISTIC, SIMULATED, and MANUAL disruption policies from the signed candidate.
+      - Complete a 30-day stabilization review and establish post-launch release, economy, incident, and timetable-date governance.
+    exitCriteria:
+      - The public world runs 30 production days within approved SLO and error budgets with no incompatible double occupation, data loss, or unbalanced or unreconciled ledger.
+      - Payment, refund, support, moderation, privacy, provider, recovery, and timetable operations meet their approved service targets.
+      - Human owners accept the stabilization evidence before the project status changes from release candidate to Full Release 1.0.
+    verification:
+      - Production SLO, invariant, reconciliation, security, support, billing, economy, recovery, and incident evidence.
+      - Independent 30-day post-launch review against the immutable release evidence manifest.
+    humanGate:
+      - Final product-owner, railway, legal, privacy, finance, security, SRE, accessibility, and support sign-off.

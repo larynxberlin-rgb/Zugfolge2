@@ -28,6 +28,26 @@ produktive OSM-Abdeckung.
 Game-, Infrastruktur- und Odoo-Datenbanken müssen getrennte Credentials,
 Schemas, Backups und Restore-Tests besitzen.
 
+## Einführung nach tatsächlichem Bedarf
+
+Die Zielarchitektur ist keine Erlaubnis, alle Dienste bereits im Walking
+Skeleton zu installieren. Die aktive
+[Full-Release-Roadmap](ROADMAP.md) führt sie just in time ein:
+
+| Meilenstein | Erst dann eingeführter Dienst |
+|---|---|
+| `MS-004` | PostgreSQL/PostGIS und S3-kompatibler Object Store nach akzeptierten Persistenz-ADRs |
+| `MS-012` | Keycloak für die reale OIDC- und Weltisolationsgrenze |
+| `MS-013` | NATS JetStream für den ersten echten Outbox-Consumer; Valkey nur bei gemessenem Cache-/Presence-Bedarf |
+| `MS-022` | Planetiler, PMTiles/MBTiles und optional Martin für die eigene Dark-Map |
+| `MS-052` | Odoo Community und seine getrennte Datenbank |
+| `MS-055` | vollständiger OpenTelemetry-/Prometheus-/Grafana-/Loki-/Tempo-Betriebsstack |
+| `MS-061` bis `MS-062` | regionale Prozesse und weitere Skalierungskomponenten nur nach Lastnachweis |
+
+`MS-010` beweist `FEAT-0001` vorher mit deterministischen, ausdrücklich nicht
+produktiven In-Memory-Adaptern. Dadurch werden PostgreSQL, NATS, Keycloak, Odoo
+und Kartendienste nicht zu versteckten Voraussetzungen für die Domänenlogik.
+
 ## Empfohlener eigener Kartenstack
 
 ```text

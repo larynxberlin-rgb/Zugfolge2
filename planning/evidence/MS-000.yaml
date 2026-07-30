@@ -1,0 +1,56 @@
+schemaVersion: 1
+milestoneId: MS-000
+status: completed
+candidateCommit: 255e34442df313eeea179221941bf1363de6cf10
+completedAt: "2026-07-30T16:02:25+02:00"
+sources:
+  specifications:
+    - spec/00-product-constitution.md
+    - spec/glossary.md
+    - spec/features/FEAT-0001-walking-skeleton.md
+  adrs:
+    - spec/adr/ADR-0001-contract-first-modular-architecture.md
+    - spec/adr/ADR-0002-odoo-backoffice-boundary.md
+    - spec/adr/ADR-0003-versioned-data-provenance.md
+    - spec/adr/ADR-0004-no-pay-to-win-monetization.md
+  contracts:
+    - packages/contracts/openapi/openapi.yaml
+    - packages/contracts/asyncapi/livemap.yaml
+    - packages/contracts/json-schema
+delivery:
+  issues: []
+  pullRequests: []
+  migrations: []
+verification:
+  commands:
+    - npm run lint
+    - npm test
+    - python -m unittest discover -s apps/data-pipeline/tests
+    - python -m unittest discover -s integrations/odoo/tests
+  artifacts:
+    - https://github.com/larynxberlin-rgb/Zugfolge/actions/runs/30549771139
+    - https://github.com/larynxberlin-rgb/Zugfolge/actions/runs/30549771142
+  invariantResults:
+    - Exclusive-occupation, balanced-ledger, deterministic-planning, and replay reference tests passed.
+    - Contract examples and schemas validated.
+  replayHash: null
+  sbomDigest: null
+  imageDigests: []
+operations:
+  observabilityChanges:
+    - FEAT-0001 defines required structured observability; no production runtime exists in MS-000.
+  runbooks:
+    - docs/SERVICES.md
+  rollbackEvidence:
+    - MS-000 contains no production persistence migration or deployment.
+reviews:
+  independentReviewers:
+    - independent-agent/final_release_review
+  humanApprovals: []
+knownLimitations:
+  - The current application is a UI and reference-domain demo, not an authoritative multiplayer game server.
+  - The repository remains UNLICENSED pending the owner decision in MS-001.
+  - Full production SBOM, signed OCI artifacts, and replay hashes belong to later milestones.
+unlocks:
+  - MS-001
+  - MS-002

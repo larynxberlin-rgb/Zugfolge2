@@ -1,0 +1,29 @@
+schemaVersion: 1
+milestoneId: MS-000
+status: verifying
+candidateCommit: "<full-git-commit>"
+completedAt: null
+sources:
+  specifications: []
+  adrs: []
+  contracts: []
+delivery:
+  issues: []
+  pullRequests: []
+  migrations: []
+verification:
+  commands: []
+  artifacts: []
+  invariantResults: []
+  replayHash: null
+  sbomDigest: null
+  imageDigests: []
+operations:
+  observabilityChanges: []
+  runbooks: []
+  rollbackEvidence: []
+reviews:
+  independentReviewers: []
+  humanApprovals: []
+knownLimitations: []
+unlocks: []
