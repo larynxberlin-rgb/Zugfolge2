@@ -12,6 +12,16 @@ product owners, domain specialists, engineers, and AI agents.
 - `features/` contains executable-style feature specifications.
 - `../packages/contracts/` contains the machine-readable v1 interfaces.
 
+Current feature specifications:
+
+- `FEAT-0001` defines the contract-first Walking Skeleton.
+- `FEAT-0002` proposes the reproducible TypeScript/Kotlin/Python engineering
+  baseline for `MS-002`. It remains non-normative until its required human
+  security review is recorded.
+
+`ADR-0005` records the matching proposed build and supply-chain decision. It is
+not accepted until the same security gate is complete.
+
 Delivery order and completion evidence live under `../planning/`. A milestone
 may schedule specification work, but it is not itself a product rule and cannot
 override an accepted specification, ADR, contract, or the precedence in
