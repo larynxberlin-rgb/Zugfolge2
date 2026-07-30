@@ -606,49 +606,36 @@ Leistungsabnahme:
 
 ### 5.2 Roadmap
 
-#### Phase 1 – Rechte, Marke und Foundation (6–8 Wochen)
+Die frühere Unterteilung in sechs große Zeitblöcke war für einzelne
+KI-Arbeitsaufträge nicht präzise genug. Die aktive Lieferplanung verwendet
+deshalb acht evidenzbasierte Release-Gates und 43 einzeln startbare
+Meilensteine:
 
-- Domain-/Markenprüfung, Quellenregister, ODbL-/Feed-Prüfung;
-- Monorepo, CI, Threat Model, Designsystem und Block-Z;
-- OSM-Pilotgraph und Odoo-Bridge-Prototyp.
+| Gate | Ergebnis |
+|---|---|
+| `RG-0` | Foundation und entscheidungsfähige Toolchain |
+| `RG-1` | dauerhafter, authentifizierter Technical Alpha |
+| `RG-2` | datenbasierter Operational Alpha im Pilotnetz |
+| `RG-3` | SPFV, SGV und SPNV als vollständiger Game Alpha |
+| `RG-4` | mehrwöchig betriebener geschlossener Pilot |
+| `RG-5` | Deutschland-Coverage und kontrollierte öffentliche Beta |
+| `RG-6` | eingefrorener und vollständig geprüfter Release Candidate |
+| `RG-7` | Full Release 1.0 nach 30 Tagen Produktionsstabilisierung |
 
-Exit: reproduzierbar gebauter und signierter leerer Vertical Slice.
+Die lesbare Roadmap steht in [`docs/ROADMAP.md`](docs/ROADMAP.md). IDs,
+Abhängigkeiten, Status, Risikoklasse, Scope, Exit-Kriterien, Prüfungen und
+menschliche Gates werden ausschließlich in
+[`planning/milestones.yaml`](planning/milestones.yaml) gepflegt.
 
-#### Phase 2 – Walking Skeleton (10–12 Wochen)
+Ein Meilenstein ist ein einzeln beauftragbares Ergebnis, aber kein einzelner
+Megadiff. Er wird nach dem verbindlichen
+[`planning/MILESTONE_PROMPT.md`](planning/MILESTONE_PROMPT.md) zuerst in
+freigegebene Specs, ADRs, Verträge und begrenzte Feature-Issues zerlegt.
+Abschlussstatus benötigt ein versioniertes Evidence Manifest.
 
-- EVU gründen, Karte laden, Trasse planen, einen Zug simulieren;
-- Livemap, Ledger, Snapshot und Replay.
-
-Exit: vollständige Fahrt mit stabilem Replay-Hash.
-
-#### Phase 3 – Betriebs- und Wirtschaftsverticals (14–18 Wochen)
-
-- Block-/Fahrstraßenlogik, Tagesplanung und Ad-hoc;
-- SPFV, SGV und SPNV end-to-end;
-- Fahrzeuge, Personal, Wartung, Abstellung und alle Störungsmodi.
-
-Exit: geschlossene, vollständig spielbare Produktverticals.
-
-#### Phase 4 – Geschlossene Pilotwelt (10–12 Wochen)
-
-- Leipzig–Halle–Erfurt mit manuell geprüften Knoten und Blöcken;
-- Wirtschaftskalibrierung, UX, Odoo, Support und Monetarisierung.
-
-Exit: stabiler mehrwöchiger Betrieb ohne Doppelbelegung oder Ledgerfehler.
-
-#### Phase 5 – Deutschlandisierung und Skalierung (20–28 Wochen)
-
-- bundesweite Datenpipeline und Qualitätsklassen;
-- regionale Simulationsprozesse, Multiworld-Isolation und Großweltlast.
-
-Exit: 200.000 Zugläufe/Tag und vollständige Wiederherstellung.
-
-#### Phase 6 – Launch-Härtung (10–14 Wochen)
-
-- Security, DSGVO, Backups, Disaster Recovery, Barrierefreiheit und Balance;
-- Store-/Billingtests, Helpdesk, Observability und Rollbackübungen.
-
-Public Launch erst mit SPFV, SGV, SPNV und allen drei Störungsmodi.
+Ein öffentlicher Launch bleibt weiterhin ausgeschlossen, solange SPFV, SGV,
+SPNV oder einer der Modi `REALISTIC`, `SIMULATED` und `MANUAL` nicht auf dem
+exakten Release Candidate geprüft ist.
 
 ### 5.3 Verbindliche Annahmen
 
@@ -687,15 +674,19 @@ Public Launch erst mit SPFV, SGV, SPNV und allen drei Störungsmodi.
 
 ### Nächster implementierbarer Slice
 
-`FEAT-0001` wird als echter JVM-21-Vertical-Slice umgesetzt:
+Der nächste technische Meilenstein ist `MS-002`: reproduzierbare
+TypeScript-, Kotlin/JVM-21- und Python-Toolchains mit einheitlichen lokalen und
+CI-Prüfungen. Danach folgt:
 
-1. Pilot-Welt und EVU persistent anlegen;
-2. einen `PathRequest` aus der UI senden;
-3. Belegungsprofil atomar reservieren oder begründet ablehnen;
-4. `TrainRun` ereignisgesteuert über zwei Konfliktressourcen simulieren;
-5. Sequenz-Delta und Recovery-Snapshot ausliefern;
-6. Trassenentgelt als idempotenten, ausgeglichenen Ledger-Eintrag buchen;
-7. kompletter Replay erzeugt denselben State-Hash.
+1. `MS-003`: Laufzeit-, Modul-, Zeit- und Replay-Entscheidungen;
+2. `MS-010`: `FEAT-0001` als deterministischer In-Memory-JVM-Vertical-Slice;
+3. `MS-004`: produktive Persistenz-/Eventing-ADRs und kleinster lokaler
+   State-Stack;
+4. `MS-011`: dauerhafte Transaktionen, Outbox, Snapshots und Recovery;
+5. `MS-012` und `MS-013`: Authentifizierung, Weltisolation und echte
+   Browser-/Livemap-Integration.
 
-Erst nach diesem Exit werden Live-OSM-Imports, Odoo oder Zahlungsintegration Teil
-des ausführbaren kritischen Pfads.
+Diese Reihenfolge beweist zuerst die Domäneninvarianten. PostgreSQL, NATS,
+Keycloak, Odoo und weitere Dienste werden erst mit ihrem ersten tatsächlichen
+Consumer eingeführt. `MS-001` für Rechte, Lizenz, Marke und Quellenfreigaben
+läuft als menschlich geführter Paralleltrack.

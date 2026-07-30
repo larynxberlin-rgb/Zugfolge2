@@ -55,16 +55,19 @@ Dependency-Audit und CodeQL-SAST.
 /packages/contracts          OpenAPI, AsyncAPI und JSON Schema
 /packages/domain             ausführbarer Referenz-Domänenkern
 /spec                        Produktverfassung, Glossar, ADRs, Features
+/planning                    maschinenlesbare Meilensteine, Prompt, Evidenz
 /tests                       Unit- und Render-Tests
 /build, /worker              Hosting- und Worker-Adapter
-/docs                        Betrieb, Dienste, Lizenzen und Datenquellen
+/docs                        Roadmap, Betrieb, Dienste, Lizenzen und Datenquellen
 /.github                     Issue- und Pull-Request-Vorlagen
 ```
 
 Die geplante Zielstruktur mit Kotlin-Game-Server, Simulation Runtime,
 Live-Gateway, Datenpipeline und Odoo-Bridge ist im [Gesamtplan](PLAN.md)
-festgehalten. Es werden nur Module angelegt, die bereits einen testbaren
-Vertical Slice oder einen freigegebenen Vertrag besitzen.
+festgehalten. Der Weg dorthin ist in der
+[Full-Release-Roadmap](docs/ROADMAP.md) in 43 einzeln startbare Meilensteine
+unterteilt. Es werden nur Module angelegt, die bereits einen testbaren Vertical
+Slice oder einen freigegebenen Vertrag besitzen.
 
 ## Die wichtigsten Invarianten
 
@@ -128,6 +131,9 @@ Ausfallprüfung.
 - Öffentliche Welten: persistent, ausschließlich Spielerzüge, 1:1-Echtzeit
 - Repository-Lizenz: **UNLICENSED**, Entscheidungsvorlage vorhanden
 
-Der aktuelle Umsetzungsstand und die nächsten Exit-Kriterien werden im
-[Gesamtplan](PLAN.md) und in
-[FEAT-0001](spec/features/FEAT-0001-walking-skeleton.md) gepflegt.
+`MS-000` ist abgeschlossen. Parallel bereit sind `MS-001` für Rechte, Lizenz
+und Marke sowie `MS-002` als nächster technischer Meilenstein für die
+reproduzierbare TypeScript-/Kotlin-/Python-Toolchain. Der aktuelle
+Umsetzungsstand, alle Abhängigkeiten und die Exit-Kriterien werden in der
+[Full-Release-Roadmap](docs/ROADMAP.md) und der
+[maschinenlesbaren Planung](planning/milestones.yaml) gepflegt.
