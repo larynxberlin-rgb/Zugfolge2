@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from enum import StrEnum
 from hashlib import sha256
 import json
+from math import isfinite
 from types import MappingProxyType
 from typing import Any, Mapping
 
@@ -13,6 +14,36 @@ class QualityClass(StrEnum):
     A_VALIDATED = "A"
     B_CONSERVATIVE = "B"
     C_INSUFFICIENT = "C"
+
+
+def _deep_freeze(value: Any) -> Any:
+    if value is None or isinstance(value, (str, bool, int)):
+        return value
+    if isinstance(value, float):
+        if not isfinite(value):
+            raise ValueError("attribute values must not contain NaN or infinity")
+        return value
+    if isinstance(value, Mapping):
+        frozen: dict[str, Any] = {}
+        for key, nested in value.items():
+            if not isinstance(key, str):
+                raise TypeError("attribute object keys must be strings")
+            frozen[key] = _deep_freeze(nested)
+        return MappingProxyType(frozen)
+    if isinstance(value, (list, tuple)):
+        return tuple(_deep_freeze(nested) for nested in value)
+    raise TypeError("attribute values must be JSON-compatible")
+
+
+def _canonical_value(value: Any) -> Any:
+    if isinstance(value, Mapping):
+        return {
+            key: _canonical_value(nested)
+            for key, nested in sorted(value.items())
+        }
+    if isinstance(value, tuple):
+        return [_canonical_value(nested) for nested in value]
+    return value
 
 
 def _require_utc(value: datetime, field: str) -> datetime:
@@ -36,6 +67,7 @@ class DataProvenance:
     transformation_ids: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
+        object.__setattr__(self, "transformation_ids", tuple(self.transformation_ids))
         if not self.source_id.strip():
             raise ValueError("source_id is required")
         if not self.license_or_permission.strip():
@@ -116,9 +148,12 @@ class AttributeValue:
     quality_class: QualityClass
     provenance: DataProvenance
 
+    def __post_init__(self) -> None:
+        object.__setattr__(self, "value", _deep_freeze(self.value))
+
     def canonical_dict(self) -> dict[str, Any]:
         return {
-            "value": self.value,
+            "value": _canonical_value(self.value),
             "qualityClass": self.quality_class.value,
             "provenance": self.provenance.canonical_dict(),
         }

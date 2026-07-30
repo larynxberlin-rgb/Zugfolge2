@@ -38,6 +38,13 @@ test("server-renders the Zugfolge operations console", async () => {
   assert.match(html, /SPNV/);
   assert.match(html, /Simuliert/);
   assert.match(html, /OpenStreetMap/);
+  assert.match(html, /Nicht autoritative UI-Demo/);
+  assert.equal(
+    [...html.matchAll(/class="mode-switch" role="group" aria-labelledby=/g)]
+      .length,
+    2,
+  );
+  assert.doesNotMatch(html, /Qualität A\/B|fachlich konfliktgeprüft/i);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
 });
 
@@ -56,5 +63,6 @@ test("ships the Block-Z brand and reduced-motion fallback", async () => {
   assert.match(css, /#0b1016/i);
   assert.match(css, /#39c6e5/i);
   assert.match(manifest, /"name":\s*"Zugfolge"/);
+  assert.equal(JSON.parse(packageJson).license, "UNLICENSED");
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
 });

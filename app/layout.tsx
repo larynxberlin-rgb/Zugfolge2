@@ -1,5 +1,5 @@
-import type { Metadata, Viewport } from "next";
-import { headers } from "next/headers";
+import { headers } from "vinext/shims/headers";
+import type { Metadata, Viewport } from "vinext/shims/metadata";
 import "./globals.css";
 
 export async function generateMetadata(): Promise<Metadata> {

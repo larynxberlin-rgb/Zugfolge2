@@ -557,6 +557,14 @@ menschliche Freigabe.
 
 ### 5.1 Verbindliche Qualitätsgates
 
+Die folgende Liste ist das vollständige Zielgate für produktionsreife
+Änderungen. Die Foundation-CI setzt derzeit Build, Typprüfung, Lint,
+Vertrags-/Domänentests, Python-Kerneltests, CodeQL-SAST, Secret- und
+Dependency-Prüfung sowie einen maschinenlesbaren Lizenz-Metadatencheck um.
+Solange insbesondere Coverage-/Mutation-Gates, Container-Scan, vollständige
+SBOM und Signatur fehlen, ist ein Produktionsrelease ausdrücklich nicht
+freigegeben.
+
 Jeder Pull Request besteht:
 
 - Spec-, Referenz- und Schema-Lint;

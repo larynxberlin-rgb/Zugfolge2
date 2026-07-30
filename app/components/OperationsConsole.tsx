@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { BlockZ } from "./BlockZ";
 import {
   MODE_DESCRIPTIONS,
@@ -120,10 +120,14 @@ function ModeSwitch({
   value: DisruptionMode;
   onChange: (mode: DisruptionMode) => void;
 }) {
+  const labelId = useId();
+
   return (
     <div className="mode-row">
-      <span className="mode-row__label">{label}</span>
-      <div className="mode-switch">
+      <span className="mode-row__label" id={labelId}>
+        {label}
+      </span>
+      <div className="mode-switch" role="group" aria-labelledby={labelId}>
         {(["REALISTIC", "SIMULATED", "MANUAL"] as const).map((mode) => (
           <button
             key={mode}
@@ -292,13 +296,14 @@ export function OperationsConsole() {
                 {WORKSPACE_LABELS[activeWorkspace]}
               </h1>
               <p className="workspace-subtitle">
-                Pilotnetz Leipzig–Halle–Erfurt · Datenstand 2026.07 · Qualität A/B
+                Pilotnetz Leipzig–Halle–Erfurt · schematische, ungeprüfte
+                Demodaten
               </p>
             </div>
             <div className="workspace-actions">
               <span className="live-pill">
                 <span className="live-pill__wave" aria-hidden="true" />
-                Live · 24 Züge
+                UI-Demo · 4 Züge
               </span>
               <button
                 className="simulation-button"
@@ -355,19 +360,19 @@ export function OperationsConsole() {
               ))}
 
               {PILOT_STATIONS.map((station) => (
-                <button
+                <span
                   key={station.id}
-                  type="button"
                   className={`station ${station.major ? "station--major" : ""}`}
                   style={{
                     left: `${station.point[0]}%`,
                     top: `${station.point[1]}%`,
                   }}
-                  aria-label={`${station.name} auswählen`}
+                  role="img"
+                  aria-label={`Betriebsstelle ${station.name}`}
                 >
-                  <span className="station__node" />
+                  <span className="station__node" aria-hidden="true" />
                   <span className="station__label">{station.shortName}</span>
-                </button>
+                </span>
               ))}
 
               {visibleTrains.map((train) => {
@@ -432,7 +437,8 @@ export function OperationsConsole() {
               target="_blank"
               rel="noreferrer"
             >
-              Ziel-Datengrundlage: OpenStreetMap (ODbL) · Demo schematisch
+              Nicht autoritative UI-Demo · Ziel-Datengrundlage:
+              OpenStreetMap (ODbL)
             </a>
           </section>
 
@@ -632,12 +638,12 @@ export function OperationsConsole() {
             <h3 className="inspector-section__title">Planner-Entscheidung</h3>
             <div className="decision-card">
               <div className="decision-card__title">
-                <span aria-hidden="true">✓</span> Trasse konfliktfrei
+                <span aria-hidden="true">✓</span> Demo-Profil konfliktfrei
               </div>
               <p className="decision-card__copy">
-                Belegung wurde gegen Block-, Fahrstraßen-, Bahnsteig- und
-                Gegenfahrressourcen geprüft. Zahlungsstatus war kein
-                Eingangsparameter.
+                Der Referenzkern prüft ausschließlich die lokale Fixture gegen
+                modellierte Blockressourcen. Dies ist keine fachlich validierte
+                Trasse. Zahlungsstatus war kein Eingangsparameter.
               </p>
             </div>
           </section>

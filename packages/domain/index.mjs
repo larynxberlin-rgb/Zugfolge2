@@ -86,13 +86,13 @@ export function createLedgerEntry({
   }
 
   const total = postings.reduce((sum, posting) => {
-    if (!Number.isInteger(posting.amountMinor)) {
+    if (!Number.isSafeInteger(posting.amountMinor)) {
       throw new Error("MONEY_MUST_USE_INTEGER_MINOR_UNITS");
     }
-    return sum + posting.amountMinor;
-  }, 0);
+    return sum + BigInt(posting.amountMinor);
+  }, 0n);
 
-  if (total !== 0) {
+  if (total !== 0n) {
     throw new Error("LEDGER_NOT_BALANCED");
   }
 

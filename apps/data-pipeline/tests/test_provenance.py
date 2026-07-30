@@ -88,6 +88,30 @@ class ProvenanceTest(unittest.TestCase):
                 entity_id="edge-1", attribute_name="maxSpeedKph", attribute=value
             )
 
+    def test_nested_attribute_values_are_deeply_immutable(self) -> None:
+        raw_value = {"signals": [{"system": "Ks"}]}
+        attribute = AttributeValue(
+            raw_value,
+            QualityClass.B_CONSERVATIVE,
+            provenance(b"nested"),
+        )
+        raw_value["signals"][0]["system"] = "Hp"
+
+        builder = InfrastructureReleaseBuilder(
+            release_id="pilot-2026.1", ruleset_version="1"
+        )
+        builder.add_attribute(
+            entity_id="edge-1",
+            attribute_name="signalling",
+            attribute=attribute,
+        )
+        release = builder.build()
+        frozen_signals = release.attributes["edge-1"]["signalling"].value["signals"]
+
+        self.assertEqual(frozen_signals[0]["system"], "Ks")
+        with self.assertRaises(TypeError):
+            frozen_signals[0]["system"] = "Hp"
+
 
 if __name__ == "__main__":
     unittest.main()

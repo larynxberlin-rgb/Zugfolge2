@@ -4,6 +4,10 @@
 **Stand:** 30. Juli 2026  
 **Entscheidung:** noch offen
 
+Bis zur Entscheidung ist das Repository technisch als `UNLICENSED`
+gekennzeichnet. Damit gilt keine Open-Source-Freigabe; sämtliche Rechte bleiben
+vorbehalten.
+
 ## Kurzempfehlung
 
 Wenn Zugfolge als echtes Open-Source-Projekt entwickelt werden soll, ist

@@ -44,7 +44,9 @@ npm test
 ```
 
 `npm test` baut die Cloudflare-/vinext-Ausgabe und prüft anschließend sowohl den
-gerenderten HTML-Vertical-Slice als auch die Domäneninvarianten.
+gerenderten HTML-Vertical-Slice als auch Verträge, Domäneninvarianten,
+Lizenzmetadaten und erkennbare Credential-Leaks. GitHub Actions ergänzt
+Dependency-Audit und CodeQL-SAST.
 
 ## Repository-Landkarte
 
@@ -98,7 +100,9 @@ Attribution ausgeliefert.
 
 Für dieses Repository ist bewusst noch **keine Root-Lizenz** gesetzt. Ein
 öffentlich sichtbares GitHub-Repository erteilt ohne Lizenz keine allgemeine
-Erlaubnis zum Kopieren, Verändern oder Weiterverbreiten.
+Erlaubnis zum Kopieren, Verändern oder Weiterverbreiten. Das Paket ist deshalb
+bis zur Entscheidung ausdrücklich als `UNLICENSED` markiert; es gilt
+„all rights reserved“.
 
 Die Empfehlung ist **AGPL-3.0-or-later für den Programmcode**, wenn Zugfolge ein
 echtes Open-Source-Projekt werden und auch Änderungen an öffentlich betriebenen
@@ -122,6 +126,7 @@ Ausfallprüfung.
 - Pilotregion: Leipzig–Halle–Erfurt
 - Zielmarkt: Deutschland / EUR / Infrastrukturstand 2026
 - Öffentliche Welten: persistent, ausschließlich Spielerzüge, 1:1-Echtzeit
+- Repository-Lizenz: **UNLICENSED**, Entscheidungsvorlage vorhanden
 
 Der aktuelle Umsetzungsstand und die nächsten Exit-Kriterien werden im
 [Gesamtplan](PLAN.md) und in

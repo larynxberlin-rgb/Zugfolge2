@@ -611,7 +611,7 @@ button:focus-visible,
   padding: 0;
   border: 0;
   background: transparent;
-  cursor: pointer;
+  cursor: default;
   transform: translate(-8px, -7px);
   text-align: left;
 }
@@ -648,8 +648,7 @@ button:focus-visible,
   font-weight: 650;
 }
 
-.station:hover .station__label,
-.station:focus-visible .station__label {
+.station:hover .station__label {
   color: var(--zf-text);
 }
 

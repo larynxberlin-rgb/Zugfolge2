@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata } from "vinext/shims/metadata";
 import { OperationsConsole } from "./components/OperationsConsole";
 
 export const metadata: Metadata = {

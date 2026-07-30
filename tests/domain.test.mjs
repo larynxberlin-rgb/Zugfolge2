@@ -116,6 +116,22 @@ test("ledger accepts only balanced integer-minor postings", () => {
       }),
     /LEDGER_NOT_BALANCED/,
   );
+
+  assert.throws(
+    () =>
+      createLedgerEntry({
+        entryId: "entry-3",
+        worldId: "world-1",
+        currency: "EUR",
+        reference: "unsafe-integer",
+        postings: [
+          { account: "PATH_EXPENSE", amountMinor: 2 ** 53 },
+          { account: "ROUNDING", amountMinor: 1 },
+          { account: "CASH", amountMinor: -(2 ** 53) },
+        ],
+      }),
+    /MONEY_MUST_USE_INTEGER_MINOR_UNITS/,
+  );
 });
 
 test("replay is deterministic and rejects sequence gaps", () => {
