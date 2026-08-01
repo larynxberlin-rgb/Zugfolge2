@@ -1,6 +1,6 @@
 # Dependency and supply-chain register
 
-**Status:** MS-002-S01 accepted policy; dependencies enter only through owning slices
+**Status:** MS-002-S02 JavaScript lock candidate; later ecosystems remain policy-only
 **Last reviewed:** 2026-08-01
 **Security approval:** accepted — [human decision record](https://github.com/larynxberlin-rgb/Zugfolge/issues/3#issuecomment-5150191133)
 
@@ -30,12 +30,12 @@ the listed verification, and retain a direct rollback.
 
 ## Current foundation
 
-The current TypeScript dependency graph is exactly recorded by
-`package-lock.json`; direct purposes are visible in `package.json` and license
-metadata is enforced by `tests/compliance.test.mjs` and
-`tests/repository-policy.test.mjs`. The lock remains
-authoritative until `MS-002-S02` replaces both it and that license check in the
-same reviewed slice.
+The TypeScript dependency graph is exactly recorded by `pnpm-lock.yaml` and
+requires Node.js `24.18.0` plus pnpm `11.18.0`. Direct purposes remain visible
+in `package.json`; direct installed licenses are checked independently of a
+package-manager-specific lockfile field, while the shipped package set is
+verified against installed metadata, lock integrity and exact notice bytes.
+`package-lock.json` and npm project-resolution commands are no longer accepted.
 
 Both current Python packages have no runtime dependency. Their pinned
 `hatchling==1.27.0` build backend is a build-time dependency. They do not yet
@@ -58,28 +58,34 @@ Current workflows use only immutable Action SHAs:
 | Action | Current release | Purpose | Permission/trust boundary |
 |---|---|---|---|
 | `actions/checkout` | v5 | materialize repository source | untrusted PR source; `contents: read` |
-| `actions/setup-node` | v5 | install/cache the declared Node runtime | downloads official Node distribution; `contents: read` |
+| `actions/setup-node` | v7.0.0 | install/cache Node.js `24.18.0` | downloads official Node distribution; `contents: read` |
+| `pnpm/action-setup` | v6.0.9 | install pnpm `11.18.0` | executes only in the existing web job; `contents: read` |
 | `actions/setup-python` | v6 | install the declared Python runtime | downloads official Python distribution; `contents: read` |
 | `github/codeql-action` | v3 | initialize, build, and upload SAST results | job-local `security-events: write` |
 | `actions/dependency-review-action` | pinned main commit | reject vulnerable dependency deltas | pull requests only; `contents: read`; Dependency Graph required |
 
-All current Action references remain unchanged in the MS-002 preparation pull
-request.
+S02 changes only the existing web job to the approved setup-node and pnpm
+references. Python and security workflows remain unchanged until their owning
+slices.
 
-### Current foundation advisory disposition
+### S02 advisory disposition
 
-An `npm audit` on 1 August 2026 reports one Low and eight High findings in the
-existing npm graph. The direct remediation anchors are
-`react-server-dom-webpack` `19.2.8`, Vite `8.2.0`, and
-`@cloudflare/vite-plugin` `1.50.0`; the Cloudflare update also owns the affected
-Wrangler/Miniflare transitive graph. These packages predate S01 and remain in a
-non-public evaluation build.
+The S02 candidate replaces the vulnerable graph with exact React and
+`react-server-dom-webpack` `19.2.8`, Vite `8.2.0`,
+`@cloudflare/vite-plugin` `1.50.0`, and Wrangler `4.118.0` pins. A frozen pnpm
+audit on 1 August 2026 reports zero known Low, Moderate, High, or Critical
+findings across 430 resolved dependencies. No force-update or advisory
+suppression is used. Public deployment remains independently blocked by the
+asset-provenance gate.
 
-S02 MUST resolve the High findings through reviewed exact pins and a new frozen
-lock before its migration is accepted. It MUST NOT use `npm audit fix --force`,
-silently suppress an advisory, or claim that the S01 policy decision accepted
-the vulnerable bytes. Until S02 passes, public deployment remains blocked by
-both the existing asset gate and this dependency disposition.
+pnpm 11 applies its default 24-hour release-age quarantine. The exact
+Cloudflare plugin and Wrangler security updates, plus their locked Miniflare
+alpha dependency, are explicit `minimumReleaseAgeExclude` entries because they
+were reviewed and intentionally selected before aging out. Lifecycle scripts
+are denied by default; only the locked `esbuild@0.28.1` and
+`workerd@1.20260730.1` installers required by the existing build are allowed.
+Removing those exceptions or reverting the dependency pins and pnpm lock is
+the S02 rollback.
 
 ## Approved MS-002 toolchains
 
@@ -97,7 +103,9 @@ both the existing asset gate and this dependency disposition.
 Approved bootstrap channels:
 
 - local pnpm: install exact `pnpm@11.18.0` from the official npm registry
-  after the pinned Node.js runtime, then verify `pnpm --version` before use;
+  after the pinned Node.js runtime, verify registry integrity
+  `sha512-M9g8d9qC9J+6g2klxvG4QRgewxMrZwY5vQEvcHX1x89jTF+HAUfBmq50ePrAHfCdiJLogEVIlu3SPumzN1dWPA==`,
+  then verify `pnpm --version` before use;
 - CI pnpm: the immutable `pnpm/action-setup` reference below;
 - local uv: the version-addressable official `0.12.0` installer, with the
   downloaded platform artifact verified against the approved digest below;

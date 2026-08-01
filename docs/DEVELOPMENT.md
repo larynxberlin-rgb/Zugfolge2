@@ -7,15 +7,25 @@ This guide deliberately separates commands that work on the current foundation
 from commands planned by `MS-002`. Do not assume a planned command exists until
 its slice is merged.
 
-## Current foundation
+## Current JavaScript foundation
 
-The current web foundation requires Node.js `>=22.13.0` and npm:
+The web foundation requires exact Node.js `24.18.0` and pnpm `11.18.0`:
 
 ```text
-npm ci
-npm run lint
-npm test
+npm install --global pnpm@11.18.0
+pnpm --version
+pnpm install --frozen-lockfile
+pnpm exec tsc --noEmit
+pnpm run lint
+pnpm run build
+pnpm test
 ```
+
+The first npm command bootstraps only the approved exact pnpm CLI from the
+official npm registry. npm is not an alternative dependency-resolution path:
+all project dependencies come exclusively from `pnpm-lock.yaml` in frozen
+mode. The install permits lifecycle scripts only for the locked `esbuild` and
+`workerd` packages required by the existing Vite/Cloudflare build.
 
 The current Python kernels require Python 3.12:
 
@@ -25,7 +35,7 @@ python -m unittest discover -s apps/data-pipeline/tests -v
 python -m unittest discover -s integrations/odoo/tests -v
 ```
 
-GitHub Actions is the clean Ubuntu reference. If `node`, `npm`, or `python`
+GitHub Actions is the clean Ubuntu reference. If `node`, `pnpm`, or `python`
 cannot be found locally, install the declared official runtime; do not use the
 presence of a cached `node_modules`, virtual environment, or system Gradle as
 evidence that the machine is supported.
@@ -35,9 +45,10 @@ cloud account is needed for the current checks. Planned self-hosted runtime
 services and their introduction milestones are documented in
 [SERVICES.md](SERVICES.md).
 
-## MS-002 target — accepted, not yet executable
+## MS-002 target — JavaScript phase executable
 
-The accepted sequence will be introduced by S02–S07:
+The first command is executable after S02; S03–S07 introduce the remaining
+commands and the root orchestrator:
 
 ```text
 pnpm install --frozen-lockfile
@@ -78,8 +89,9 @@ The human Security Reviewer decision is recorded in
 [MS-002-S01](https://github.com/larynxberlin-rgb/Zugfolge/issues/3#issuecomment-5150191133),
 and `FEAT-0002` plus `ADR-0005` are accepted. S02 may migrate JavaScript only
 after S01 merges; S03 and S04 then introduce the Python and Kotlin foundations
-independently. No command in the target sequence is claimed executable before
-its owning slice has merged and passed its rollback and clean-install checks.
+independently. No later command in the target sequence is claimed executable
+before its owning slice has merged and passed its rollback and clean-install
+checks.
 
 See [planning/MS-002-KICKOFF.md](../planning/MS-002-KICKOFF.md) for the eight
 independently mergeable delivery slices.
