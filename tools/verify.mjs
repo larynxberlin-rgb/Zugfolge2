@@ -21,7 +21,7 @@ export const VERIFICATION_PHASES = Object.freeze([
   {
     id: "frozen-dependencies",
     commands: [
-      ["pnpm", "install", "--frozen-lockfile"],
+      ["pnpm", "install", "--frozen-lockfile", "--reporter=silent"],
       ["pnpm", "audit", "--audit-level=high"],
       ["uv", "sync", "--all-packages", "--locked"],
       ["node", "tools/verify-gradle-wrapper.mjs"],

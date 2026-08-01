@@ -33,6 +33,12 @@ test("root verification exposes the eight accepted ordered phases", () => {
       "sbom-and-evidence",
     ],
   );
+  assert.deepEqual(VERIFICATION_PHASES[1].commands[0], [
+    "pnpm",
+    "install",
+    "--frozen-lockfile",
+    "--reporter=silent",
+  ]);
   const calls = [];
   assert.throws(() =>
     runVerification(
@@ -107,12 +113,17 @@ test("empty checkout enters the orchestrator before pnpm may install dependencie
       ),
     ]);
     const batch = process.platform === "win32";
+    const childEnvironment = {
+      ...process.env,
+      npm_config_offline: "true",
+    };
+    delete childEnvironment.NODE_V8_COVERAGE;
     const result = spawnSync(batch ? process.env.ComSpec : "pnpm", batch
       ? ["/d", "/s", "/c", "pnpm.cmd run probe"]
       : ["run", "probe"], {
       cwd: sandbox,
       encoding: "utf8",
-      env: { ...process.env, npm_config_offline: "true" },
+      env: childEnvironment,
       shell: false,
     });
     assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
