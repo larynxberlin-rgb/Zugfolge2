@@ -53,6 +53,15 @@ gerenderten HTML-Vertical-Slice als auch Verträge, Domäneninvarianten,
 Lizenzmetadaten und erkennbare Credential-Leaks. GitHub Actions ergänzt
 Dependency-Audit und CodeQL-SAST.
 
+Für Datenpipeline und Odoo-Bridge werden zusätzlich das offizielle CPython
+`3.13.14` und uv `0.12.0` verwendet:
+
+```bash
+uv sync --all-packages --locked
+uv run python -m unittest discover -s apps/data-pipeline/tests -v
+uv run python -m unittest discover -s integrations/odoo/tests -v
+```
+
 ## Repository-Landkarte
 
 ```text

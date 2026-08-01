@@ -1,12 +1,9 @@
 from datetime import datetime, timezone
-from pathlib import Path
+from importlib.metadata import version
 import sys
 import unittest
 
-MODULE_ROOT = Path(__file__).resolve().parents[1] / "src"
-sys.path.insert(0, str(MODULE_ROOT))
-
-from zugfolge_data import (  # noqa: E402
+from zugfolge_data import (
     AttributeValue,
     DataProvenance,
     InfrastructureRelease,
@@ -28,6 +25,10 @@ def provenance(payload: bytes = b"osm-fixture") -> DataProvenance:
 
 
 class ProvenanceTest(unittest.TestCase):
+    def test_workspace_package_is_installed(self) -> None:
+        self.assertEqual(version("zugfolge-data-pipeline"), "0.1.0")
+        self.assertEqual(sys.version_info[:3], (3, 13, 14))
+
     def test_checksum_is_derived_from_original_bytes(self) -> None:
         self.assertEqual(provenance().checksum_sha256, provenance().checksum_sha256)
         self.assertNotEqual(

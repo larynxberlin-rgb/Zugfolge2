@@ -1,11 +1,8 @@
-from pathlib import Path
+from importlib.metadata import version
 import sys
 import unittest
 
-MODULE_ROOT = Path(__file__).resolve().parents[1] / "src"
-sys.path.insert(0, str(MODULE_ROOT))
-
-from zugfolge_odoo_bridge import (  # noqa: E402
+from zugfolge_odoo_bridge import (
     IdempotencyConflict,
     IdempotencyInbox,
     InvalidWebhook,
@@ -18,6 +15,10 @@ class WebhookBoundaryTest(unittest.TestCase):
     secret = b"0123456789abcdef0123456789abcdef"
     body = b'{"messageId":"event-1","type":"ENTITLEMENT_CHANGED"}'
     timestamp = 1_785_411_600
+
+    def test_workspace_package_is_installed(self) -> None:
+        self.assertEqual(version("zugfolge-odoo-bridge"), "0.1.0")
+        self.assertEqual(sys.version_info[:3], (3, 13, 14))
 
     def test_valid_signature_is_accepted(self) -> None:
         signature = sign_webhook(self.secret, self.timestamp, self.body)

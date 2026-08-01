@@ -358,15 +358,38 @@ test("distributed packages and Python build dependencies stay explicit", async (
     ({ ecosystem }) => ecosystem === "python",
   );
   assert.ok(python);
-  assert.equal(python.exactResolution, false);
-  assert.equal(python.lockfile, null);
-  assert.equal(python.status, "RELEASE_BLOCKED_NO_LOCK");
+  assert.equal(python.exactResolution, true);
+  assert.equal(python.lockfile, "uv.lock");
+  assert.equal(python.status, "LOCKED_REVIEW_PENDING");
   assert.deepEqual(python.runtimeDependencies, []);
   assert.deepEqual(python.buildDependencies, ["hatchling==1.27.0"]);
+  const uvLock = await readFile(new URL("../uv.lock", import.meta.url), "utf8");
+  assert.equal(normalizedTextSha256(uvLock), python.canonicalSha256);
+  assert.equal(
+    [...uvLock.matchAll(/^\[\[package\]\]$/gm)].length,
+    python.packageCountIncludingWorkspace,
+  );
+  assert.match(uvLock, /^requires-python = "==3\.13\.14"$/m);
+  assert.match(uvLock, /^name = "hatchling"$/m);
+  assert.match(uvLock, /^version = "1\.27\.0"$/m);
+  const pythonVersion = await readFile(
+    new URL("../.python-version", import.meta.url),
+    "utf8",
+  );
+  assert.equal(pythonVersion.trim(), "3.13.14");
+  const rootPythonProject = await readFile(
+    new URL("../pyproject.toml", import.meta.url),
+    "utf8",
+  );
+  assert.match(rootPythonProject, /^requires-python = "==3\.13\.14"$/m);
+  assert.match(rootPythonProject, /^required-version = "==0\.12\.0"$/m);
+  assert.match(rootPythonProject, /^python-preference = "only-system"$/m);
   for (const path of python.manifests) {
     const project = await readFile(new URL(`../${path}`, import.meta.url), "utf8");
     assert.match(project, /^dependencies = \[\]$/m);
-    assert.match(project, /^requires = \["hatchling==1\.27\.0"\]$/m);
+    if (path !== "pyproject.toml") {
+      assert.match(project, /^requires = \["hatchling==1\.27\.0"\]$/m);
+    }
   }
 });
 

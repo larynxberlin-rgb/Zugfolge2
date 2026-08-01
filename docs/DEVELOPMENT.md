@@ -27,12 +27,18 @@ all project dependencies come exclusively from `pnpm-lock.yaml` in frozen
 mode. The install permits lifecycle scripts only for the locked `esbuild` and
 `workerd` packages required by the existing Vite/Cloudflare build.
 
-The current Python kernels require Python 3.12:
+The Python workspace requires exact CPython `3.13.14` and uv `0.12.0`. uv is
+bootstrapped only from the approved versioned installer and runs against the
+official system interpreter selected by `.python-version`:
 
 ```text
-python -m compileall -q apps/data-pipeline/src integrations/odoo/src
-python -m unittest discover -s apps/data-pipeline/tests -v
-python -m unittest discover -s integrations/odoo/tests -v
+uv --version
+uv sync --all-packages --locked
+uv run python -m compileall -q apps/data-pipeline/src integrations/odoo/src
+uv run python -m unittest discover -s apps/data-pipeline/tests -v
+uv run python -m unittest discover -s integrations/odoo/tests -v
+uv build --package zugfolge-data-pipeline
+uv build --package zugfolge-odoo-bridge
 ```
 
 GitHub Actions is the clean Ubuntu reference. If `node`, `pnpm`, or `python`
@@ -47,8 +53,8 @@ services and their introduction milestones are documented in
 
 ## MS-002 target — JavaScript phase executable
 
-The first command is executable after S02; S03–S07 introduce the remaining
-commands and the root orchestrator:
+The first two commands are executable after S02/S03; S04–S07 introduce the
+remaining command and the root orchestrator:
 
 ```text
 pnpm install --frozen-lockfile
