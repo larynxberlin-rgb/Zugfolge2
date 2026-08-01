@@ -16,7 +16,15 @@ path = [
   "apps/data-pipeline/tests/**",
   "build/**",
   "build-constraints.txt",
+  "build.gradle.kts",
   "eslint.config.mjs",
+  "gradle.properties",
+  "gradle/libs.versions.toml",
+  "gradle/verification-metadata.xml",
+  "gradle/wrapper/gradle-wrapper.properties",
+  "apps/game-server/build.gradle.kts",
+  "apps/game-server/src/**",
+  "apps/game-server/gradle.lockfile",
   "integrations/odoo/pyproject.toml",
   "integrations/odoo/src/**",
   "integrations/odoo/tests/**",
@@ -26,9 +34,11 @@ path = [
   "packages/domain/index.mjs",
   "postcss.config.mjs",
   "pyproject.toml",
+  "settings.gradle.kts",
   "public/**",
   "scripts/**",
   "tests/**",
+  "tools/verify-gradle-wrapper.mjs",
   "tsconfig.json",
   "uv.lock",
   "vite.config.ts",
@@ -40,12 +50,23 @@ SPDX-License-Identifier = "AGPL-3.0-or-later"
 
 [[annotations]]
 path = [
+  "gradle/wrapper/gradle-wrapper.jar",
+  "gradlew",
+  "gradlew.bat",
+]
+precedence = "closest"
+SPDX-FileCopyrightText = "2015 the original author or authors"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = [
   "CONTRIBUTING.md",
   "NOTICE",
   "PLAN.md",
   "README.md",
   "TRADEMARKS.md",
   "apps/data-pipeline/README.md",
+  "apps/game-server/README.md",
   "compliance/**",
   "docs/**",
   "integrations/odoo/README.md",
