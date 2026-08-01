@@ -13,7 +13,10 @@ import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { parse as parseYaml } from "yaml";
-import { verifyGradleWrapper } from "../tools/verify-gradle-wrapper.mjs";
+import {
+  verifyGradleWrapper,
+  verifyJavaPropertyOutput,
+} from "../tools/verify-gradle-wrapper.mjs";
 
 const REPOSITORY_PATH = fileURLToPath(new URL("../", import.meta.url));
 
@@ -124,6 +127,25 @@ test("Gradle wrapper and distribution retain independently reviewed checksums", 
   });
 });
 
+test("JVM policy rejects a different vendor or patch release", () => {
+  const approved = `
+    java.runtime.version = 21.0.12+8-LTS
+    java.vendor = Eclipse Adoptium
+  `;
+  assert.deepEqual(verifyJavaPropertyOutput(approved), {
+    runtimeVersion: "21.0.12+8-LTS",
+    vendor: "Eclipse Adoptium",
+  });
+  assert.throws(
+    () => verifyJavaPropertyOutput(approved.replace("Eclipse Adoptium", "Oracle Corporation")),
+    /Eclipse Adoptium/,
+  );
+  assert.throws(
+    () => verifyJavaPropertyOutput(approved.replace("21.0.12+8-LTS", "21.0.13+9-LTS")),
+    /21\.0\.12\+8-LTS/,
+  );
+});
+
 test("wrapper verification fails closed after JAR tampering", async (context) => {
   const fixture = await wrapperFixture(context);
   await writeFile(
@@ -153,13 +175,14 @@ test("wrapper verification fails closed after distribution drift", async (contex
 });
 
 test("Kotlin foundation pins JVM 21 and writes outside tracked build source", async () => {
-  const [rootBuild, applicationBuild, versions, ignore, lock, verification] =
+  const [rootBuild, applicationBuild, properties, versions, ignore, lock, verification] =
     await Promise.all([
       readFile(path.join(REPOSITORY_PATH, "build.gradle.kts"), "utf8"),
       readFile(
         path.join(REPOSITORY_PATH, "apps", "game-server", "build.gradle.kts"),
         "utf8",
       ),
+      readFile(path.join(REPOSITORY_PATH, "gradle.properties"), "utf8"),
       readFile(path.join(REPOSITORY_PATH, "gradle", "libs.versions.toml"), "utf8"),
       readFile(path.join(REPOSITORY_PATH, ".gitignore"), "utf8"),
       readFile(
@@ -172,13 +195,19 @@ test("Kotlin foundation pins JVM 21 and writes outside tracked build source", as
       ),
     ]);
   assert.match(rootBuild, /\.gradle-build\/root/);
-  assert.match(applicationBuild, /jvmToolchain\(21\)/);
+  assert.match(applicationBuild, /languageVersion\.set\(JavaLanguageVersion\.of\(21\)\)/);
+  assert.match(applicationBuild, /vendor\.set\(JvmVendorSpec\.ADOPTIUM\)/);
+  assert.match(applicationBuild, /21\.0\.12\+8-LTS/);
   assert.match(applicationBuild, /explicitApi\(\)/);
   assert.doesNotMatch(applicationBuild, /project\s*\(/);
   assert.doesNotMatch(applicationBuild, /spring|ktor|micronaut/i);
   assert.match(versions, /^kotlin = "2\.4\.10"$/m);
   assert.match(versions, /^junit = "6\.1\.2"$/m);
   assert.match(ignore, /^\/\.gradle-build\/$/m);
+  assert.match(rootBuild, /approvedJavaVendor = "Eclipse Adoptium"/);
+  assert.match(rootBuild, /approvedJavaRuntime = "21\.0\.12\+8-LTS"/);
+  assert.match(properties, /^org\.gradle\.java\.installations\.auto-detect=false$/m);
+  assert.match(properties, /^org\.gradle\.java\.installations\.auto-download=false$/m);
   assert.doesNotMatch(rootBuild, /layout\.buildDirectory.*["']build["']/);
   assert.match(lock, /^org\.jetbrains\.kotlin:kotlin-stdlib:2\.4\.10=/m);
   assert.match(lock, /^org\.junit\.jupiter:junit-jupiter:6\.1\.2=/m);

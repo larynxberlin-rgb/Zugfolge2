@@ -1,10 +1,16 @@
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.jvm.toolchain.JvmVendorSpec
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
 }
 
 kotlin {
     explicitApi()
-    jvmToolchain(21)
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+        vendor.set(JvmVendorSpec.ADOPTIUM)
+    }
 }
 
 dependencies {
@@ -19,6 +25,12 @@ tasks.test {
     reports {
         junitXml.required = true
         html.required = true
+    }
+    doFirst {
+        val runtimeVersion = javaLauncher.get().metadata.javaRuntimeVersion.toString()
+        check(runtimeVersion == "21.0.12+8-LTS") {
+            "Unsupported test JVM runtime '$runtimeVersion'. Expected 21.0.12+8-LTS."
+        }
     }
 }
 

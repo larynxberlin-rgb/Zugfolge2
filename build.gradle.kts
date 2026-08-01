@@ -3,6 +3,18 @@ plugins {
     alias(libs.plugins.kotlin.jvm) apply false
 }
 
+val approvedJavaVendor = "Eclipse Adoptium"
+val approvedJavaRuntime = "21.0.12+8-LTS"
+
+check(System.getProperty("java.vendor") == approvedJavaVendor) {
+    "Unsupported Gradle JVM vendor '${System.getProperty("java.vendor")}'. " +
+        "Expected $approvedJavaVendor from Eclipse Temurin 21.0.12+8."
+}
+check(System.getProperty("java.runtime.version") == approvedJavaRuntime) {
+    "Unsupported Gradle JVM runtime '${System.getProperty("java.runtime.version")}'. " +
+        "Expected $approvedJavaRuntime."
+}
+
 group = "de.zugfolge"
 version = "0.1.0-SNAPSHOT"
 

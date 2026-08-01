@@ -46,9 +46,10 @@ an exact version during `uv sync`. Standalone distribution builds additionally
 consume `build-constraints.txt` with `--require-hashes`, so their independent
 PEP 517 environments accept only the artifacts recorded by `uv.lock`.
 
-The JVM workspace requires Eclipse Temurin `21.0.12+8`. A system Gradle is not
-supported: verify the committed wrapper bytes and distribution pin before the
-wrapper may download or execute Gradle `9.5.0`:
+The JVM workspace requires exact Eclipse Temurin `21.0.12+8` through
+`JAVA_HOME`; another vendor or Java 21 patch release fails closed. A system
+Gradle is not supported: verify the JVM, committed wrapper bytes, and
+distribution pin before the wrapper may download or execute Gradle `9.5.0`:
 
 ```text
 node tools/verify-gradle-wrapper.mjs
