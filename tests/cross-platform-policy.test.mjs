@@ -3,7 +3,8 @@
 
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { readFile } from "node:fs/promises";
+import { access, mkdtemp, readFile, rm } from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
@@ -60,6 +61,25 @@ test("each supported tool mismatch fails in a child preflight", () => {
     );
     assert.notEqual(result.status, 0, `${name} mismatch was accepted`);
     assert.match(`${result.stdout}${result.stderr}`, new RegExp(`PREFLIGHT_VERSION_MISMATCH ${name}`));
+  }
+});
+
+test("child preflight does not create a Python environment or modify the uv lock", async () => {
+  const sandbox = await mkdtemp(path.join(os.tmpdir(), "zugfolge-preflight-"));
+  const environmentPath = path.join(sandbox, "project-env");
+  const lockPath = path.join(REPOSITORY_ROOT, "uv.lock");
+  const lockBefore = await readFile(lockPath);
+  try {
+    const result = spawnSync(process.execPath, ["tools/preflight.mjs"], {
+      cwd: REPOSITORY_ROOT,
+      encoding: "utf8",
+      env: { ...process.env, UV_PROJECT_ENVIRONMENT: environmentPath },
+    });
+    assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
+    await assert.rejects(access(environmentPath), { code: "ENOENT" });
+    assert.deepEqual(await readFile(lockPath), lockBefore, "preflight modified uv.lock");
+  } finally {
+    await rm(sandbox, { force: true, recursive: true });
   }
 });
 

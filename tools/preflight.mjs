@@ -69,7 +69,7 @@ export function validateToolVersions(actual) {
 export async function collectToolVersions() {
   const pnpm = runVersionCommand("pnpm", ["--version"]);
   const uvOutput = runVersionCommand("uv", ["--version"]);
-  const pythonOutput = runVersionCommand("uv", ["run", "python", "--version"]);
+  const pythonOutput = runVersionCommand("python", ["--version"]);
   const java = await verifyApprovedJavaRuntime();
   const gradle = await verifyGradleWrapper(REPOSITORY_ROOT);
   return validateToolVersions({
