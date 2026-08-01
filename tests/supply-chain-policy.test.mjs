@@ -12,7 +12,11 @@ import {
   validateWorkflowPolicy,
   verifyWorkflowTree,
 } from "../tools/verify-workflows.mjs";
-import { validateCycloneDx } from "../tools/verify-sbom.mjs";
+import {
+  assertJvmDirectDependencies,
+  validateEvidenceArtifactLayout,
+  validateCycloneDx,
+} from "../tools/verify-sbom.mjs";
 
 const REPOSITORY_ROOT = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 
@@ -140,8 +144,12 @@ test("CycloneDX validation fails closed on missing or unresolved evidence", () =
     bomFormat: "CycloneDX",
     specVersion: "1.6",
     version: 1,
-    metadata: { component: { "bom-ref": "root", name: "root", version: "1" } },
-    components: [{ "bom-ref": "pkg", name: "dependency", version: "1" }],
+    metadata: {
+      component: { "bom-ref": "root", name: "root", type: "application", version: "1" },
+    },
+    components: [
+      { "bom-ref": "pkg", name: "dependency", type: "library", version: "1" },
+    ],
     dependencies: [
       { ref: "root", dependsOn: ["pkg"] },
       { ref: "pkg", dependsOn: [] },
@@ -149,6 +157,18 @@ test("CycloneDX validation fails closed on missing or unresolved evidence", () =
   };
   assert.doesNotThrow(() => validateCycloneDx(valid, "fixture"));
   assert.throws(() => validateCycloneDx({ ...valid, components: [] }, "fixture"));
+  assert.throws(() =>
+    validateCycloneDx(
+      { ...valid, metadata: { component: { "bom-ref": "root", name: "root" } } },
+      "fixture",
+    ),
+  );
+  assert.throws(() =>
+    validateCycloneDx(
+      { ...valid, metadata: { component: { "bom-ref": "root", name: "root", type: "other" } } },
+      "fixture",
+    ),
+  );
   assert.throws(() =>
     validateCycloneDx(
       { ...valid, dependencies: [{ ref: "pkg", dependsOn: [] }] },
@@ -160,5 +180,40 @@ test("CycloneDX validation fails closed on missing or unresolved evidence", () =
       { ...valid, dependencies: [{ ref: "root", dependsOn: ["missing"] }] },
       "fixture",
     ),
+  );
+});
+
+test("JVM SBOM validation rejects a missing resolved direct dependency", () => {
+  const document = {
+    components: [
+      {
+        "bom-ref": "junit",
+        group: "org.junit.jupiter",
+        name: "junit-jupiter",
+        type: "library",
+        version: "6.1.2",
+      },
+    ],
+  };
+  const catalog = '[libraries]\njunit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }\n';
+  const build = "dependencies { testImplementation(libs.junit.jupiter) }";
+  const lock = "org.junit.jupiter:junit-jupiter:6.1.2=testCompileClasspath,testRuntimeClasspath\n";
+  assert.doesNotThrow(() => assertJvmDirectDependencies(document, catalog, build, lock));
+  assert.throws(() => assertJvmDirectDependencies({ components: [] }, catalog, build, lock));
+});
+
+test("evidence artifact layout requires coverage and tests from every stack", () => {
+  const complete = [
+    "jvm/jacoco.xml",
+    "jvm/test-results.xml",
+    "node/coverage-summary.json",
+    "node/test-results.xml",
+    "python/coverage.json",
+    "python/coverage.xml",
+    "python/test-results.json",
+  ];
+  assert.doesNotThrow(() => validateEvidenceArtifactLayout(complete));
+  assert.throws(() =>
+    validateEvidenceArtifactLayout(complete.filter((name) => !name.startsWith("jvm/"))),
   );
 });

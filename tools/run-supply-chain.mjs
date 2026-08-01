@@ -3,7 +3,14 @@
 
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+  copyFileSync,
+  mkdirSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -11,6 +18,7 @@ import { fileURLToPath } from "node:url";
 const REPOSITORY_ROOT = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const OUTPUT_ROOT = path.join(REPOSITORY_ROOT, "outputs");
 const SBOM_ROOT = path.join(OUTPUT_ROOT, "sbom");
+const JVM_COVERAGE_ROOT = path.join(OUTPUT_ROOT, "coverage", "jvm");
 
 function executable(name) {
   if (process.platform !== "win32") return name === "gradlew" ? "./gradlew" : name;
@@ -90,6 +98,7 @@ run("uv", [
 linkPythonRootDependencies();
 run("gradlew", ["--no-daemon", "--console=plain", "cyclonedxBom"]);
 run("node", ["tools/verify-local-evidence.mjs"]);
+publishJvmEvidence();
 
 const documents = ["jvm.cdx.json", "node.cdx.json", "python.cdx.json"];
 const manifest = {
@@ -105,6 +114,28 @@ writeFileSync(
   "utf8",
 );
 console.log(`Generated ${documents.length} CycloneDX documents and coverage evidence.`);
+
+function publishJvmEvidence() {
+  const sourceRoot = path.join(REPOSITORY_ROOT, ".gradle-build", "apps", "game-server");
+  const junitRoot = path.join(sourceRoot, "test-results", "test");
+  const junitFiles = readdirSync(junitRoot).filter(
+    (name) => name.startsWith("TEST-") && name.endsWith(".xml"),
+  );
+  assert.equal(junitFiles.length, 1, "JVM evidence expects one complete JUnit XML suite");
+  const junitSource = path.join(junitRoot, junitFiles[0]);
+  const jacocoSource = path.join(
+    sourceRoot,
+    "reports",
+    "jacoco",
+    "test",
+    "jacocoTestReport.xml",
+  );
+  assert.ok(JVM_COVERAGE_ROOT.startsWith(`${REPOSITORY_ROOT}${path.sep}`));
+  rmSync(JVM_COVERAGE_ROOT, { force: true, recursive: true });
+  mkdirSync(JVM_COVERAGE_ROOT, { recursive: true });
+  copyFileSync(junitSource, path.join(JVM_COVERAGE_ROOT, "test-results.xml"));
+  copyFileSync(jacocoSource, path.join(JVM_COVERAGE_ROOT, "jacoco.xml"));
+}
 
 function linkPythonRootDependencies() {
   const sbomPath = path.join(SBOM_ROOT, "python.cdx.json");

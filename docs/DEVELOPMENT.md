@@ -111,8 +111,9 @@ node tools/verify-sbom.mjs
 The generator re-runs all three coverage suites and writes three CycloneDX 1.6
 documents plus a checksum manifest below ignored `outputs/sbom/`. It uses only
 the frozen pnpm and uv graphs plus Gradle lock and verification metadata. In CI,
-`zugfolge-ms002-evidence` contains `outputs/coverage` and `outputs/sbom`, is
-retained for exactly 30 days, and reports the upload digest in the job summary.
+`zugfolge-ms002-evidence` contains Node, Python, and JVM test/coverage reports
+below `outputs/coverage` plus all three ecosystem SBOMs below `outputs/sbom`.
+It is retained for exactly 30 days and reports the upload digest in the job summary.
 The artifact is temporary evidence; its digest is the permanent milestone fact.
 
 GitHub Actions is the clean Ubuntu reference. If `node`, `pnpm`, `python`, or Java
