@@ -1,6 +1,6 @@
 # Dependency and supply-chain register
 
-**Status:** MS-002-S05 locked polyglot baseline and local evidence
+**Status:** MS-002-S06 locked supply-chain evidence
 **Last reviewed:** 2026-08-01
 **Security approval:** accepted — [human decision record](https://github.com/larynxberlin-rgb/Zugfolge/issues/3#issuecomment-5150191133)
 
@@ -39,8 +39,9 @@ verified against installed metadata, lock integrity and exact notice bytes.
 
 Both Python packages have no runtime dependency or dependency on one another.
 They share `uv.lock` under exact CPython `3.13.14` and uv `0.12.0`; the root
-development group locks `hatchling==1.27.0`, `editables==0.6`, and their
-build-tool closure. uv is configured for system Python only, so it cannot
+development group locks coverage, `cyclonedx-bom==7.3.1`,
+`hatchling==1.27.0`, `editables==0.6`, and their complete tool closure. uv is
+configured for system Python only, so it cannot
 silently substitute an unapproved managed interpreter. Root build constraints
 pin the complete isolated editable-build closure. Standalone wheel/sdist builds
 also require every artifact hash in `build-constraints.txt`, whose values are
@@ -67,17 +68,18 @@ Current workflows use only immutable Action SHAs:
 
 | Action | Current release | Purpose | Permission/trust boundary |
 |---|---|---|---|
-| `actions/checkout` | v5 | materialize repository source | untrusted PR source; `contents: read` |
+| `actions/checkout` | v7.0.1 | materialize repository source and history | untrusted PR source; `contents: read` |
 | `actions/setup-node` | v7.0.0 | install/cache Node.js `24.18.0` | downloads official Node distribution; `contents: read` |
-| `pnpm/action-setup` | v6.0.9 | install pnpm `11.18.0` | executes only in the existing web job; `contents: read` |
+| `actions/setup-java` | v5.6.0 | install Temurin `21.0.12+8` | downloads approved JDK distribution; `contents: read` |
+| `pnpm/action-setup` | v6.0.9 | install pnpm `11.18.0` | executes in locked Node/evidence jobs; `contents: read` |
 | `actions/setup-python` | v7.0.0 | install CPython `3.13.14` | downloads official Python distribution; `contents: read` |
-| `astral-sh/setup-uv` | v9.0.0 | install uv `0.12.0` | executes only in the existing Python job; `contents: read` |
-| `github/codeql-action` | v3 | initialize, build, and upload SAST results | job-local `security-events: write` |
-| `actions/dependency-review-action` | pinned main commit | reject vulnerable dependency deltas | pull requests only; `contents: read`; Dependency Graph required |
+| `astral-sh/setup-uv` | v9.0.0 | install uv `0.12.0` | executes in locked Python/evidence jobs; `contents: read` |
+| `actions/upload-artifact` | v7.0.1 | retain S06 evidence for 30 days | artifact upload only; no additional write permission |
+| `github/codeql-action` | v4.37.4 | initialize, build, and upload SAST results | job-local `security-events: write` |
+| `actions/dependency-review-action` | v5.0.0 | reject High-severity dependency deltas | pull requests only; `contents: read`; Dependency Graph required |
 
-S02 changes only the existing web job; S03 changes only the existing Python
-job to the approved setup-python and setup-uv references. Security workflows
-and the cross-platform matrix remain unchanged until their owning slices.
+S06 uses these exact references across the current workflows. Cross-platform
+runner parity remains the separately bounded S07 change.
 
 ### S02 advisory disposition
 
@@ -194,11 +196,13 @@ The approved Action majors require a sufficiently current GitHub Actions
 runner. S07 therefore uses explicit `ubuntu-24.04` and `windows-2025` hosted
 images and records their image versions in job evidence.
 
-The repository currently reports `sha_pinning_required: false`. The human
-decision requires enabling that setting before S06 is accepted when the GitHub
-repository supports it; the repository policy test remains mandatory even when
-the setting is enabled. S06 may add weekly Dependabot update pull requests but
-MUST NOT enable auto-merge.
+Before S06, the repository reported `sha_pinning_required: false`. The
+repository reported `sha_pinning_required: true` through the GitHub Actions
+permissions API on 1 August 2026 after the S06 gate enabled repository-level
+full-SHA enforcement. Repository policy tests remain mandatory even with that
+server-side setting. Weekly Dependabot update pull requests MUST NOT auto-merge.
+S06 MUST NOT enable auto-merge for those updates.
+The server-side setting was required before S06 is accepted.
 
 ## Approved CycloneDX tooling
 

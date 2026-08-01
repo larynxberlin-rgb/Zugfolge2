@@ -93,6 +93,28 @@ the exact coverage-tool versions, successful suites, relative source paths, and
 absence of the local checkout path. A missing, malformed, stale-version, failed,
 or path-leaking artifact fails closed.
 
+## Local S06 supply-chain evidence
+
+Install the approved Gitleaks `8.30.1` binary from its official release and
+verify the platform archive against the SHA-256 value in
+[DEPENDENCIES.md](DEPENDENCIES.md). Keep the executable outside the repository
+and add only its directory to `PATH`. Then run the S06 acceptance sequence:
+
+```text
+node tools/verify-workflows.mjs
+node --test tests/supply-chain-policy.test.mjs tests/repository-policy.test.mjs
+gitleaks git --config=.gitleaks.toml --redact --no-banner
+node tools/run-supply-chain.mjs
+node tools/verify-sbom.mjs
+```
+
+The generator re-runs all three coverage suites and writes three CycloneDX 1.6
+documents plus a checksum manifest below ignored `outputs/sbom/`. It uses only
+the frozen pnpm and uv graphs plus Gradle lock and verification metadata. In CI,
+`zugfolge-ms002-evidence` contains `outputs/coverage` and `outputs/sbom`, is
+retained for exactly 30 days, and reports the upload digest in the job summary.
+The artifact is temporary evidence; its digest is the permanent milestone fact.
+
 GitHub Actions is the clean Ubuntu reference. If `node`, `pnpm`, `python`, or Java
 cannot be found locally, install the declared official runtime; do not use the
 presence of a cached `node_modules`, virtual environment, or system Gradle as

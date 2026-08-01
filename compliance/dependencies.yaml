@@ -26,12 +26,12 @@ resolvedGraphs:
   - ecosystem: python
     manifests: [pyproject.toml, apps/data-pipeline/pyproject.toml, integrations/odoo/pyproject.toml]
     runtimeDependencies: []
-    developmentDependencies: [coverage==7.15.2]
+    developmentDependencies: [coverage==7.15.2, cyclonedx-bom==7.3.1]
     buildDependencies: [editables==0.6, hatchling==1.27.0]
     lockfile: uv.lock
     buildConstraintFile: build-constraints.txt
-    canonicalSha256: B990AC44FF6F16F1FB3B392FF939072E4CABCA5BC67F1278023E11C77B70E740
-    packageCountIncludingWorkspace: 10
+    canonicalSha256: 188F2704851C95E78D23B59D52E4B1D3BE8A31D93E69B633EDA3323C07C1DF45
+    packageCountIncludingWorkspace: 41
     exactResolution: true
     status: LOCKED_REVIEW_PENDING
 
@@ -123,6 +123,50 @@ sourceValidators:
     updateMethod: Review the exact upstream release, npm integrity, license, advisories, parser changes, and adversarial boundary fixtures before changing the pin and lock.
     rollback: Revert the parser integration and exact dependency record together only after an independently reviewed fail-closed replacement preserves the module-boundary tests.
 
+securityTools:
+  - name: Gitleaks CLI
+    version: 8.30.1
+    scope: TEST
+    owningSlice: MS-002-S06
+    licenseExpression: MIT
+    purpose: Scan repository content and Git history for secret-like material, including the safe synthetic acceptance marker
+    officialSource: https://github.com/gitleaks/gitleaks/releases/tag/v8.30.1
+    trustBoundary: Executes a checksummed upstream binary against untrusted repository content and history without receiving repository secrets or write permissions.
+    updateMethod: Review the exact release, checksums, license, ruleset changes, advisories, and synthetic-marker behavior before updating both platform downloads.
+    rollback: Remove the isolated secret-scan jobs and configuration while retaining repository credential-pattern tests.
+
+sbomTools:
+  - name: pnpm sbom
+    version: 11.18.0
+    scope: TEST
+    owningSlice: MS-002-S06
+    licenseExpression: MIT
+    purpose: Generate the CycloneDX 1.6 document for the integrity-locked pnpm dependency graph
+    officialSource: https://pnpm.io/11.x/cli/sbom
+    trustBoundary: Reads the repository package manifest and lock without package lifecycle execution and writes only ignored evidence.
+    updateMethod: Update only with the approved exact pnpm toolchain and repeat locked graph, schema, and direct-component verification.
+    rollback: Remove Node SBOM generation while retaining frozen pnpm installation and the lockfile.
+  - name: cyclonedx-bom
+    version: 7.3.1
+    scope: TEST
+    owningSlice: MS-002-S06
+    licenseExpression: Apache-2.0
+    purpose: Generate a reproducible CycloneDX 1.6 document from requirements exported from the locked uv workspace
+    officialSource: https://pypi.org/project/cyclonedx-bom/7.3.1/
+    trustBoundary: Executes from the synchronized uv lock against a generated requirements view without credentials, registry tokens, or production data.
+    updateMethod: Review the exact release, license, advisories, CLI/schema behavior and full locked closure before updating pyproject.toml and uv.lock together.
+    rollback: Remove the exact dev dependency, regenerate uv.lock, and remove only Python SBOM generation.
+  - name: org.cyclonedx.bom
+    version: 3.3.0
+    scope: TEST
+    owningSlice: MS-002-S06
+    licenseExpression: Apache-2.0
+    purpose: Generate the aggregate CycloneDX 1.6 JVM document from verified Gradle dependency graphs
+    officialSource: https://plugins.gradle.org/plugin/org.cyclonedx.bom/3.3.0
+    trustBoundary: Executes verified Gradle plugin bytecode during the evidence task and receives repository dependency metadata but no credentials or production data.
+    updateMethod: Review plugin compatibility, license, advisories and generated schema, then update the catalog, locks and verification metadata together.
+    rollback: Remove the root plugin/task and its lock and verification entries while retaining the JVM build and tests.
+
 directPackages:
   - { name: react, scope: RUNTIME, version: 19.2.8, licenseExpression: MIT, purpose: Browser and server UI runtime }
   - { name: react-dom, scope: RUNTIME, version: 19.2.8, licenseExpression: MIT, purpose: DOM and server rendering }
@@ -176,13 +220,105 @@ distributedWebPackages:
   status: NOTICE_GENERATED_COMPATIBILITY_REVIEW_PENDING
 
 githubActions:
-  - { repository: actions/checkout, sha: fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09, release: v5, licenseExpression: MIT, purpose: Materialize repository source, status: PINNED_CURRENT_USE_REVIEW_PENDING }
-  - { repository: actions/setup-node, sha: 820762786026740c76f36085b0efc47a31fe5020, release: v7.0.0, licenseExpression: MIT, purpose: Install and cache the exact Node runtime, status: PINNED_CURRENT_USE_REVIEW_PENDING }
-  - { repository: pnpm/action-setup, sha: 0ebf47130e4866e96fce0953f49152a61190b271, release: v6.0.9, licenseExpression: MIT, purpose: Install the exact pnpm CLI for the web job, status: PINNED_CURRENT_USE_REVIEW_PENDING }
-  - { repository: actions/setup-python, sha: 5fda3b95a4ea91299a34e894583c3862153e4b97, release: v7.0.0, licenseExpression: MIT, owningSlice: MS-002-S03, purpose: Install exact CPython 3.13.14, status: PINNED_CURRENT_USE_REVIEW_PENDING }
-  - { repository: astral-sh/setup-uv, sha: c771a70e6277c0a99b617c7a806ffedaca235ff9, release: v9.0.0, licenseExpression: MIT, owningSlice: MS-002-S03, purpose: Install exact uv 0.12.0 for the Python job, status: PINNED_CURRENT_USE_REVIEW_PENDING }
-  - { repository: github/codeql-action, sha: a2983b8bed1923f44751c5c43237f479442827b3, release: v3, licenseExpression: MIT, purpose: Initialize build and analyze SAST results, status: PINNED_CURRENT_USE_REVIEW_PENDING }
-  - { repository: actions/dependency-review-action, sha: 1e966ba708e4b64bb0c9bfb7abb5a232840be16a, release: pinned-main-commit, licenseExpression: MIT, purpose: Reject vulnerable dependency deltas, status: PINNED_CURRENT_USE_REVIEW_PENDING }
+  - repository: actions/checkout
+    sha: 3d3c42e5aac5ba805825da76410c181273ba90b1
+    release: v7.0.1
+    licenseExpression: MIT
+    owningSlice: MS-002-S06
+    purpose: Materialize untrusted repository source and complete history for scanning
+    officialSource: https://github.com/actions/checkout/releases/tag/v7.0.1
+    trustBoundary: Executes third-party Action code with contents read and no repository secrets or write permission.
+    updateMethod: Resolve the reviewed release tag to its peeled commit and update every workflow reference atomically.
+    rollback: Restore the prior fully pinned checkout Action in every workflow.
+    status: PINNED_CURRENT_USE_REVIEW_PENDING
+  - repository: actions/setup-node
+    sha: 820762786026740c76f36085b0efc47a31fe5020
+    release: v7.0.0
+    licenseExpression: MIT
+    owningSlice: MS-002-S02
+    purpose: Install and cache the exact Node runtime
+    officialSource: https://github.com/actions/setup-node/releases/tag/v7.0.0
+    trustBoundary: Downloads the exact official Node runtime with contents read and no repository secrets.
+    updateMethod: Review the release and runtime checksums, then update all full-SHA references together.
+    rollback: Restore the previous pinned setup-node Action and exact Node runtime pin.
+    status: PINNED_CURRENT_USE_REVIEW_PENDING
+  - repository: actions/setup-java
+    sha: 03ad4de0992f5dab5e18fcb136590ce7c4a0ac95
+    release: v5.6.0
+    licenseExpression: MIT
+    owningSlice: MS-002-S06
+    purpose: Install exact Eclipse Temurin 21.0.12+8 for JVM evidence
+    officialSource: https://github.com/actions/setup-java/releases/tag/v5.6.0
+    trustBoundary: Downloads the approved Temurin toolchain with contents read and no repository secrets.
+    updateMethod: Review Action release and JDK platform digests before updating its full SHA and exact runtime.
+    rollback: Remove the evidence setup step or restore the prior pinned Action and JDK pin.
+    status: PINNED_CURRENT_USE_REVIEW_PENDING
+  - repository: pnpm/action-setup
+    sha: 0ebf47130e4866e96fce0953f49152a61190b271
+    release: v6.0.9
+    licenseExpression: MIT
+    owningSlice: MS-002-S02
+    purpose: Install exact pnpm 11.18.0 for locked Node and evidence jobs
+    officialSource: https://github.com/pnpm/action-setup/releases/tag/v6.0.9
+    trustBoundary: Executes package-manager bootstrap code with contents read and no registry or repository secrets.
+    updateMethod: Review the Action release and pnpm compatibility before updating all full-SHA references.
+    rollback: Restore the prior pinned Action while retaining the repository packageManager pin.
+    status: PINNED_CURRENT_USE_REVIEW_PENDING
+  - repository: actions/setup-python
+    sha: 5fda3b95a4ea91299a34e894583c3862153e4b97
+    release: v7.0.0
+    licenseExpression: MIT
+    owningSlice: MS-002-S03
+    purpose: Install exact CPython 3.13.14
+    officialSource: https://github.com/actions/setup-python/releases/tag/v7.0.0
+    trustBoundary: Downloads the exact official Python runtime with contents read and no repository secrets.
+    updateMethod: Review release and interpreter checksums before updating the full SHA and Python pin together.
+    rollback: Restore the prior pinned Action and exact interpreter pin.
+    status: PINNED_CURRENT_USE_REVIEW_PENDING
+  - repository: astral-sh/setup-uv
+    sha: c771a70e6277c0a99b617c7a806ffedaca235ff9
+    release: v9.0.0
+    licenseExpression: MIT
+    owningSlice: MS-002-S03
+    purpose: Install exact uv 0.12.0 for locked Python and evidence jobs
+    officialSource: https://github.com/astral-sh/setup-uv/releases/tag/v9.0.0
+    trustBoundary: Downloads the exact uv binary with contents read and no package-registry credentials.
+    updateMethod: Review release checksums and lock compatibility before updating every full-SHA reference.
+    rollback: Restore the prior pinned Action and exact uv version.
+    status: PINNED_CURRENT_USE_REVIEW_PENDING
+  - repository: actions/upload-artifact
+    sha: 043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+    release: v7.0.1
+    licenseExpression: MIT
+    owningSlice: MS-002-S06
+    purpose: Upload coverage and CycloneDX evidence for 30 days
+    officialSource: https://github.com/actions/upload-artifact/releases/tag/v7.0.1
+    trustBoundary: Reads only ignored evidence paths and uses the platform artifact channel without additional write permission.
+    updateMethod: Review release, retention and digest outputs before updating the full SHA.
+    rollback: Remove the isolated upload and summary steps while retaining local evidence generation.
+    status: PINNED_CURRENT_USE_REVIEW_PENDING
+  - repository: github/codeql-action
+    sha: f205ea1c3313d32999d8d6a48b4f6530d4437b38
+    release: v4.37.4
+    licenseExpression: MIT
+    owningSlice: MS-002-S06
+    purpose: Initialize, build and upload SAST results
+    officialSource: https://github.com/github/codeql-action/releases/tag/v4.37.4
+    trustBoundary: Analyzes untrusted source; only its job receives security-events write and it receives no repository secrets.
+    updateMethod: Review the exact release and queries, then update init, autobuild and analyze references atomically.
+    rollback: Restore the prior pinned CodeQL release across all three steps.
+    status: PINNED_CURRENT_USE_REVIEW_PENDING
+  - repository: actions/dependency-review-action
+    sha: a1d282b36b6f3519aa1f3fc636f609c47dddb294
+    release: v5.0.0
+    licenseExpression: MIT
+    owningSlice: MS-002-S06
+    purpose: Reject vulnerable dependency deltas at High severity
+    officialSource: https://github.com/actions/dependency-review-action/releases/tag/v5.0.0
+    trustBoundary: Reads pull-request dependency metadata with contents read and no repository secrets or write permission.
+    updateMethod: Review the exact release and severity behavior before updating the full SHA.
+    rollback: Restore the prior pinned dependency review while retaining local lock-policy checks.
+    status: PINNED_CURRENT_USE_REVIEW_PENDING
 
 containers: []
 fonts: []

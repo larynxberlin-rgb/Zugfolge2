@@ -51,7 +51,7 @@ const [
 const lock = parse(lockSource);
 
 function trackedFiles() {
-  return execFileSync("git", ["ls-files", "-z"], {
+  return execFileSync("git", ["ls-files", "-z", "--cached", "--others", "--exclude-standard"], {
     cwd: REPOSITORY_ROOT,
     encoding: "utf8",
   })
@@ -371,7 +371,10 @@ test("distributed packages and Python build dependencies stay explicit", async (
   assert.equal(python.buildConstraintFile, "build-constraints.txt");
   assert.equal(python.status, "LOCKED_REVIEW_PENDING");
   assert.deepEqual(python.runtimeDependencies, []);
-  assert.deepEqual(python.developmentDependencies, ["coverage==7.15.2"]);
+  assert.deepEqual(python.developmentDependencies, [
+    "coverage==7.15.2",
+    "cyclonedx-bom==7.3.1",
+  ]);
   assert.deepEqual(python.buildDependencies, [
     "editables==0.6",
     "hatchling==1.27.0",
@@ -445,13 +448,12 @@ test("distributed packages and Python build dependencies stay explicit", async (
   for (const [name, constraint] of constrainedPackages) {
     assert.deepEqual(constraint, registryPackages.get(name));
   }
-  assert.deepEqual(
-    [...registryPackages.keys()]
-      .filter((name) => !constrainedPackages.has(name))
-      .sort(),
-    ["coverage"],
-    "only the approved S05 test tool may sit outside the hashed PEP 517 closure",
-  );
+  const testToolClosure = [...registryPackages.keys()]
+    .filter((name) => !constrainedPackages.has(name))
+    .sort();
+  assert.ok(testToolClosure.includes("coverage"));
+  assert.ok(testToolClosure.includes("cyclonedx-bom"));
+  assert.equal(testToolClosure.length, 32, "locked S05/S06 test-tool closure drifted");
   const pythonVersion = await readFile(
     new URL("../.python-version", import.meta.url),
     "utf8",
@@ -462,7 +464,8 @@ test("distributed packages and Python build dependencies stay explicit", async (
     "utf8",
   );
   assert.match(rootPythonProject, /^requires-python = "==3\.13\.14"$/m);
-  assert.match(rootPythonProject, /^dev = \["coverage==7\.15\.2", /m);
+  assert.match(rootPythonProject, /^dev = \[\n {2}"coverage==7\.15\.2",/m);
+  assert.match(rootPythonProject, /^ {2}"cyclonedx-bom==7\.3\.1",$/m);
   assert.doesNotMatch(rootPythonProject, /^no-build-isolation\s*=/m);
   for (const constraint of constrainedPackages.keys()) {
     assert.match(
@@ -505,6 +508,32 @@ test("distributed packages and Python build dependencies stay explicit", async (
   );
   assert.equal(registryPackages.get("coverage").version, coverageRecord.version);
 
+  uniqueBy(dependencies.securityTools, "name", "security tools");
+  assert.deepEqual(dependencies.securityTools.map(({ name }) => name), ["Gitleaks CLI"]);
+  uniqueBy(dependencies.sbomTools, "name", "SBOM tools");
+  assert.deepEqual(
+    dependencies.sbomTools.map(({ name }) => name),
+    ["pnpm sbom", "cyclonedx-bom", "org.cyclonedx.bom"],
+  );
+  for (const tool of [...dependencies.securityTools, ...dependencies.sbomTools]) {
+    assert.equal(tool.scope, "TEST");
+    assert.equal(tool.owningSlice, "MS-002-S06");
+    assert.match(tool.officialSource, /^https:\/\//);
+    for (const field of [
+      "purpose",
+      "licenseExpression",
+      "trustBoundary",
+      "updateMethod",
+      "rollback",
+    ]) {
+      assert.ok(tool[field], `${tool.name} needs ${field}`);
+    }
+  }
+  assert.equal(
+    registryPackages.get("cyclonedx-bom").version,
+    dependencies.sbomTools.find(({ name }) => name === "cyclonedx-bom").version,
+  );
+
   const [gameBuild, gameLock, gradleVerification] = await Promise.all([
     readFile(new URL("../apps/game-server/build.gradle.kts", import.meta.url), "utf8"),
     readFile(new URL("../apps/game-server/gradle.lockfile", import.meta.url), "utf8"),
@@ -516,6 +545,10 @@ test("distributed packages and Python build dependencies stay explicit", async (
   assert.match(
     gradleVerification,
     /<component group="org\.jacoco" name="org\.jacoco\.agent" version="0\.8\.15">[\s\S]*?<sha256 value="[0-9a-f]{64}"/,
+  );
+  assert.match(
+    gradleVerification,
+    /<component group="org\.cyclonedx" name="cyclonedx-gradle-plugin" version="3\.3\.0">[\s\S]*?<sha256 value="[0-9a-f]{64}"/,
   );
 
   uniqueBy(dependencies.contractValidators, "name", "contract validators");
@@ -583,7 +616,11 @@ test("workflow actions use inventoried immutable SHAs", async () => {
   for (const action of dependencies.githubActions) {
     assert.equal(action.licenseExpression, "MIT");
     assert.equal(action.status, "PINNED_CURRENT_USE_REVIEW_PENDING");
-    assert.ok(action.purpose);
+    assert.match(action.officialSource, /^https:\/\/github\.com\//);
+    assert.match(action.owningSlice, /^MS-002-S0[236]$/);
+    for (const field of ["purpose", "trustBoundary", "updateMethod", "rollback"]) {
+      assert.ok(action[field], `${action.repository} needs ${field}`);
+    }
   }
   for (const repository of ["actions/setup-python", "astral-sh/setup-uv"]) {
     assert.equal(

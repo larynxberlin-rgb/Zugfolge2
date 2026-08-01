@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: 2026 Zugfolge contributors
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+title = "Zugfolge secret scanning policy"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "zugfolge-synthetic-secret"
+description = "Safe marker proving that repository secret scanning executes"
+regex = '''ZUGFOLGE_TEST_SECRET_[A-Z0-9]{16}'''
+keywords = ["ZUGFOLGE_TEST_SECRET_"]
