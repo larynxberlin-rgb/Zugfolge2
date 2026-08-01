@@ -59,5 +59,12 @@ Do not include hidden reasoning, credentials, personal data, or raw provider dat
 - [ ] External data has provenance, license/permission, version, and checksum.
 - [ ] Monetization changes include a no-pay-to-win equivalence analysis.
 - [ ] Logs, fixtures, prompts, and commits contain no secrets or personal data.
+- [ ] I am an authorized repository agent/maintainer; external contribution
+      intake remains closed until the reviewed CLA process is active.
+- [ ] Material AI assistance and third-party inputs are disclosed without
+      including prompts, hidden reasoning, confidential data, or unlicensed
+      material.
+- [ ] Changed files retain the intended `REUSE.toml`/SPDX license boundary and
+      do not silently relicense provenance-pending assets.
 - [ ] Failure, migration, observability, and rollback behavior are tested.
 - [ ] An independent agent/session reviewed the change.

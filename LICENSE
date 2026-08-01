@@ -1,0 +1,41 @@
+Zugfolge license notice
+========================
+
+Zugfolge uses a component-specific license matrix. No single license applies to
+every file in this repository.
+
+The authoritative file-level assignment is `REUSE.toml`:
+
+- original program code, tests, build and runtime configuration are licensed
+  under the GNU Affero General Public License v3.0 or later
+  (`AGPL-3.0-or-later`);
+- public OpenAPI, AsyncAPI, JSON Schema contracts, contract examples, and
+  generated public SDKs are licensed under the Apache License 2.0
+  (`Apache-2.0`);
+- original specifications, architecture decisions, plans, and documentation
+  are licensed under Creative Commons Attribution 4.0 International
+  (`CC-BY-4.0`), attributed to Zugfolge contributors;
+- a future OSM-derived database release may be distributed under the Open Data
+  Commons Open Database License 1.0 (`ODbL-1.0`) only when that release carries
+  its own approval, attribution, provenance, and database-offer notice. No
+  current database artifact is licensed merely because that future policy is
+  documented here.
+- provenance-pending fixtures and media explicitly mapped to
+  `LicenseRef-Zugfolge-Provenance-Pending` are excluded from the license grants
+  above until they are replaced, removed, or approved under a standard
+  license.
+
+Complete texts for licenses currently assigned to repository files are stored
+in `LICENSES/`. ODbL remains a future policy only; its official text is linked
+from `docs/LICENSING.md` and will be added with the first approved database
+artifact.
+
+Third-party dependencies, imported data, fonts, and separately identified
+media retain their own licenses or contractual terms. Any later copyright
+license for a cleared Block-Z rendering grants no permission to imply
+endorsement and grants no trademark rights in the name Zugfolge, the Block-Z
+designation, or other source identifiers. See `TRADEMARKS.md`.
+
+Copyright notices and file assignments follow the REUSE Specification. If a
+file-level SPDX notice conflicts with this summary, the file-level notice and
+`REUSE.toml` control.

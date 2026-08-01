@@ -89,7 +89,7 @@ milestones:
 
   - id: MS-001
     release: RG-0
-    status: ready
+    status: in-progress
     risk: R3
     effort: M
     title: Rights, license, brand, and source clearance

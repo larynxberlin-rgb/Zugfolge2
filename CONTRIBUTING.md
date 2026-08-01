@@ -3,10 +3,14 @@
 Zugfolge is not accepting external code, documentation, data, design, or asset
 contributions yet.
 
-The repository is `UNLICENSED`, the accountable rights holder is not yet
-recorded, and no DCO or CLA has been approved. Opening a pull request does not
-grant Zugfolge permission to incorporate it. Maintainers will close external
-pull requests until `MS-001` activates a reviewed contribution policy.
+The repository publishes the file-level license matrix in
+[`REUSE.toml`](REUSE.toml), but the accountable legal rights holder and the
+historic rights chain are still under review. The project owner selected a CLA
+as the future contribution model. No CLA text, signing process, privacy
+handling, or required repository check is active yet. Opening a pull request
+does not by itself grant Zugfolge permission to incorporate it. Maintainers
+will close external pull requests until `MS-001` activates the reviewed CLA
+process.
 
 Bug reports and factual project feedback may be submitted through GitHub
 Issues, but they must not contain:
@@ -22,12 +26,7 @@ Repository-commissioned implementation agents must follow
 allowlist. AI assistance never replaces accountable human rights and final
 review.
 
-The future contribution model will be chosen in `MS-001`:
-
-- inbound equals outbound plus DCO for a single-license Open Source strategy;
-  or
-- a qualified individual/corporate CLA before any contribution required for
-  proprietary or dual licensing.
-
-Until that decision is merged and enforced, **external contributions are
-closed**.
+The selected future model is a qualified individual/entity CLA. A DCO is not
+an alternative contribution path. Until counsel-approved terms, accountable
+signing, privacy handling, and enforcement are merged and active, **external
+contributions are closed**.

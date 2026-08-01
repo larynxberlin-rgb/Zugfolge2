@@ -5,6 +5,9 @@ permission.
 
 - [Source risk memo](SOURCE-RISK-MEMO.md)
 - [Privacy baseline](PRIVACY-BASELINE.md)
+- [Public license decision](LICENSE-DECISION.md)
+- [Ownership and rights-chain status](OWNERSHIP.md)
+- [AI-assisted work provenance](AI-PROVENANCE.md)
 - [License decision brief](../LICENSING.md)
 - [Machine-readable rights register](../../compliance/rights-register.yaml)
 - [Proposed clearance specification](../../spec/features/FEAT-0003-rights-license-and-source-clearance.md)

@@ -1,0 +1,76 @@
+version = 1
+
+[[annotations]]
+path = [
+  ".github/**",
+  ".gitattributes",
+  ".gitignore",
+  ".openai/**",
+  "AGENTS.md",
+  "app/**",
+  "apps/data-pipeline/pyproject.toml",
+  "apps/data-pipeline/src/**",
+  "apps/data-pipeline/tests/**",
+  "build/**",
+  "eslint.config.mjs",
+  "integrations/odoo/pyproject.toml",
+  "integrations/odoo/src/**",
+  "integrations/odoo/tests/**",
+  "package-lock.json",
+  "package.json",
+  "packages/domain/index.mjs",
+  "postcss.config.mjs",
+  "public/**",
+  "scripts/**",
+  "tests/**",
+  "tsconfig.json",
+  "vite.config.ts",
+  "worker/**",
+]
+precedence = "closest"
+SPDX-FileCopyrightText = "2026 Zugfolge project contributors <https://github.com/larynxberlin-rgb/Zugfolge>"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
+[[annotations]]
+path = [
+  "CONTRIBUTING.md",
+  "NOTICE",
+  "PLAN.md",
+  "README.md",
+  "TRADEMARKS.md",
+  "apps/data-pipeline/README.md",
+  "compliance/**",
+  "docs/**",
+  "integrations/odoo/README.md",
+  "packages/domain/README.md",
+  "planning/**",
+  "spec/**",
+]
+precedence = "closest"
+SPDX-FileCopyrightText = "2026 Zugfolge project contributors <https://github.com/larynxberlin-rgb/Zugfolge>"
+SPDX-License-Identifier = "CC-BY-4.0"
+
+[[annotations]]
+path = "packages/contracts/**"
+precedence = "closest"
+SPDX-FileCopyrightText = "2026 Zugfolge project contributors <https://github.com/larynxberlin-rgb/Zugfolge>"
+SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = [
+  "app/components/BlockZ.tsx",
+  "app/lib/pilot-data.ts",
+  "public/favicon.svg",
+  "public/og.png",
+]
+precedence = "override"
+SPDX-FileCopyrightText = "NOASSERTION"
+SPDX-License-Identifier = "LicenseRef-Zugfolge-Provenance-Pending"
+SPDX-FileComment = "No license grant. Origin, constituent material, copyright ownership, and authority to license remain under accountable human review. A build containing this file is evaluation-only and must not be publicly deployed or distributed until the file is approved, replaced, or excluded."
+
+[[annotations]]
+path = "public/legal/THIRD-PARTY-NOTICES.txt"
+precedence = "override"
+SPDX-FileCopyrightText = "NOASSERTION"
+SPDX-License-Identifier = "LicenseRef-Third-Party-Notices"
+SPDX-FileComment = "Mechanical compilation. Embedded third-party notices and license texts retain their own terms and are not relicensed by Zugfolge."

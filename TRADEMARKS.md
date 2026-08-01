@@ -15,6 +15,12 @@ truthful compatibility statements, repository forks, and notices required by
 an applicable license remain unaffected. Forks should use a distinct name and
 logo unless the future rights holder grants written permission.
 
+The current React source code that renders Block-Z, favicon, and social-preview
+image are assigned `LicenseRef-Zugfolge-Provenance-Pending`, which grants no
+copyright permission. A later program-code license would still not clear the
+displayed sign as a trademark. Nothing in this policy claims that an unverified
+asset is owned, cleared, or available for relicensing.
+
 Before public brand use, humans must separately:
 
 - identify the trademark and domain owner;

@@ -1,0 +1,15 @@
+Zugfolge third-party notice compilation
+=========================================
+
+A file identified as LicenseRef-Third-Party-Notices is a mechanical
+compilation of license and attribution material supplied by third parties.
+Zugfolge grants no additional copyright license in that third-party material.
+
+Each embedded notice, copyright statement, and license text remains governed
+by the terms that it identifies. The compilation may be copied without
+omission alongside the distribution for which it was generated, as required
+to preserve those third-party notices.
+
+This identifier does not relicense any dependency and grants no trademark,
+patent, database, endorsement, publicity, privacy, or other right beyond the
+permissions in the embedded third-party terms.

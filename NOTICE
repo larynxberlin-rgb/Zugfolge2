@@ -1,0 +1,24 @@
+Zugfolge
+Copyright 2026 Zugfolge contributors
+
+Repository license matrix:
+
+- program code, tests, build and runtime configuration: AGPL-3.0-or-later
+- public contracts and generated public SDKs: Apache-2.0
+- original documentation and specifications: CC-BY-4.0
+- separately approved OSM-derived database releases: ODbL-1.0
+- explicitly mapped provenance-pending fixtures and media: no grant
+
+See LICENSE, REUSE.toml, LICENSES/, and docs/LICENSING.md for the exact scope.
+
+The name Zugfolge, the Block-Z designation, and other source identifiers are
+subject to the separate policy in TRADEMARKS.md. Copyright permission for
+runtime files does not imply endorsement or permission to brand a fork as an
+official Zugfolge service.
+
+Third-party packages and data are not relicensed by this notice. Their own
+license, attribution, patent, database, and notice obligations continue to
+apply. Dependency metadata is recorded in lockfiles and docs/DEPENDENCIES.md.
+The web distribution carries `public/legal/THIRD-PARTY-NOTICES.txt`; each
+release must regenerate and verify that artifact against its exact runtime
+closure.

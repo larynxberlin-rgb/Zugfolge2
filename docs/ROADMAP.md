@@ -16,9 +16,11 @@ it has one outcome and one measurable exit gate.
 
 - `MS-000` is complete: the repository, product constitution, initial
   contracts, demo, reference kernel, CI, service map, and license brief exist.
-- `MS-001` is ready as the parallel human/legal track.
+- `MS-001` is in progress as the parallel human/legal track: its preparation
+  register is integrated and the owner license slice is being published.
 - `MS-002` is the next technical milestone.
-- No milestone after `MS-000` is described as implemented.
+- No milestone after `MS-000` is complete; bounded preparation and active
+  slices remain subject to their exit gates.
 - The project becomes **Full Release 1.0 only after `MS-074` and its 30-day
   production stabilization gate**. Deployment alone is not a full release.
 
@@ -71,7 +73,7 @@ flowchart LR
 | ID | Milestone | Status |
 |---|---|---|
 | `MS-000` | Repository and product foundation | completed |
-| `MS-001` | Rights, license, brand, and source clearance | ready |
+| `MS-001` | Rights, license, brand, and source clearance | in-progress |
 | `MS-002` | Reproducible polyglot engineering baseline | ready |
 | `MS-003` | Walking Skeleton runtime and determinism architecture | planned |
 
@@ -207,8 +209,9 @@ Useful parallel lanes:
 
 ## Decisions deliberately not hidden in the roadmap
 
-- The current root license remains `UNLICENSED` until `MS-001` receives an owner
-  and legal decision.
+- The owner-published file-level license mosaic is active in
+  `LICENSED_REVIEW_PENDING`; qualified rights-chain, software-license, brand,
+  asset, data, and CLA reviews remain blocking `MS-001` gates.
 - Production persistence and eventing require accepted ADRs after the in-memory
   Walking Skeleton proves the domain transactions.
 - NATS, Valkey, Keycloak, Odoo, and map services are introduced only when their

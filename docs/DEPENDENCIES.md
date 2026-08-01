@@ -4,8 +4,9 @@
 **Last reviewed:** 2026-07-30
 
 This register explains why build and CI dependencies execute, where they come
-from, and how they are pinned and removed. It is not a license grant for
-Zugfolge itself. The repository remains `UNLICENSED` pending `MS-001`.
+from, and how they are pinned and removed. It does not relicense dependencies.
+Zugfolge's own file-level matrix is recorded in
+[`REUSE.toml`](../REUSE.toml), while wider `MS-001` rights review remains open.
 
 Entries marked **candidate** are not approved or installed. They require the
 human Security Reviewer named by `MS-002` before an implementation slice may
@@ -37,6 +38,18 @@ same reviewed slice.
 Both current Python packages have no runtime dependency. Their pinned
 `hatchling==1.27.0` build backend is a build-time dependency. They do not yet
 share a resolved lock.
+
+The current web production dependency closure is `react`, `react-dom`, and
+`scheduler`. The emitted browser/server artifact also carries code or generated
+output associated with `react-server-dom-webpack`, Tailwind CSS, Vinext,
+Rolldown, and Vite. The deterministic
+[`generate-third-party-notices.mjs`](../scripts/generate-third-party-notices.mjs)
+collects their exact installed license files into the shipped
+[`THIRD-PARTY-NOTICES.txt`](../public/legal/THIRD-PARTY-NOTICES.txt). CI fails
+when that file is stale, missing from `dist`, or when native/build-only
+artifacts leak into the client distribution. This reviewed set must be
+re-evaluated whenever bundling or dependencies change; it is not a permanent
+allowlist.
 
 Current workflows use only immutable Action SHAs:
 

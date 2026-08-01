@@ -1,10 +1,11 @@
 # MS-001 kickoff: rights, license, brand, and source clearance
 
-**Milestone state:** `ready`
+**Milestone state:** `in-progress`
 
 **Preparation state:** complete when Slice S01 is merged
 
-**Implementation state:** blocked at the owner/legal gate
+**Implementation state:** owner license decision recorded; qualified reviews and
+remaining clearance slices still blocking completion
 
 **Risk:** R3
 
@@ -21,11 +22,13 @@ source, service, and initial privacy decisions needed through `RG-4`. It also
 records later Full Release source gates, especially `MS-039`, without pretending
 that a deferral is an approval.
 
-The repository remains `UNLICENSED`, external contributions remain closed, and
-all source approvals remain blocked until accountable humans sign the required
-decisions. This kickoff is an executable work contract, not legal advice.
+The repository is now `LICENSED_REVIEW_PENDING`: the explicitly mapped code,
+contract, and documentation grants are published, while provenance-pending
+files are excluded. External contributions remain closed and all source
+approvals remain blocked until accountable humans sign the required decisions.
+This kickoff is an executable work contract, not legal advice.
 
-## Repository evidence at kickoff
+## Repository evidence at original kickoff
 
 - No root `LICENSE`, `NOTICE`, contributor policy, DCO/CLA, rights-holder
   decision, asset register, or approved source register existed at discovery.
@@ -39,24 +42,35 @@ decisions. This kickoff is an executable work contract, not legal advice.
 - MS-002 is being prepared in parallel. Final license and dependency evidence
   must therefore run against the integrated current `main` candidate.
 
-## Blocking human decisions
+The 2026-07-30 owner amendment selected
+`AGPL-3.0-or-later`/`Apache-2.0`/`CC-BY-4.0`, a future ODbL database boundary,
+and a future CLA. It did not complete the rights chain, activate contribution
+intake, clear an asset or mark, or approve a data source.
 
-The project owner must answer and record:
+## Recorded owner decisions and blocking human reviews
 
-1. May third parties operate public commercial forks if network-copyleft duties
-   are met?
-2. Who is the natural or legal licensor, trademark owner, domain owner, and
+Recorded by the project owner:
+
+- compliant commercial AGPL forks are permitted;
+- program code uses `AGPL-3.0-or-later`;
+- public contracts/SDKs use `Apache-2.0`;
+- original documentation uses `CC-BY-4.0`;
+- a separately approved OSM-derived database release will use ODbL;
+- a qualified CLA is the selected future contribution model;
+- trademark and provenance-pending asset rights remain separate.
+
+Still requiring accountable evidence or qualified review:
+
+1. Who is the natural or legal licensor, trademark owner, domain owner, and
    contracting party?
-3. Is the core license candidate `AGPL-3.0-or-later`,
-   `AGPL-3.0-only`, `EUPL-1.2`, or proprietary?
-4. Are contracts/SDKs Apache-2.0 and documentation CC-BY-4.0 acceptable?
-5. Is future proprietary/OEM dual licensing a real requirement?
-6. Will contributions use DCO with inbound-equals-outbound, or does dual
-   licensing require a qualified CLA before the first external contribution?
-7. Which existing commits, AI-assisted outputs, assets, and fixtures can the
+2. Which existing commits, AI-assisted outputs, assets, and fixtures can the
    rights holder validly license?
-8. Which trademark classes, territories, owner, fallback name, and filing
+3. Which trademark classes, territories, owner, fallback name, and filing
    strategy apply?
+4. Which qualified individual/entity CLA text, signing process, privacy rules,
+   and required repository check will be activated?
+5. Which exact third-party notices and build materials must accompany each
+   release format?
 
 Qualified reviewers must separately approve:
 
@@ -181,8 +195,9 @@ tests/rights-policy.test.mjs
 README.md
 ```
 
-Only one of `DCO.txt` or `CLA.md` may become operative. A draft alternative may
-exist only when visibly marked non-operative.
+The owner selected a future individual/entity CLA. No repository CLA text may
+become operative before qualified review and enforcement; no DCO alternative
+may accept contributions in parallel.
 
 **Forbidden:** personal identity documents; signatures; employment or
 contractor contracts; confidential legal advice; automatic copyright claims
@@ -215,9 +230,10 @@ software-license counsel.
 
 ## S03 — Apply the owner-approved license mosaic
 
-**Result:** Code, public contracts/SDKs, documentation, original fixtures,
-OSM-derived data, brands, and commercial assets have explicit, non-conflicting
-rules. The first licensed commit is permanently recorded.
+**Result:** Code, public contracts/SDKs, documentation, provenance-pending
+fixtures and media, future OSM-derived databases, and brand rights have
+explicit, non-conflicting treatments. The first licensed commit is permanently
+recorded without turning open review gates into approvals.
 
 **Risk:** R3
 
@@ -241,27 +257,33 @@ packages/**/package.json
 apps/**/pyproject.toml
 integrations/**/pyproject.toml
 apps/*/build.gradle.kts
+compliance/schemas/rights-register.schema.json
 tests/repository-policy.test.mjs
+tests/rights-policy.test.mjs
 tests/rendered-html.test.mjs
 app/components/OperationsConsole.tsx
 app/layout.tsx
 compliance/rights-register.yaml
 ```
 
-**Forbidden:** selecting a license in code without the signed owner/legal
-decision; placing third-party data or brand assets under the code license;
+**Forbidden:** selecting a license in code without a documented owner decision;
+representing that decision as qualified legal review; placing third-party data
+or provenance-pending brand assets under the code license;
 claiming that later removal revokes licenses already received; weakening tests
 to tolerate inconsistent metadata.
 
 **Acceptance:**
 
-- Given the approved decision, when license tests run, then every component and
+- Given the recorded owner decision, when license tests run, then every component and
   package has the exact SPDX identifier and notice required for its scope.
 - Given the official web service, when rendered, then users can reach the
   corresponding source for the deployed version where the selected license
   requires it.
 - Given a failed atomic license update, then the candidate does not merge and
-  the last integrated state remains explicitly `UNLICENSED`.
+  the last integrated state remains unchanged.
+- Given the first license publication, when the two-commit attestation is
+  validated, then Commit B records its immediate parent Commit A as the grant
+  commit and changes only attestation/evidence paths.
 
 **Rollback:** before merge, revert atomically. After a licensed commit has been
 distributed, changes are prospective only and the prior grant remains recorded.
@@ -279,8 +301,9 @@ git diff --check
 git diff --exit-code -- LICENSE LICENSES NOTICE REUSE.toml package.json pnpm-lock.yaml
 ```
 
-**Gate:** project owner, rights holder, qualified license counsel, and
-independent dependency reviewer.
+**Gate:** project owner decision recorded; identified rights holder, qualified
+license counsel, and independent dependency reviewer remain required for
+`MS-001` completion.
 
 ## S04 — Clear assets and dependencies
 

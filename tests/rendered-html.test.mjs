@@ -40,6 +40,13 @@ test("server-renders the Zugfolge operations console", async () => {
   assert.match(html, /OpenStreetMap/);
   assert.match(html, /Synthetische lokale Demodaten/);
   assert.match(html, /keine OSM-Daten geladen/);
+  assert.match(
+    html,
+    /github\.com\/larynxberlin-rgb\/Zugfolge\/tree\/license-v1/,
+  );
+  assert.match(html, /Quellcode &amp; Lizenzmatrix/);
+  assert.match(html, /\/legal\/THIRD-PARTY-NOTICES\.txt/);
+  assert.match(html, /Drittanbieter-Lizenzen/);
   assert.match(html, /SYNTH/);
   assert.doesNotMatch(html, /Ziel-Datengrundlage/);
   assert.doesNotMatch(html, />● A\/B</);
@@ -67,6 +74,6 @@ test("ships the Block-Z brand and reduced-motion fallback", async () => {
   assert.match(css, /#0b1016/i);
   assert.match(css, /#39c6e5/i);
   assert.match(manifest, /"name":\s*"Zugfolge"/);
-  assert.equal(JSON.parse(packageJson).license, "UNLICENSED");
+  assert.equal(JSON.parse(packageJson).license, "AGPL-3.0-or-later");
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
 });

@@ -109,21 +109,31 @@ Quellen und Dienste steht im
 
 ## Lizenzstatus
 
-Für dieses Repository ist bewusst noch **keine Root-Lizenz** gesetzt. Ein
-öffentlich sichtbares GitHub-Repository erteilt ohne Lizenz keine allgemeine
-Erlaubnis zum Kopieren, Verändern oder Weiterverbreiten. Das Paket ist deshalb
-bis zur Entscheidung ausdrücklich als `UNLICENSED` markiert; es gilt
-„all rights reserved“.
+Zugfolge veröffentlicht ein dateibezogenes Lizenzmosaik:
 
-Die Empfehlung ist **AGPL-3.0-or-later für den Programmcode**, wenn Zugfolge ein
-echtes Open-Source-Projekt werden und Betreiber veränderter öffentlicher
-Fassungen den interagierenden Nutzern den korrespondierenden Quellcode anbieten
-sollen. Markenmaterial, Datenbanken und Dokumentation brauchen davon getrennte
-Regeln. Auswirkungen und
-Alternativen sind in [docs/LICENSING.md](docs/LICENSING.md) erläutert. Vor der
-Entscheidung sind eine dokumentierte Rechtekette und qualifizierte
-Lizenz-, Daten- und Markenprüfung erforderlich. Externe Beiträge bleiben bis
-dahin geschlossen.
+- Programmcode, Tests und Konfiguration: `AGPL-3.0-or-later`
+- öffentliche Verträge und SDKs: `Apache-2.0`
+- originale Dokumentation, Specs und Planung: `CC-BY-4.0`
+- künftige, gesondert freigegebene OSM-Datenbank-Releases: `ODbL-1.0`
+
+Die verbindliche Zuordnung steht in [REUSE.toml](REUSE.toml), die vollständigen
+Texte unter [LICENSES](LICENSES/) und die Folgen für Hosting, Attribution,
+Marke und Daten in [docs/LICENSING.md](docs/LICENSING.md).
+
+Vier vorhandene Dateien mit noch ungeklärter Asset- beziehungsweise
+Fixture-Provenienz sind ausdrücklich von den Standard-Grants ausgenommen:
+`app/components/BlockZ.tsx`, `app/lib/pilot-data.ts`, `public/favicon.svg` und
+`public/og.png`. Sie tragen
+`LicenseRef-Zugfolge-Provenance-Pending` und müssen vor einem Full-Release
+geprüft, standardkonform lizenziert oder ersetzt werden.
+Der gegenwärtige lokale Demo-Build enthält diese Dateien deshalb nur zu
+Evaluationszwecken; er darf bis zu ihrer Freigabe, Ersetzung oder technischen
+Entfernung nicht öffentlich bereitgestellt oder als Release verteilt werden.
+
+Der Status `LICENSED_REVIEW_PENDING` ist keine juristische, Marken-, Quellen-
+oder Produktionsfreigabe. Die Rechtekette und qualifizierte Prüfung bleiben
+offen. Externe Beiträge bleiben geschlossen; ein CLA ist als Zukunftsmodell
+gewählt, aber noch nicht in Kraft.
 
 ## Mitwirken
 
@@ -133,9 +143,9 @@ vollständig lesen. Neue Provider, Laufzeitabhängigkeiten, Datenquellen oder
 öffentliche Verträge benötigen eine dokumentierte Lizenz-, Sicherheits- und
 Ausfallprüfung.
 
-Externe Pull Requests werden bis zur geprüften Eigentums-, Lizenz- und
-Beitragsentscheidung in `MS-001` noch nicht angenommen. Der aktuelle,
-ausdrücklich geschlossene Zustand ist in
+Externe Pull Requests werden bis zur geprüften Rechtekette und einem
+anwaltlich geprüften, technisch erzwungenen CLA-Prozess in `MS-001` noch nicht
+angenommen. Der aktuelle, ausdrücklich geschlossene Zustand ist in
 [CONTRIBUTING.md](CONTRIBUTING.md) dokumentiert.
 
 ## Projektstatus
@@ -145,12 +155,13 @@ ausdrücklich geschlossene Zustand ist in
 - Pilotregion: Leipzig–Halle–Erfurt
 - Zielmarkt: Deutschland / EUR / Infrastrukturstand 2026
 - Öffentliche Welten: persistent, ausschließlich Spielerzüge, 1:1-Echtzeit
-- Repository-Lizenz: **UNLICENSED**, Entscheidungsvorlage vorhanden
+- Repository-Lizenz: **Lizenzmosaik aktiv, Review offen**
 
 `MS-000` ist abgeschlossen. `MS-001` für Rechte, Lizenz, Marke und Quellen ist
-in acht prüfbare Slices vorbereitet und wartet nach dem Vorbereitungsslice auf
-die dokumentierten Human-Gates. `MS-002` ist der parallele technische
-Meilenstein für die reproduzierbare TypeScript-/Kotlin-/Python-Toolchain. Der aktuelle
+in Arbeit: Das Vorbereitungsregister ist integriert und das Owner-Lizenzmosaik
+wird veröffentlicht; Rechtekette, Assets, Marke, Datenquellen und CLA bleiben
+dokumentierte Human-Gates. `MS-002` ist der parallele technische Meilenstein
+für die reproduzierbare TypeScript-/Kotlin-/Python-Toolchain. Der aktuelle
 Umsetzungsstand, alle Abhängigkeiten und die Exit-Kriterien werden in der
 [Full-Release-Roadmap](docs/ROADMAP.md) und der
 [maschinenlesbaren Planung](planning/milestones.yaml) gepflegt.

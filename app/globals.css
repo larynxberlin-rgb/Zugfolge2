@@ -734,21 +734,30 @@ button:focus-visible,
   backdrop-filter: blur(8px);
 }
 
-.map-attribution {
+.map-legal-links {
   position: absolute;
   right: 10px;
   bottom: 8px;
   z-index: 4;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 3px 8px;
+  max-width: calc(100% - 20px);
   padding: 3px 5px;
   border-radius: 4px;
   background: rgb(11 16 22 / 82%);
+  backdrop-filter: blur(8px);
+}
+
+.map-legal-links a {
   color: #8295a4;
   font-size: 7px;
   text-decoration: none;
 }
 
-.map-attribution:hover,
-.map-attribution:focus-visible {
+.map-legal-links a:hover,
+.map-legal-links a:focus-visible {
   color: var(--zf-cyan);
   outline: 1px solid var(--zf-cyan);
 }

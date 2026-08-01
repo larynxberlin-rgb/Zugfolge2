@@ -1,0 +1,23 @@
+Zugfolge provenance-pending material
+=====================================
+
+No copyright license is granted for a file identified as
+LicenseRef-Zugfolge-Provenance-Pending.
+
+The file is retained in the repository while its authorship, source material,
+AI assistance, rights chain, and permitted uses are reviewed. Repository
+visibility and access through a hosting platform do not create an additional
+permission to reproduce, modify, distribute, or sublicense that file.
+
+A local validation build may contain the file so that the existing development
+state remains testable. Such a build is evaluation-only and is not eligible for
+public deployment or distribution. A public release must approve, replace, or
+technically exclude the file first.
+
+This reservation does not limit rights that a recipient independently has
+under applicable law. It grants no trademark, endorsement, publicity, privacy,
+database, patent, or other right.
+
+This identifier is a temporary rights-control state, not an Open Source
+license. The file must be replaced, removed, or moved to an explicit standard
+license after accountable provenance review.
