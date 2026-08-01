@@ -100,16 +100,16 @@ the S02 rollback.
 
 ## Approved MS-002 toolchains
 
-| Dependency | Policy pin | Purpose | License | Official source | Trust/update/rollback |
-|---|---|---|---|---|---|
-| Node.js | `24.18.0` LTS | TypeScript runtime and root verifier | MIT | [Node.js release](https://nodejs.org/en/blog/release/v24.18.0) | official binary/checksum; update as isolated toolchain slice; roll back pin and lock together |
-| pnpm | `11.18.0` | JavaScript workspace and frozen dependency resolution | MIT | [pnpm release](https://github.com/pnpm/pnpm/releases/tag/v11.18.0) | exact `packageManager` plus lock; no floating `latest`; restore npm lock on rollback |
-| CPython | `3.13.14` | data-pipeline and Odoo-bridge runtime | PSF-2.0 | [Python release](https://www.python.org/downloads/release/python-31314/) | official source plus signed Windows installer; interpreter compatibility accepted below |
-| uv | `0.12.0` | Python workspace, environment, build and lock | MIT OR Apache-2.0 | [uv releases](https://github.com/astral-sh/uv/releases) | exact installer/Action version; frozen workspace lock; remove root workspace on rollback |
-| Eclipse Temurin | `21.0.12+8` | Kotlin compiler/runtime toolchain | GPL-2.0-only WITH Classpath-exception-2.0 | [official release](https://github.com/adoptium/temurin21-binaries/releases/tag/jdk-21.0.12%2B8) | exact Linux/Windows artifacts below; isolated pin update and wrapper rollback |
-| Gradle wrapper | `9.5.0` | Kotlin multi-project build | Apache-2.0 | [Gradle distributions](https://services.gradle.org/versions/all) | distribution SHA-256 plus wrapper-JAR SHA-256; wrapper fully tracked; remove additive build on rollback |
-| Kotlin JVM plugin | `2.4.10` | Kotlin compilation | Apache-2.0 | [Kotlin releases](https://kotlinlang.org/docs/releases.html) | Gradle dependency verification; 9.5 is the newest fully supported Gradle version |
-| JUnit Jupiter/BOM | `6.1.2` | JVM tests | EPL-2.0 | [JUnit 6.1.2](https://docs.junit.org/6.1.2/overview.html) | Gradle lock/verification; remove test-only dependency on rollback |
+| Dependency | Policy pin | Owning slice | Purpose | License | Official source | Trust/update/rollback |
+|---|---|---|---|---|---|---|
+| Node.js | `24.18.0` LTS | `MS-002-S02` | TypeScript runtime and root verifier | MIT | [Node.js release](https://nodejs.org/en/blog/release/v24.18.0) | official binary/checksum; update as isolated toolchain slice; roll back pin and lock together |
+| pnpm | `11.18.0` | `MS-002-S02` | JavaScript workspace and frozen dependency resolution | MIT | [pnpm release](https://github.com/pnpm/pnpm/releases/tag/v11.18.0) | exact `packageManager` plus lock; no floating `latest`; restore npm lock on rollback |
+| CPython | `3.13.14` | `MS-002-S03` | data-pipeline and Odoo-bridge runtime | PSF-2.0 | [Python release](https://www.python.org/downloads/release/python-31314/) | official source plus signed Windows installer; interpreter compatibility accepted below |
+| uv | `0.12.0` | `MS-002-S03` | Python workspace, environment, build and lock | MIT OR Apache-2.0 | [uv releases](https://github.com/astral-sh/uv/releases) | exact installer/Action version; frozen workspace lock; remove root workspace on rollback |
+| Eclipse Temurin | `21.0.12+8` | `MS-002-S04` | Kotlin compiler/runtime toolchain | GPL-2.0-only WITH Classpath-exception-2.0 | [official release](https://github.com/adoptium/temurin21-binaries/releases/tag/jdk-21.0.12%2B8) | executes the compiler, tests, and build in the local/CI JVM boundary; update both platform checksums in an isolated toolchain slice; restore the pin and wrapper-compatible JDK on rollback |
+| Gradle wrapper | `9.5.0` | `MS-002-S04` | Kotlin multi-project build | Apache-2.0 | [Gradle distributions](https://services.gradle.org/versions/all) | committed wrapper code downloads and executes the reviewed distribution; update both official SHA-256 values and regenerate wrapper files in isolation; remove the additive JVM build on rollback |
+| Kotlin JVM plugin | `2.4.10` | `MS-002-S04` | Kotlin compilation | Apache-2.0 | [Kotlin releases](https://kotlinlang.org/docs/releases.html) | executes during Gradle configuration/compilation under strict dependency verification; update the catalog, lock, and verification metadata together; revert the plugin pin and metadata on rollback |
+| JUnit Jupiter/BOM | `6.1.2` | `MS-002-S04` | JVM tests | EPL-2.0 | [JUnit 6.1.2](https://docs.junit.org/6.1.2/overview.html) | executes repository-authored tests only and remains test-scoped; update the catalog, lock, and verification metadata together; remove the test-only dependency on rollback |
 
 Approved bootstrap channels:
 

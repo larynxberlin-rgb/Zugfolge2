@@ -46,7 +46,22 @@ an exact version during `uv sync`. Standalone distribution builds additionally
 consume `build-constraints.txt` with `--require-hashes`, so their independent
 PEP 517 environments accept only the artifacts recorded by `uv.lock`.
 
-GitHub Actions is the clean Ubuntu reference. If `node`, `pnpm`, or `python`
+The JVM workspace requires Eclipse Temurin `21.0.12+8`. A system Gradle is not
+supported: verify the committed wrapper bytes and distribution pin before the
+wrapper may download or execute Gradle `9.5.0`:
+
+```text
+node tools/verify-gradle-wrapper.mjs
+.\gradlew.bat --no-daemon --console=plain check
+git diff --exit-code -- gradle.lockfile apps/game-server/gradle.lockfile gradle/verification-metadata.xml
+```
+
+Linux uses `./gradlew` for the second command. Dependency verification is
+strict, dependency locks are committed, the Kotlin/JUnit versions are exact,
+and generated output is isolated below `/.gradle-build` rather than the tracked
+TypeScript source directory `/build`.
+
+GitHub Actions is the clean Ubuntu reference. If `node`, `pnpm`, `python`, or Java
 cannot be found locally, install the declared official runtime; do not use the
 presence of a cached `node_modules`, virtual environment, or system Gradle as
 evidence that the machine is supported.

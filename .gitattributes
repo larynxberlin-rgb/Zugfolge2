@@ -3,3 +3,10 @@ LICENSES/** -whitespace
 apps/data-pipeline/LICENSE -whitespace
 integrations/odoo/LICENSE -whitespace
 public/legal/THIRD-PARTY-NOTICES.txt -whitespace
+
+# Keep wrapper launchers deterministic across supported shells.
+gradlew text eol=lf
+gradlew.bat text eol=crlf
+gradle/wrapper/gradle-wrapper.jar binary
+*.gradle.kts text eol=lf
+gradle/*.toml text eol=lf
