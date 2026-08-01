@@ -22,3 +22,8 @@ apply. Dependency metadata is recorded in lockfiles and docs/DEPENDENCIES.md.
 The web distribution carries `public/legal/THIRD-PARTY-NOTICES.txt`; each
 release must regenerate and verify that artifact against its exact runtime
 closure.
+
+The machine-readable S04 asset/dependency inventories and unresolved
+obligations are recorded in `compliance/assets.yaml`,
+`compliance/dependencies.yaml`, and
+`docs/legal/THIRD-PARTY-NOTICES.md`.
