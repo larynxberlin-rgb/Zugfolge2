@@ -4,13 +4,13 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { readFile, readdir } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
-import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 
 import AsyncApiSpecs from "@asyncapi/specs";
 import Ajv from "ajv";
 import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
+import ts from "typescript";
 import YAML from "yaml";
 
 const ALLOWED_SPEC_STATUSES = new Set(["Accepted", "Proposed", "Superseded"]);
@@ -19,11 +19,8 @@ const ASYNCAPI_VALIDATOR = new Ajv({
   strict: false,
   validateFormats: false,
 }).compile(AsyncApiSpecs.schemasWithoutId["3.0.0"]);
-const require = createRequire(import.meta.url);
-const REDOCLY_CLI = path.join(
-  path.dirname(require.resolve("@redocly/cli/package.json")),
-  "bin",
-  "cli.js",
+const REDOCLY_CLI = fileURLToPath(
+  import.meta.resolve("@redocly/cli/bin/cli.js"),
 );
 
 async function filesBelow(directory, predicate = () => true) {
@@ -236,14 +233,6 @@ const FORBIDDEN_IMPORT_SEGMENTS = new Set([
   "work",
 ]);
 
-function importSpecifiers(source) {
-  return [
-    ...source.matchAll(
-      /(?:\bfrom\s+|\bimport\s*\(\s*|\brequire\s*\(\s*|\bimport\s+)["']([^"']+)["']/g,
-    ),
-  ].map((match) => match[1]);
-}
-
 function assertSafeImportPath(specifier, sourcePath) {
   const segments = specifier.replaceAll("\\", "/").split("/");
   assert.ok(
@@ -258,14 +247,50 @@ function assertSafeImportPath(specifier, sourcePath) {
 }
 
 export function validateJavaScriptModuleSource(source, sourcePath = "JavaScript source") {
-  for (const dynamicImport of source.matchAll(/\b(?:import|require)\s*\(([^)]*)\)/g)) {
-    assert.match(
-      dynamicImport[1].trim(),
-      /^(?:"[^"\r\n]+"|'[^'\r\n]+')$/,
-      `${sourcePath} uses a non-literal dynamic import that cannot be boundary-checked`,
-    );
-  }
-  for (const specifier of importSpecifiers(source)) {
+  const scriptKind = sourcePath.endsWith("x") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
+  const syntaxTree = ts.createSourceFile(
+    sourcePath,
+    source,
+    ts.ScriptTarget.Latest,
+    true,
+    scriptKind,
+  );
+  assert.deepEqual(
+    syntaxTree.parseDiagnostics,
+    [],
+    `${sourcePath} cannot be parsed for module-boundary validation`,
+  );
+  const specifiers = [];
+  const forbiddenRuntimeIdentifiers = new Set([
+    "create" + "Require",
+    "ev" + "al",
+    "Fun" + "ction",
+    "requ" + "ire",
+  ]);
+  const visit = (node) => {
+    if (
+      (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
+      node.moduleSpecifier &&
+      ts.isStringLiteralLike(node.moduleSpecifier)
+    ) {
+      specifiers.push(node.moduleSpecifier.text);
+    }
+    if (ts.isCallExpression(node) && node.expression.kind === ts.SyntaxKind.ImportKeyword) {
+      assert.ok(
+        node.arguments.length === 1 && ts.isStringLiteralLike(node.arguments[0]),
+        `${sourcePath} uses a non-literal dynamic import that cannot be boundary-checked`,
+      );
+      specifiers.push(node.arguments[0].text);
+    }
+    if (ts.isIdentifier(node) && forbiddenRuntimeIdentifiers.has(node.text)) {
+      assert.fail(
+        `${sourcePath} uses a runtime loader or compiler that cannot be boundary-checked`,
+      );
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(syntaxTree);
+  for (const specifier of specifiers) {
     assert.ok(!path.isAbsolute(specifier), `${sourcePath} imports absolute path ${specifier}`);
     assert.doesNotMatch(
       specifier,
@@ -289,13 +314,8 @@ function pythonImportRoots(source) {
   const normalized = source.replace(/\\\r?\n/g, " ");
   assert.doesNotMatch(
     normalized,
-    /\b(?:__import__|importlib)\b/,
+    /\b(?:__builtins__|__getattribute__|__import__|builtins|compile|eval|exec|getattr|globals|importlib|locals)\b/,
     "dynamic Python imports are forbidden because their module edge is not statically reviewable",
-  );
-  assert.doesNotMatch(
-    normalized,
-    /\b(?:eval|exec)\s*\(/,
-    "dynamic Python execution is forbidden because imports cannot be boundary-checked",
   );
   for (const from of normalized.matchAll(
     /\bfrom\s+([A-Za-z_]\w*(?:\s*\.\s*[A-Za-z_]\w*)*)\s+import\b/g,

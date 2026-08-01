@@ -174,8 +174,19 @@ test("module-boundary lint rejects generated, private, and undeclared workspace 
         'const privateModule = import("apps/" + moduleName);',
         "app/private.ts",
       ),
-    /non-literal dynamic import/,
+    /dynamic import/,
   );
+  for (const runtimeLoaderSource of [
+    "import /* boundary */ (target)",
+    "require /* boundary */ (target)",
+    "const loader = require; loader(target)",
+    "const loader = Function; loader(source)",
+  ]) {
+    assert.throws(
+      () => validateJavaScriptModuleSource(runtimeLoaderSource, "app/private.ts"),
+      /dynamic import|runtime loader or compiler/,
+    );
+  }
   const pythonBoundary = {
     declaredWorkspaceDependencies: new Set(),
     ownerImport: "zugfolge_data",
@@ -208,6 +219,8 @@ test("module-boundary lint rejects generated, private, and undeclared workspace 
     '__import__("zugfolge_odoo_bridge")',
     'importlib.import_module("zugfolge_odoo_bridge")',
     'from importlib import import_module; import_module("zugfolge_odoo_bridge")',
+    'from builtins import exec as run; run("import zugfolge_odoo_bridge")',
+    'import builtins as b; getattr(b, "exec")("import zugfolge_odoo_bridge")',
   ]) {
     assert.throws(
       () => validatePythonModuleSource(dynamicPythonSource, pythonBoundary),
