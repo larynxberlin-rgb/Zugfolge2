@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { readdir, readFile } from "node:fs/promises";
 import test from "node:test";
+import { parse as parseYaml } from "yaml";
 import {
   checkThirdPartyNotices,
   DISTRIBUTED_WEB_PACKAGES,
@@ -10,23 +11,33 @@ import {
 } from "../scripts/generate-third-party-notices.mjs";
 
 const lockSource = await readFile(
-  new URL("../package-lock.json", import.meta.url),
+  new URL("../pnpm-lock.yaml", import.meta.url),
   "utf8",
 );
-const lock = JSON.parse(lockSource);
+const lock = parseYaml(lockSource);
 
 function productionClosure() {
-  const queue = Object.keys(lock.packages[""].dependencies ?? {});
-  const visited = new Set();
+  const queue = Object.entries(lock.importers["."].dependencies ?? {}).map(
+    ([name, reference]) => [name, reference.version],
+  );
+  const visitedKeys = new Set();
+  const visitedNames = new Set();
   while (queue.length > 0) {
-    const name = queue.shift();
-    if (visited.has(name)) continue;
-    visited.add(name);
-    const entry = lock.packages[`node_modules/${name}`];
-    assert.ok(entry, `${name} is missing from package-lock.json`);
-    queue.push(...Object.keys(entry.dependencies ?? {}));
+    const [name, reference] = queue.shift();
+    const snapshotKey = `${name}@${reference}`;
+    if (visitedKeys.has(snapshotKey)) continue;
+    visitedKeys.add(snapshotKey);
+    visitedNames.add(name);
+    const version = reference.replace(/\(.*/, "");
+    assert.ok(
+      lock.packages[`${name}@${version}`],
+      `${name}@${version} is missing from pnpm-lock.yaml`,
+    );
+    const snapshot = lock.snapshots[snapshotKey];
+    assert.ok(snapshot, `${snapshotKey} has no pnpm snapshot`);
+    queue.push(...Object.entries(snapshot.dependencies ?? {}));
   }
-  return [...visited].sort();
+  return [...visitedNames].sort();
 }
 
 test("web notice is deterministic and covers runtime plus emitted build code", async () => {
@@ -35,7 +46,7 @@ test("web notice is deterministic and covers runtime plus emitted build code", a
   const lockDigest = normalizedTextSha256(lockSource);
 
   assert.deepEqual(productionClosure(), ["react", "react-dom", "scheduler"]);
-  assert.ok(notice.includes(`package-lock.json SHA-256: ${lockDigest}`));
+  assert.ok(notice.includes(`pnpm-lock.yaml SHA-256: ${lockDigest}`));
   for (const name of productionClosure()) {
     assert.ok(
       DISTRIBUTED_WEB_PACKAGES.includes(name),
@@ -43,14 +54,14 @@ test("web notice is deterministic and covers runtime plus emitted build code", a
     );
   }
   for (const expected of [
-    "react@19.2.6",
-    "react-dom@19.2.6",
+    "react@19.2.8",
+    "react-dom@19.2.8",
     "scheduler@0.27.0",
-    "react-server-dom-webpack@19.2.6",
+    "react-server-dom-webpack@19.2.8",
     "tailwindcss@4.2.1",
     "vinext@0.0.50",
-    "rolldown@1.0.1",
-    "vite@8.0.13",
+    "rolldown@1.2.1",
+    "vite@8.2.0",
     "Copyright (c) Meta Platforms, Inc. and affiliates.",
     "Copyright (c) Tailwind Labs, Inc.",
     "Copyright (c) 2026 Cloudflare, Inc.",

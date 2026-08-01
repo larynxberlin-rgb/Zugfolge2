@@ -23,26 +23,31 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
-      - name: Set up Node.js
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+      - name: Set up pnpm
+        uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
         with:
-          node-version: 22.13.0
-          cache: npm
+          version: 11.18.0
 
-      - name: Install exact dependencies
-        run: npm ci
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.18.0
+          cache: pnpm
 
-      - name: Audit production dependencies
-        run: npm audit --audit-level=high --omit=dev
+      - name: Install frozen dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Audit dependency graph
+        run: pnpm audit --audit-level=high
 
       - name: Type-check
-        run: npx tsc --noEmit
+        run: pnpm exec tsc --noEmit
 
       - name: Lint
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Build and test
-        run: npm test
+        run: pnpm test
 
   integration-kernels:
     name: Data and Odoo kernels

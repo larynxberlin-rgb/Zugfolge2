@@ -9,7 +9,6 @@ const REPOSITORY_ROOT = new URL("../", import.meta.url);
 test("repository publishes one consistent file-level license matrix", async () => {
   const [
     packageJson,
-    lockfile,
     rootLicense,
     reuse,
     dataPipelineProject,
@@ -17,9 +16,6 @@ test("repository publishes one consistent file-level license matrix", async () =
     contractsReadme,
   ] = await Promise.all([
     readFile(new URL("../package.json", import.meta.url), "utf8").then(JSON.parse),
-    readFile(new URL("../package-lock.json", import.meta.url), "utf8").then(
-      JSON.parse,
-    ),
     readFile(new URL("../LICENSE", import.meta.url), "utf8"),
     readFile(new URL("../REUSE.toml", import.meta.url), "utf8"),
     readFile(
@@ -38,7 +34,6 @@ test("repository publishes one consistent file-level license matrix", async () =
 
   assert.equal(packageJson.private, true);
   assert.equal(packageJson.license, "AGPL-3.0-or-later");
-  assert.equal(lockfile.packages[""].license, "AGPL-3.0-or-later");
   assert.match(rootLicense, /AGPL-3\.0-or-later/);
   assert.match(rootLicense, /Apache-2\.0/);
   assert.match(rootLicense, /CC-BY-4\.0/);
@@ -63,15 +58,23 @@ test("repository publishes one consistent file-level license matrix", async () =
     /SPDX-License-Identifier = "LicenseRef-Zugfolge-Provenance-Pending"/,
   );
 
-  const dependenciesWithoutLicense = Object.entries(lockfile.packages)
-    .filter(([path]) => path !== "")
-    .filter(([, metadata]) => !metadata.license)
-    .map(([path]) => path);
+  const directDependencies = Object.keys({
+    ...packageJson.dependencies,
+    ...packageJson.devDependencies,
+  }).sort();
+  const dependenciesWithoutLicense = [];
+  for (const name of directDependencies) {
+    const metadata = await readFile(
+      new URL(`../node_modules/${name}/package.json`, import.meta.url),
+      "utf8",
+    ).then(JSON.parse);
+    if (!metadata.license) dependenciesWithoutLicense.push(name);
+  }
 
   assert.deepEqual(
     dependenciesWithoutLicense,
     [],
-    `dependency license metadata missing: ${dependenciesWithoutLicense.join(", ")}`,
+    `direct installed dependency license metadata missing: ${dependenciesWithoutLicense.join(", ")}`,
   );
 });
 

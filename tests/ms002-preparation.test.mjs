@@ -173,12 +173,12 @@ test("the accepted baseline stays service-free and records exact cross-platform 
   assert.match(dependencies, /before S06 is accepted/);
   assert.match(dependencies, /MUST NOT enable auto-merge/);
   assert.match(dependencies, /No cross-ecosystem CycloneDX CLI is\napproved/);
-  assert.match(dependencies, /one Low and eight High findings/);
+  assert.match(dependencies, /zero known Low, Moderate, High, or Critical/);
   assert.match(dependencies, /react-server-dom-webpack` `19\.2\.8`/);
   assert.match(dependencies, /Vite `8\.2\.0`/);
   assert.match(dependencies, /@cloudflare\/vite-plugin` `1\.50\.0`/);
-  assert.match(dependencies, /S02 MUST resolve the High findings/);
-  assert.match(dependencies, /MUST NOT use `npm audit fix --force`/);
+  assert.match(dependencies, /No force-update or advisory\nsuppression is used/);
+  assert.match(dependencies, /default 24-hour release-age quarantine/);
   assert.doesNotMatch(
     `${adr}\n${dependencies}\n${kickoff}`,
     /\| (?:Python runtime \| CPython|CPython|Python) \|? `3\.12\.13`/,

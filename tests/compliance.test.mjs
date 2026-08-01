@@ -38,9 +38,9 @@ const [assets, dependencies, rightsRegister, packageJson, lockSource] =
     readFile(new URL("../package.json", import.meta.url), "utf8").then(
       JSON.parse,
     ),
-    readFile(new URL("../package-lock.json", import.meta.url), "utf8"),
+    readFile(new URL("../pnpm-lock.yaml", import.meta.url), "utf8"),
   ]);
-const lock = JSON.parse(lockSource);
+const lock = parse(lockSource);
 
 function trackedFiles() {
   return execFileSync("git", ["ls-files", "-z"], {
@@ -69,6 +69,51 @@ async function recursiveFiles(directory) {
     }),
   );
   return files.flat();
+}
+
+async function installedPnpmMetadata() {
+  const virtualStore = path.join(REPOSITORY_PATH, "node_modules", ".pnpm");
+  const virtualEntries = await readdir(virtualStore);
+  const packages = new Map();
+
+  async function collect(packageDirectory) {
+    const metadata = await readFile(
+      path.join(packageDirectory, "package.json"),
+      "utf8",
+    )
+      .then(JSON.parse)
+      .catch((error) => {
+        if (error?.code === "ENOENT") return null;
+        throw error;
+      });
+    if (metadata?.name && metadata.version) {
+      packages.set(`${metadata.name}@${metadata.version}`, metadata);
+    }
+  }
+
+  for (const virtualEntry of virtualEntries) {
+    const packageRoot = path.join(virtualStore, virtualEntry, "node_modules");
+    const entries = await readdir(packageRoot, { withFileTypes: true }).catch(
+      (error) => {
+        if (error?.code === "ENOENT") return [];
+        throw error;
+      },
+    );
+    for (const entry of entries) {
+      if (entry.name.startsWith("@") && entry.isDirectory()) {
+        const scopeRoot = path.join(packageRoot, entry.name);
+        for (const scopedEntry of await readdir(scopeRoot, {
+          withFileTypes: true,
+        })) {
+          await collect(path.join(scopeRoot, scopedEntry.name));
+        }
+      } else {
+        await collect(path.join(packageRoot, entry.name));
+      }
+    }
+  }
+
+  return [...packages.values()];
 }
 
 test("S04 asset inventory fails closed and matches registered bytes", async () => {
@@ -171,7 +216,7 @@ test("all tracked media, fonts, audio, and containers are inventoried", async ()
   }
 });
 
-test("locked npm graph and every observed license expression are controlled", () => {
+test("locked pnpm graph and every installed license expression are controlled", async () => {
   const graph = dependencies.resolvedGraphs.find(
     ({ ecosystem }) => ecosystem === "npm",
   );
@@ -180,20 +225,31 @@ test("locked npm graph and every observed license expression are controlled", ()
   assert.equal(graph.status, "LOCKED_REVIEW_PENDING");
   assert.equal(normalizedTextSha256(lockSource), graph.canonicalSha256);
 
-  const entries = Object.entries(lock.packages).filter(([path]) => path !== "");
+  const entries = Object.entries(lock.packages);
   assert.equal(entries.length, graph.packageCountExcludingRoot);
-  const missing = entries.filter(([, metadata]) => !metadata.license);
+  assert.deepEqual(
+    entries.filter(([, metadata]) => !metadata.resolution?.integrity),
+    [],
+    "every registry package must retain pnpm integrity metadata",
+  );
+
+  const installed = await installedPnpmMetadata();
+  const missing = installed.filter((metadata) => !metadata.license);
   assert.equal(missing.length, graph.missingLicenseMetadata);
   assert.deepEqual(missing, []);
 
   uniqueBy(dependencies.licenseExpressionPolicies, "expression", "policies");
   const observedExpressions = [
-    ...new Set(entries.map(([, metadata]) => metadata.license)),
+    ...new Set(installed.map((metadata) => metadata.license)),
   ].sort();
-  const controlledExpressions = dependencies.licenseExpressionPolicies
-    .map(({ expression }) => expression)
-    .sort();
-  assert.deepEqual(observedExpressions, controlledExpressions);
+  const controlledExpressions = new Set(
+    dependencies.licenseExpressionPolicies.map(({ expression }) => expression),
+  );
+  assert.deepEqual(
+    observedExpressions.filter((expression) => !controlledExpressions.has(expression)),
+    [],
+    "installed license expressions must have an explicit policy",
+  );
   for (const policy of dependencies.licenseExpressionPolicies) {
     assert.equal(policy.compatibility, "HUMAN_REVIEW_REQUIRED");
     for (const field of ["notice", "sourceOffer", "patent"]) {
@@ -207,7 +263,7 @@ test("locked npm graph and every observed license expression are controlled", ()
   );
 });
 
-test("every direct npm package has an exact purpose and matching lock metadata", () => {
+test("every direct npm package has an exact purpose and matching pnpm metadata", async () => {
   uniqueBy(dependencies.directPackages, "name", "direct packages");
   const rootScopes = new Map([
     ...Object.entries(packageJson.dependencies ?? {}).map(([name, version]) => [
@@ -226,13 +282,23 @@ test("every direct npm package has an exact purpose and matching lock metadata",
 
   for (const dependency of dependencies.directPackages) {
     const root = rootScopes.get(dependency.name);
-    const resolved = lock.packages[`node_modules/${dependency.name}`];
+    const importerScope =
+      dependency.scope === "RUNTIME" ? "dependencies" : "devDependencies";
+    const reference = lock.importers["."][importerScope][dependency.name];
+    const resolvedVersion = reference.version.replace(/\(.*/, "");
+    const resolved = lock.packages[`${dependency.name}@${resolvedVersion}`];
+    const metadata = await readFile(
+      new URL(`../node_modules/${dependency.name}/package.json`, import.meta.url),
+      "utf8",
+    ).then(JSON.parse);
     assert.ok(root);
-    assert.ok(resolved, `${dependency.name} is absent from package-lock.json`);
+    assert.ok(resolved, `${dependency.name} is absent from pnpm-lock.yaml`);
     assert.equal(dependency.scope, root.scope);
     assert.equal(String(dependency.version), root.version);
-    assert.equal(String(dependency.version), resolved.version);
-    assert.equal(dependency.licenseExpression, resolved.license);
+    assert.equal(String(dependency.version), reference.specifier);
+    assert.equal(String(dependency.version), resolvedVersion);
+    assert.equal(metadata.version, resolvedVersion);
+    assert.equal(dependency.licenseExpression, metadata.license);
     assert.ok(dependency.purpose, `${dependency.name} needs a purpose`);
   }
 });

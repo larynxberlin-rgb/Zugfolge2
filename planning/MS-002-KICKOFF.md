@@ -123,11 +123,20 @@ R3 workflow change.
   supply-chain boundary.
 - **Allowed paths:** `/package.json`, removal of `/package-lock.json`,
   `/pnpm-lock.yaml`, `/pnpm-workspace.yaml`, `/.npmrc`, `/.node-version`,
+  `/.github/workflows/ci.yml`,
   `/.gitignore`, `/tests/repository-policy.test.mjs`,
-  `/tests/ms002-toolchain.test.mjs`, `/README.md`,
+  `/tests/ms002-toolchain.test.mjs`, `/tests/ms002-preparation.test.mjs`,
+  `/tests/compliance.test.mjs`, `/compliance/dependencies.yaml`, `/REUSE.toml`,
+  `/scripts/generate-third-party-notices.mjs`,
+  `/tests/third-party-notices.test.mjs`,
+  `/public/legal/THIRD-PARTY-NOTICES.txt`,
+  `/planning/MS-002-KICKOFF.md`, `/README.md`,
   `/docs/DEVELOPMENT.md`, and `/docs/DEPENDENCIES.md`.
 - **Forbidden:** moving the web application, changing rendered behavior,
-  GitHub workflows, Python, Kotlin, contracts, or production services.
+  security/supply-chain workflows, Python/Kotlin jobs, runner-matrix rollout,
+  contracts, or production services. The existing web CI job may change only
+  enough to execute this pnpm lock with the approved immutable Node/pnpm
+  Actions.
 - **Acceptance:** AC-003, AC-004, AC-010 for the JavaScript stack; frozen install
   and all existing Node checks pass twice without lock drift.
 - **Rollback:** restore `package-lock.json` and npm commands in one revert.

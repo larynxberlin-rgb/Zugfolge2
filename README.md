@@ -28,22 +28,27 @@ keine produktionsfähige Mehrspielersimulation.
 
 ## Schnellstart
 
-Voraussetzung: Node.js `>=22.13.0`.
+Voraussetzungen: Node.js `24.18.0` und pnpm `11.18.0`. pnpm wird lokal einmal
+als exakte Registry-Version installiert; danach prüft das Repository beide
+Versionen über `package.json` und `.node-version`.
 
 ```bash
-npm ci
-npm run dev
+npm install --global pnpm@11.18.0
+pnpm --version
+pnpm install --frozen-lockfile
+pnpm run dev
 ```
 
 Danach ist die Anwendung unter `http://localhost:3000` erreichbar.
 
 ```bash
-npm run lint
-npm run test:unit
-npm test
+pnpm exec tsc --noEmit
+pnpm run lint
+pnpm run test:unit
+pnpm test
 ```
 
-`npm test` baut die Cloudflare-/vinext-Ausgabe und prüft anschließend sowohl den
+`pnpm test` baut die Cloudflare-/vinext-Ausgabe und prüft anschließend sowohl den
 gerenderten HTML-Vertical-Slice als auch Verträge, Domäneninvarianten,
 Lizenzmetadaten und erkennbare Credential-Leaks. GitHub Actions ergänzt
 Dependency-Audit und CodeQL-SAST.
@@ -168,5 +173,6 @@ Umsetzungsstand, alle Abhängigkeiten und die Exit-Kriterien werden in der
 
 Die technische Vorbereitung für `MS-002` ist in
 [planning/MS-002-KICKOFF.md](planning/MS-002-KICKOFF.md) in acht einzeln
-mergefähige Slices zerlegt. Abhängigkeits- und CI-Änderungen beginnen erst nach
-der dort verlangten menschlichen Security-Freigabe.
+mergefähige Slices zerlegt. Die menschliche Security-Freigabe und S01 sind
+abgeschlossen. S02 ersetzt die JavaScript-Auflösung atomar durch den
+eingefrorenen pnpm-Lock; die weiteren Sprach- und CI-Slices bleiben getrennt.
