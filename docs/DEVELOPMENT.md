@@ -126,20 +126,23 @@ cloud account is needed for the current checks. Planned self-hosted runtime
 services and their introduction milestones are documented in
 [SERVICES.md](SERVICES.md).
 
-## MS-002 target — JavaScript phase executable
+## Cross-platform root verification
 
-The first two commands are executable after S02/S03; S04–S07 introduce the
-remaining command and the root orchestrator:
+After installing the exact tools documented above and the checksummed Gitleaks
+binary from [DEPENDENCIES.md](DEPENDENCIES.md), run this sequence from a clean
+checkout. It is identical in Bash on Ubuntu 24.04 and PowerShell on Windows
+Server 2025:
 
 ```text
-pnpm install --frozen-lockfile
-uv sync --all-packages --locked
-./gradlew --no-daemon --console=plain check
+node tools/preflight.mjs
+node --test tests/cross-platform-policy.test.mjs
 pnpm verify
+git diff --exit-code
 ```
 
-Windows uses `gradlew.bat` for the third command. `pnpm verify` will run the same
-logical phases on both supported systems:
+The preflight fails before dependency installation when Node.js, pnpm, Python,
+uv, Temurin, or the reviewed Gradle wrapper differs from its exact approved
+identity. `pnpm verify` stops on the first failed phase and runs:
 
 1. toolchain preflight;
 2. frozen dependency synchronization check;
@@ -152,6 +155,19 @@ logical phases on both supported systems:
 
 Target runner images are `ubuntu-24.04` and `windows-2025`. Exact toolchain
 versions and candidate sources are in [DEPENDENCIES.md](DEPENDENCIES.md).
+
+Successful verification writes only ignored evidence:
+
+- `outputs/verification/summary.json` records tool identities, phase results,
+  durations, relative artifact names, and SHA-256 digests;
+- `outputs/coverage/{node,python,jvm}` contains machine-readable test and
+  coverage reports;
+- `outputs/sbom` contains the three validated CycloneDX dependency graphs and
+  their checksum manifest.
+
+The CI matrix uploads these paths as `zugfolge-ms002-ubuntu-24.04` and
+`zugfolge-ms002-windows-2025` for 30 days. Neither workflow receives repository
+write access, secrets, deployment credentials, or production service access.
 
 ## Failure rules
 

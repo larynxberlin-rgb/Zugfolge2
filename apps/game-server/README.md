@@ -8,6 +8,12 @@ behavior are intentionally absent.
 Build from the repository root after verifying the wrapper:
 
 ```text
+pnpm verify
+```
+
+For an isolated JVM development check:
+
+```text
 node tools/verify-gradle-wrapper.mjs
 .\gradlew.bat --no-daemon --console=plain check
 ```

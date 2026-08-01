@@ -14,14 +14,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  web-foundation:
-    name: Web foundation
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+  verification:
+    name: Verify (${{ matrix.id }})
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: ubuntu-24.04
+            runner: ubuntu-24.04
+          - id: windows-2025
+            runner: windows-2025
 
     steps:
-      - name: Check out repository
+      - name: Check out complete repository history
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
 
       - name: Set up pnpm
         uses: pnpm/action-setup@0ebf47130e4866e96fce0953f49152a61190b271 # v6.0.9
@@ -33,30 +43,6 @@ jobs:
         with:
           node-version: 24.18.0
           cache: pnpm
-
-      - name: Install frozen dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Audit dependency graph
-        run: pnpm audit --audit-level=high
-
-      - name: Type-check
-        run: pnpm exec tsc --noEmit
-
-      - name: Lint
-        run: pnpm run lint
-
-      - name: Build and test
-        run: pnpm test
-
-  integration-kernels:
-    name: Data and Odoo kernels
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Python
         uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
@@ -70,20 +56,70 @@ jobs:
           enable-cache: true
           cache-dependency-glob: uv.lock
 
-      - name: Sync locked Python workspace
-        run: uv sync --all-packages --locked
+      - name: Set up Temurin
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5.6.0
+        with:
+          distribution: temurin
+          java-version: 21.0.12+8.0.LTS
 
-      - name: Compile Python sources
-        run: uv run python -m compileall -q apps/data-pipeline/src integrations/odoo/src
+      - name: Install checksummed Gitleaks on Linux
+        if: runner.os == 'Linux'
+        env:
+          GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+          GITLEAKS_VERSION: 8.30.1
+        run: |
+          archive="$RUNNER_TEMP/gitleaks.tar.gz"
+          directory="$RUNNER_TEMP/gitleaks"
+          curl --fail --location --silent --show-error \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" \
+            --output "$archive"
+          echo "${GITLEAKS_SHA256}  ${archive}" | sha256sum --check --strict
+          mkdir --parents "$directory"
+          tar --extract --gzip --file "$archive" --directory "$directory" gitleaks
+          echo "$directory" >> "$GITHUB_PATH"
 
-      - name: Test data provenance
-        run: uv run python -m unittest discover -s apps/data-pipeline/tests -v
+      - name: Install checksummed Gitleaks on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        env:
+          GITLEAKS_SHA256: d29144deff3a68aa93ced33dddf84b7fdc26070add4aa0f4513094c8332afc4e
+          GITLEAKS_VERSION: 8.30.1
+        run: |
+          $archive = Join-Path $env:RUNNER_TEMP "gitleaks.zip"
+          $directory = Join-Path $env:RUNNER_TEMP "gitleaks"
+          $uri = "https://github.com/gitleaks/gitleaks/releases/download/v${env:GITLEAKS_VERSION}/gitleaks_${env:GITLEAKS_VERSION}_windows_x64.zip"
+          Invoke-WebRequest -UseBasicParsing -Uri $uri -OutFile $archive
+          $actual = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actual -ne $env:GITLEAKS_SHA256) { throw "Gitleaks checksum mismatch" }
+          Expand-Archive -LiteralPath $archive -DestinationPath $directory
+          $directory | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-      - name: Test Odoo trust boundary
-        run: uv run python -m unittest discover -s integrations/odoo/tests -v
+      - name: Preflight exact toolchain
+        run: node tools/preflight.mjs
 
-      - name: Build data pipeline with hashed backend closure
-        run: uv build --package zugfolge-data-pipeline --build-constraints build-constraints.txt --require-hashes
+      - name: Prove cross-platform policy
+        run: node --test tests/cross-platform-policy.test.mjs
 
-      - name: Build Odoo bridge with hashed backend closure
-        run: uv build --package zugfolge-odoo-bridge --build-constraints build-constraints.txt --require-hashes
+      - name: Run root verification
+        run: pnpm verify
+
+      - name: Prove tracked files remain unchanged
+        run: git diff --exit-code
+
+      - name: Upload platform evidence
+        id: platform-evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: zugfolge-ms002-${{ matrix.id }}
+          path: |
+            outputs/verification
+            outputs/coverage
+            outputs/sbom
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish platform evidence summary
+        env:
+          ARTIFACT_DIGEST: ${{ steps.platform-evidence.outputs.artifact-digest }}
+          PLATFORM_ID: ${{ matrix.id }}
+        run: node tools/verify.mjs --write-ci-summary

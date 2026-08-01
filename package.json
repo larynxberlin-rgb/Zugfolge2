@@ -20,7 +20,8 @@
     "test:unit": "node --test tests/domain.test.mjs",
     "licenses:check": "node scripts/generate-third-party-notices.mjs --check",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern .gradle-build --ignore-pattern .venv --ignore-pattern outputs --ignore-pattern work",
-    "verify:spec": "node tools/spec-lint.mjs"
+    "verify:spec": "node tools/spec-lint.mjs",
+    "verify": "node tools/verify.mjs"
   },
   "dependencies": {
     "react": "19.2.8",

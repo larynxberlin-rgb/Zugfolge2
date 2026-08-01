@@ -1,8 +1,14 @@
 # Preserve reviewed upstream license and notice bytes verbatim.
-LICENSES/** -whitespace
-apps/data-pipeline/LICENSE -whitespace
-integrations/odoo/LICENSE -whitespace
-public/legal/THIRD-PARTY-NOTICES.txt -whitespace
+LICENSES/** -text -whitespace
+apps/data-pipeline/LICENSE -text -whitespace
+integrations/odoo/LICENSE -text -whitespace
+public/legal/THIRD-PARTY-NOTICES.txt -text -whitespace
+
+# Registered brand and calibration assets are checksum-addressed provenance.
+public/favicon.svg text eol=lf
+public/og.png binary
+app/components/BlockZ.tsx text eol=lf
+app/lib/pilot-data.ts text eol=lf
 
 # Keep wrapper launchers deterministic across supported shells.
 gradlew text eol=lf
@@ -10,3 +16,4 @@ gradlew.bat text eol=crlf
 gradle/wrapper/gradle-wrapper.jar binary
 *.gradle.kts text eol=lf
 gradle/*.toml text eol=lf
+*.mjs text eol=lf
