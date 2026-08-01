@@ -269,6 +269,15 @@ export function validateJavaScriptModuleSource(source, sourcePath = "JavaScript 
   ]);
   const staticStringValue = (node) => {
     if (ts.isStringLiteralLike(node)) return node.text;
+    if (ts.isTemplateExpression(node)) {
+      let value = node.head.text;
+      for (const span of node.templateSpans) {
+        const expression = staticStringValue(span.expression);
+        if (expression === undefined) return undefined;
+        value += expression + span.literal.text;
+      }
+      return value;
+    }
     if (
       ts.isParenthesizedExpression(node) ||
       ts.isAsExpression(node) ||

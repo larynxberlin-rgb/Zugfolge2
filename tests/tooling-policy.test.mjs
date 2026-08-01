@@ -189,6 +189,8 @@ test("module-boundary lint rejects generated, private, and undeclared workspace 
     'const { ["createRequire"]: loader } = module; loader(import.meta.url)(target)',
     'Reflect.get(module, "createRequire")(import.meta.url)(target)',
     'import module from "node:module"; module.loader(target)',
+    'globalThis[`ev${"al"}`](source)',
+    'process.getBuiltinModule("module")[`create${"Require"}`](import.meta.url)(target)',
   ]) {
     assert.throws(
       () => validateJavaScriptModuleSource(runtimeLoaderSource, "app/private.ts"),
