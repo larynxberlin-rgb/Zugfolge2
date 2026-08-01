@@ -1,0 +1,85 @@
+schemaVersion: 1
+statusAsOf: "2026-08-01"
+status: INVENTORIED_REVIEW_PENDING
+
+authority:
+  featureId: FEAT-0003
+  requirements: [RIGHTS-002, RIGHTS-003, RIGHTS-007]
+  acceptanceScenarios: [AC-006, AC-010]
+  issue: https://github.com/larynxberlin-rgb/Zugfolge/issues/16
+
+releasePolicy:
+  publicDistributionEligible: false
+  evaluationBuildOnly: true
+  blockingStatuses: [ORIGIN_REVIEW_REQUIRED, REJECTED]
+  nextGate: Asset/IP reviewer and accountable rights holder must approve or replace every blocking item.
+
+discovery:
+  trackedMediaExtensions: [.png, .svg, .jpg, .jpeg, .jpe, .jfif, .gif, .webp, .avif, .ico, .bmp, .tif, .tiff, .apng, .woff, .woff2, .ttf, .otf, .eot, .mp3, .wav, .wave, .ogg, .oga, .opus, .flac, .aac, .m4a, .mp4, .m4v, .webm, .mov, .mkv, .avi]
+  trackedUiSourceExtensions: [.css, .scss, .sass, .less, .pcss, .html, .htm, .tsx, .ts, .jsx, .js]
+  publicAssetExclusions: [public/legal/THIRD-PARTY-NOTICES.txt, public/manifest.webmanifest]
+  trackedFontFiles: []
+  trackedAudioFiles: []
+  remoteFontProviders: []
+  containerFiles: []
+
+assets:
+  - id: favicon-block-z
+    path: public/favicon.svg
+    sha256: DCAF777A55D32C905D170F2CBB07EBB9C07831EF11B96A57F0B0BC55CFECB619
+    kind: BRAND_VECTOR
+    origin: Repository-created Block-Z vector; creator, tools, references, and transfer remain unevidenced.
+    aiAssistance: UNKNOWN
+    provenanceStatus: ORIGIN_REVIEW_REQUIRED
+    licenseDecision: LicenseRef-Zugfolge-Provenance-Pending
+    permittedUses: []
+    currentUse: LOCAL_EVALUATION_BUILD_ONLY
+    publicReleaseEligibility: BLOCKED
+    evidenceRefs: []
+    reviewerRole: ASSET_RIGHTS_REVIEWER
+    rollback: Remove the favicon and every derivative from build output.
+
+  - id: social-preview
+    path: public/og.png
+    sha256: 3FB461D7C2833060909EFF82E1FF083171D4C8752A5C3AB72E9E87787A0F2961
+    kind: BRAND_RASTER
+    origin: Repository-created social preview; constituent assets and generation history remain unevidenced.
+    aiAssistance: UNKNOWN
+    provenanceStatus: ORIGIN_REVIEW_REQUIRED
+    licenseDecision: LicenseRef-Zugfolge-Provenance-Pending
+    permittedUses: []
+    currentUse: LOCAL_EVALUATION_BUILD_ONLY
+    publicReleaseEligibility: BLOCKED
+    evidenceRefs: []
+    reviewerRole: ASSET_RIGHTS_REVIEWER
+    rollback: Remove the preview and invalidate derived presentation exports.
+
+  - id: block-z-component
+    path: app/components/BlockZ.tsx
+    sha256: 414AFFB897241ED7E9F06FEA572E05461DF2BB0C3130FE5B427349C52382DCAC
+    kind: BRAND_RENDERING_CODE
+    origin: Repository-authored React rendering; human authorship and AI-assistance evidence remain incomplete.
+    aiAssistance: AI_ASSISTED
+    provenanceStatus: ORIGIN_REVIEW_REQUIRED
+    licenseDecision: LicenseRef-Zugfolge-Provenance-Pending
+    permittedUses: []
+    currentUse: LOCAL_EVALUATION_BUILD_ONLY
+    publicReleaseEligibility: BLOCKED
+    evidenceRefs: []
+    reviewerRole: ASSET_RIGHTS_REVIEWER
+    rollback: Replace the component and every derivative rendering.
+
+  - id: synthetic-pilot-fixture
+    path: app/lib/pilot-data.ts
+    sha256: C193FB8B716E6441565CA9F96D542FC141171C4D1CAEAC5A3713D7003115F411
+    kind: SYNTHETIC_FIXTURE
+    origin: Illustrative repository fixture; independent origin of every value has not completed human review.
+    aiAssistance: AI_ASSISTED
+    provenanceStatus: ORIGIN_REVIEW_REQUIRED
+    licenseDecision: LicenseRef-Zugfolge-Provenance-Pending
+    permittedUses: []
+    currentUse: LOCAL_EVALUATION_BUILD_ONLY
+    publicReleaseEligibility: BLOCKED
+    evidenceRefs: []
+    reviewerRole: FIXTURE_RIGHTS_REVIEWER
+    rollback: Replace the fixture, update its checksum, and rerun UI and replay tests.

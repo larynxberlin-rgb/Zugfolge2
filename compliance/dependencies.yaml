@@ -1,0 +1,92 @@
+schemaVersion: 1
+statusAsOf: "2026-08-01"
+status: INVENTORIED_REVIEW_PENDING
+
+authority:
+  featureId: FEAT-0003
+  requirements: [RIGHTS-002, RIGHTS-003, RIGHTS-007]
+  acceptanceScenarios: [AC-006, AC-010]
+  issue: https://github.com/larynxberlin-rgb/Zugfolge/issues/16
+
+releasePolicy:
+  publicDistributionEligible: false
+  compatibilityDecision: HUMAN_REVIEW_REQUIRED
+  rule: Metadata presence is not legal compatibility approval; unknown or changed metadata fails closed.
+  nextGate: Independent software-license and security review against integrated main.
+
+resolvedGraphs:
+  - ecosystem: npm
+    manifest: package.json
+    lockfile: package-lock.json
+    canonicalSha256: 82C76697F7CAB85E0C3838467413B304A5C1181B5F7F639315115F7824FF973B
+    packageCountExcludingRoot: 438
+    missingLicenseMetadata: 0
+    exactResolution: true
+    status: LOCKED_REVIEW_PENDING
+  - ecosystem: python
+    manifests: [apps/data-pipeline/pyproject.toml, integrations/odoo/pyproject.toml]
+    runtimeDependencies: []
+    buildDependencies: [hatchling==1.27.0]
+    lockfile: null
+    exactResolution: false
+    status: RELEASE_BLOCKED_NO_LOCK
+
+directPackages:
+  - { name: react, scope: RUNTIME, version: 19.2.6, licenseExpression: MIT, purpose: Browser and server UI runtime }
+  - { name: react-dom, scope: RUNTIME, version: 19.2.6, licenseExpression: MIT, purpose: DOM and server rendering }
+  - { name: "@cloudflare/vite-plugin", scope: DEVELOPMENT, version: 1.37.1, licenseExpression: MIT, purpose: Cloudflare-compatible evaluation build }
+  - { name: "@eslint/js", scope: DEVELOPMENT, version: 9.39.4, licenseExpression: MIT, purpose: JavaScript lint rules }
+  - { name: "@tailwindcss/postcss", scope: DEVELOPMENT, version: 4.2.1, licenseExpression: MIT, purpose: Tailwind PostCSS integration }
+  - { name: "@types/node", scope: DEVELOPMENT, version: 22.19.19, licenseExpression: MIT, purpose: Node.js type declarations }
+  - { name: "@types/react", scope: DEVELOPMENT, version: 19.2.14, licenseExpression: MIT, purpose: React type declarations }
+  - { name: "@types/react-dom", scope: DEVELOPMENT, version: 19.2.3, licenseExpression: MIT, purpose: React DOM type declarations }
+  - { name: "@vitejs/plugin-react", scope: DEVELOPMENT, version: 6.0.2, licenseExpression: MIT, purpose: React compilation in Vite }
+  - { name: "@vitejs/plugin-rsc", scope: DEVELOPMENT, version: 0.5.26, licenseExpression: MIT, purpose: React Server Components build support }
+  - { name: ajv, scope: DEVELOPMENT, version: 8.20.0, licenseExpression: MIT, purpose: JSON Schema validation }
+  - { name: ajv-formats, scope: DEVELOPMENT, version: 3.0.1, licenseExpression: MIT, purpose: Standard JSON Schema formats }
+  - { name: eslint, scope: DEVELOPMENT, version: 9.39.4, licenseExpression: MIT, purpose: Static analysis }
+  - { name: eslint-plugin-react-hooks, scope: DEVELOPMENT, version: 7.1.1, licenseExpression: MIT, purpose: React Hooks lint rules }
+  - { name: globals, scope: DEVELOPMENT, version: 17.8.0, licenseExpression: MIT, purpose: Lint environment globals }
+  - { name: react-server-dom-webpack, scope: DEVELOPMENT, version: 19.2.6, licenseExpression: MIT, purpose: React Server Components runtime emitted by the build }
+  - { name: tailwindcss, scope: DEVELOPMENT, version: 4.2.1, licenseExpression: MIT, purpose: Design-system CSS generation }
+  - { name: typescript, scope: DEVELOPMENT, version: 5.9.3, licenseExpression: Apache-2.0, purpose: Type checking and compilation }
+  - { name: typescript-eslint, scope: DEVELOPMENT, version: 8.65.0, licenseExpression: MIT, purpose: TypeScript-aware linting }
+  - { name: vinext, scope: DEVELOPMENT, version: 0.0.50, licenseExpression: MIT, purpose: Web application build and server adapter }
+  - { name: vite, scope: DEVELOPMENT, version: 8.0.13, licenseExpression: MIT, purpose: Web bundling }
+  - { name: wrangler, scope: DEVELOPMENT, version: 4.92.0, licenseExpression: "MIT OR Apache-2.0", purpose: Local Cloudflare-compatible build tooling }
+  - { name: yaml, scope: DEVELOPMENT, version: 2.9.0, licenseExpression: ISC, purpose: Machine-readable repository policy parsing }
+
+licenseExpressionPolicies:
+  - { expression: 0BSD, notice: RETAIN_IF_DISTRIBUTED, sourceOffer: NONE_IDENTIFIED, patent: NO_EXPRESS_GRANT_REVIEW_REQUIRED, compatibility: HUMAN_REVIEW_REQUIRED }
+  - { expression: Apache-2.0, notice: RETAIN_IF_DISTRIBUTED, sourceOffer: NONE_IDENTIFIED, patent: EXPRESS_GRANT_AND_NOTICE_REVIEW_REQUIRED, compatibility: HUMAN_REVIEW_REQUIRED }
+  - { expression: "Apache-2.0 AND LGPL-3.0-or-later", notice: RETAIN_IF_DISTRIBUTED, sourceOffer: LGPL_SOURCE_AND_RELINKING_REVIEW_REQUIRED, patent: MIXED_TERMS_REVIEW_REQUIRED, compatibility: HUMAN_REVIEW_REQUIRED }
+  - { expression: "Apache-2.0 AND LGPL-3.0-or-later AND MIT", notice: RETAIN_IF_DISTRIBUTED, sourceOffer: LGPL_SOURCE_AND_RELINKING_REVIEW_REQUIRED, patent: MIXED_TERMS_REVIEW_REQUIRED, compatibility: HUMAN_REVIEW_REQUIRED }
+  - { expression: BSD-2-Clause, notice: RETAIN_IF_DISTRIBUTED, sourceOffer: NONE_IDENTIFIED, patent: NO_EXPRESS_GRANT_REVIEW_REQUIRED, compatibility: HUMAN_REVIEW_REQUIRED }
+  - { expression: BSD-3-Clause, notice: RETAIN_IF_DISTRIBUTED, sourceOffer: NONE_IDENTIFIED, patent: NO_EXPRESS_GRANT_REVIEW_REQUIRED, compatibility: HUMAN_REVIEW_REQUIRED }
+  - { expression: BlueOak-1.0.0, notice: RETAIN_IF_DISTRIBUTED, sourceOffer: NONE_IDENTIFIED, patent: EXPRESS_GRANT_REVIEW_REQUIRED, compatibility: HUMAN_REVIEW_REQUIRED }
+  - { expression: CC-BY-4.0, notice: ATTRIBUTION_AND_CHANGE_NOTICE_REQUIRED, sourceOffer: NOT_APPLICABLE, patent: NO_PATENT_GRANT_REVIEW_REQUIRED, compatibility: HUMAN_REVIEW_REQUIRED }
+  - { expression: CC0-1.0, notice: RETAIN_IF_DISTRIBUTED, sourceOffer: NOT_APPLICABLE, patent: NO_PATENT_GRANT_REVIEW_REQUIRED, compatibility: HUMAN_REVIEW_REQUIRED }
+  - { expression: ISC, notice: RETAIN_IF_DISTRIBUTED, sourceOffer: NONE_IDENTIFIED, patent: NO_EXPRESS_GRANT_REVIEW_REQUIRED, compatibility: HUMAN_REVIEW_REQUIRED }
+  - { expression: LGPL-3.0-or-later, notice: RETAIN_IF_DISTRIBUTED, sourceOffer: SOURCE_AND_RELINKING_REVIEW_REQUIRED, patent: LICENSE_TERMS_REVIEW_REQUIRED, compatibility: HUMAN_REVIEW_REQUIRED }
+  - { expression: MIT, notice: RETAIN_IF_DISTRIBUTED, sourceOffer: NONE_IDENTIFIED, patent: NO_EXPRESS_GRANT_REVIEW_REQUIRED, compatibility: HUMAN_REVIEW_REQUIRED }
+  - { expression: "MIT OR Apache-2.0", notice: RETAIN_IF_DISTRIBUTED, sourceOffer: NONE_IDENTIFIED, patent: LICENSE_CHOICE_REVIEW_REQUIRED, compatibility: HUMAN_REVIEW_REQUIRED }
+  - { expression: MPL-2.0, notice: RETAIN_IF_DISTRIBUTED, sourceOffer: FILE_LEVEL_SOURCE_REVIEW_REQUIRED, patent: EXPRESS_GRANT_REVIEW_REQUIRED, compatibility: HUMAN_REVIEW_REQUIRED }
+  - { expression: Python-2.0, notice: RETAIN_IF_DISTRIBUTED, sourceOffer: NONE_IDENTIFIED, patent: LICENSE_TERMS_REVIEW_REQUIRED, compatibility: HUMAN_REVIEW_REQUIRED }
+
+distributedWebPackages:
+  manifest: public/legal/THIRD-PARTY-NOTICES.txt
+  generator: scripts/generate-third-party-notices.mjs
+  packages: [react, react-dom, scheduler, react-server-dom-webpack, "@vitejs/plugin-rsc", tailwindcss, vinext, rolldown, vite]
+  licenseTextFallbacks:
+    "@vitejs/plugin-rsc": "@vitejs/plugin-react"
+  status: NOTICE_GENERATED_COMPATIBILITY_REVIEW_PENDING
+
+githubActions:
+  - { repository: actions/checkout, sha: fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09, release: v5, licenseExpression: MIT, purpose: Materialize repository source, status: PINNED_CURRENT_USE_REVIEW_PENDING }
+  - { repository: actions/setup-node, sha: a0853c24544627f65ddf259abe73b1d18a591444, release: v5, licenseExpression: MIT, purpose: Install and cache the declared Node runtime, status: PINNED_CURRENT_USE_REVIEW_PENDING }
+  - { repository: actions/setup-python, sha: ece7cb06caefa5fff74198d8649806c4678c61a1, release: v6, licenseExpression: MIT, purpose: Install the declared Python runtime, status: PINNED_CURRENT_USE_REVIEW_PENDING }
+  - { repository: github/codeql-action, sha: a2983b8bed1923f44751c5c43237f479442827b3, release: v3, licenseExpression: MIT, purpose: Initialize build and analyze SAST results, status: PINNED_CURRENT_USE_REVIEW_PENDING }
+  - { repository: actions/dependency-review-action, sha: 1e966ba708e4b64bb0c9bfb7abb5a232840be16a, release: pinned-main-commit, licenseExpression: MIT, purpose: Reject vulnerable dependency deltas, status: PINNED_CURRENT_USE_REVIEW_PENDING }
+
+containers: []
+fonts: []
