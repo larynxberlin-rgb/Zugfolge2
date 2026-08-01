@@ -431,15 +431,26 @@ export function OperationsConsole() {
                 <span className="legend-dot" /> Restriktion
               </span>
             </div>
-            <a
-              className="map-attribution"
-              href="https://www.openstreetmap.org/copyright"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Synthetische lokale Demodaten · keine OSM-Daten geladen · Ziel:
-              OpenStreetMap (ODbL)
-            </a>
+            <div className="map-legal-links" aria-label="Daten- und Lizenzhinweise">
+              <a
+                href="https://www.openstreetmap.org/copyright"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Synthetische lokale Demodaten · keine OSM-Daten geladen ·
+                OpenStreetMap-Zieldaten (ODbL)
+              </a>
+              <a
+                href="https://github.com/larynxberlin-rgb/Zugfolge/tree/license-v1"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Quellcode &amp; Lizenzmatrix
+              </a>
+              <a href="/legal/THIRD-PARTY-NOTICES.txt">
+                Drittanbieter-Lizenzen
+              </a>
+            </div>
           </section>
 
           <section className="operations-strip" aria-label="Laufender Betrieb">

@@ -1,0 +1,5 @@
+# Preserve reviewed upstream license and notice bytes verbatim.
+LICENSES/** -whitespace
+apps/data-pipeline/LICENSE -whitespace
+integrations/odoo/LICENSE -whitespace
+public/legal/THIRD-PARTY-NOTICES.txt -whitespace

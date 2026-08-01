@@ -122,8 +122,7 @@ function assertSourcePolicy(source) {
   }
 }
 
-test("MS-001 preparation register matches its schema", () => {
-
+test("MS-001 rights register matches its schema", () => {
   assert.equal(
     validate(register),
     true,
@@ -131,20 +130,71 @@ test("MS-001 preparation register matches its schema", () => {
   );
 });
 
-test("preparation grants no license, contribution right, source, asset, or brand approval", () => {
-  assert.equal(register.repositoryStatus, "PREPARATION");
+test("owner license publication does not grant contribution, source, asset, or brand approval", () => {
+  assert.equal(register.repositoryStatus, "LICENSED_REVIEW_PENDING");
   assert.equal(
     register.statusRules.approvalExpiryPolicy,
     "EVALUATE_AT_CI_RUN_DATE",
   );
   assert.equal(packageJson.private, true);
-  assert.equal(packageJson.license, "UNLICENSED");
-  assert.equal(register.licensing.currentRootLicense, "UNLICENSED");
-  assert.equal(register.licensing.firstLicensedCommit, null);
+  assert.equal(packageJson.license, "AGPL-3.0-or-later");
+  assert.equal(
+    register.licensing.status,
+    "OWNER_DECIDED_COUNSEL_PENDING",
+  );
+  assert.equal(register.licensing.ownerDecision.status, "RECORDED");
+  assert.equal(register.licensing.publicationStatus, "ACTIVE");
+  assert.equal(register.licensing.rootLicenseModel, "LICENSE_MOSAIC");
+  assert.equal(
+    register.licensing.firstLicensePublication.protocol,
+    "TWO_COMMIT_PARENT_ATTESTATION_V1",
+  );
+  assert.equal(
+    register.licensing.firstLicensePublication.state,
+    "PENDING_ATTESTATION",
+  );
+  assert.equal(register.licensing.firstLicensePublication.grantCommit, null);
+  assert.equal(register.licensing.firstLicensePublication.attestedAt, null);
   assert.equal(register.ownership.status, "HUMAN_REVIEW_REQUIRED");
   assert.equal(register.ownership.externalContributions, "CLOSED");
+  assert.equal(register.ownership.selectedContributionModel, "CLA");
+  assert.equal(
+    register.ownership.contributionModelStatus,
+    "OWNER_SELECTED_COUNSEL_PENDING",
+  );
+  assert.equal(register.ownership.claActivationStatus, "NOT_ACTIVE");
   assert.equal(register.ownership.aiAssistedWorkReview, "PENDING");
-  assert.match(contributing, /external contributions are\s+closed/i);
+  assert.match(contributing, /external\s+contributions\s+are\s+closed/i);
+  const components = new Map(
+    register.licensing.components.map((component) => [
+      component.id,
+      component,
+    ]),
+  );
+  assert.equal(
+    components.get("game-code")?.selectedTreatment,
+    "AGPL-3.0-or-later",
+  );
+  assert.equal(
+    components.get("public-contracts-sdks")?.selectedTreatment,
+    "Apache-2.0",
+  );
+  assert.equal(
+    components.get("original-documentation")?.selectedTreatment,
+    "CC-BY-4.0",
+  );
+  assert.equal(
+    components.get("synthetic-fixtures")?.publicationStatus,
+    "EXCLUDED_FROM_LICENSE_GRANT",
+  );
+  assert.equal(
+    components.get("osm-derived-database")?.publicationStatus,
+    "POLICY_ONLY_NO_ARTIFACT",
+  );
+  assert.equal(
+    components.get("brand-premium-media")?.publicationStatus,
+    "RIGHTS_RESERVATION_ACTIVE",
+  );
   assert.equal(
     register.licensing.components.every(
       (component) => component.status === "HUMAN_REVIEW_REQUIRED",

@@ -2,11 +2,14 @@
 
 **Status:** Proposed
 
-**Version:** 0.1
+**Version:** 0.2
 
 **Date:** 2026-07-30
 
 **Milestone:** MS-001
+
+**Owner-decision amendment:** 2026-07-30; public license mosaic recorded while
+qualified feature review remains open
 
 ## Outcome
 
@@ -15,13 +18,16 @@ rights it does not hold or using code, brands, assets, services, or railway data
 outside documented permissions.
 
 This proposal does not itself grant a license, approve a provider, clear a
-trademark, reserve a domain, or provide legal advice. Its requirements become
-normative only after the listed human gate accepts the specification.
+trademark, reserve a domain, or provide legal advice. The separately recorded
+project-owner decision publishes a file-level license mosaic while this wider
+feature remains proposed and its qualified review gates remain open.
 
 ## Preconditions
 
 - `MS-000` is complete.
-- The repository remains `UNLICENSED`.
+- The repository is `LICENSED_REVIEW_PENDING`.
+- The owner-published code, contract, and documentation grants are active only
+  for their explicit file-level scopes.
 - External contributions are closed.
 - `CONST-006`, `CONST-012`, and `ADR-0003` remain authoritative.
 - Confidential evidence is stored outside the public repository.
@@ -48,7 +54,8 @@ normative only after the listed human gate accepts the specification.
 - implementing provider adapters, production services, payment, accounts, or
   telemetry;
 - declaring a source approved based only on public availability;
-- changing the root license before the rights-holder and legal gates pass.
+- granting rights to provenance-pending files or third-party material;
+- treating owner publication as qualified legal, brand, asset, or data review.
 
 ## Proposed requirements
 
@@ -60,7 +67,10 @@ repository ownership, or AI-service output assignment MUST NOT be treated as
 sufficient evidence by itself.
 
 The rights chain for prior human, employee, contractor, and AI-assisted work
-MUST be reviewed before the first licensed commit is published.
+MUST be reviewed before `MS-001` can close or an affected Full Release can ship.
+An earlier owner-published grant MUST be described as applying only to rights
+the grantor is authorized to grant; publication MUST NOT be recorded as proof
+that the rights chain is complete.
 
 ### RIGHTS-002 — AI and third-party provenance
 
@@ -75,23 +85,27 @@ Code, public contracts/SDKs, documentation, original fixtures, OSM-derived
 databases, brands, premium assets, third-party feeds, and player data MUST have
 separate, explicit license or rights decisions.
 
-Until all human gates pass:
+A documented project owner MAY publish an explicit file-level license mosaic
+while qualified review remains open. That state MUST be named
+`LICENSED_REVIEW_PENDING` and MUST:
 
-- package metadata MUST remain `UNLICENSED`;
-- no root `LICENSE` MUST be added;
-- no repository text may imply an Open Source grant;
-- the first commit carrying a license grant MUST be recorded;
-- a later license change MUST acknowledge that grants already received under a
-  valid earlier license are not silently revoked.
+- distinguish active publication from `APPROVED` review status;
+- activate grants only for the mapped scopes and only to the extent that the
+  grantor holds the required rights;
+- exclude provenance-pending fixtures, brand media, and third-party material;
+- keep ODbL at `POLICY_ONLY_NO_ARTIFACT` until an actual qualified database
+  release exists;
+- leave source, asset, brand, service, privacy, and MS-001 gates unchanged;
+- permanently record the first commit carrying a license grant;
+- acknowledge that grants already received under a valid earlier license are
+  not silently revoked by a later repository change.
 
 ### RIGHTS-004 — Contributions
 
-External contributions MUST remain closed until the owner chooses and counsel
-approves one contribution model:
-
-- inbound equals outbound plus DCO for a single-license Open Source strategy; or
-- an appropriate individual and corporate CLA before any contribution needed
-  for proprietary or dual licensing.
+The project owner selected a future individual/entity CLA. Selection MUST NOT
+be treated as activation. External contributions MUST remain closed until
+counsel approves the operative text, authorized signing and privacy handling
+are active, and a required repository check enforces the correct record.
 
 The contribution policy MUST require contributors to disclose AI assistance and
 affirm that they have the rights required for their submission.
@@ -200,6 +214,29 @@ access, incident handling, and any required impact assessment.
 
 **And** external contributions remain closed.
 
+### AC-001A — Published grants do not approve open rights
+
+**Given** `repositoryStatus` is `LICENSED_REVIEW_PENDING`
+
+**When** the compliance register is validated
+
+**Then** the selected code, contract, and documentation grants are active
+
+**And** ownership and qualified review remain pending
+
+**And** no source, asset, brand, service, or data permission becomes approved
+
+**And** provenance-pending fixtures and media remain outside the grants
+
+**And** a build containing them is blocked from public deployment and release
+distribution
+
+**And** external contributions remain `CLOSED`
+
+**And** the CLA is selected but `NOT_ACTIVE`
+
+**And** `MS-001` remains incomplete.
+
 ### AC-002 — Machine-readable source completeness
 
 **Given** a source is present in the register
@@ -277,17 +314,28 @@ contains confidential or personal data
 **Then** only a non-secret reference, digest, accountable role, and decision
 date enter the repository.
 
-### AC-009 — License change is atomic
+### AC-009 — First publication uses parent attestation
 
-**Given** the owner and legal gates approve a license mosaic
+**Given** the owner authorized public publication
 
-**When** the first license slice is prepared
+**When** Commit A publishes the license mosaic
 
-**Then** root license files, notices, package metadata, contribution terms, UI
-source link, tests, and the first licensed commit record change together
+**Then** its register state is `PENDING_ATTESTATION`
 
-**And** a failed consistency check leaves the repository explicitly
-`UNLICENSED`.
+**And** the publication is already treated as irreversible for recipients.
+
+**Given** Commit B is the immediate child of Commit A
+
+**When** Commit B records Commit A's SHA
+
+**Then** the state becomes `ATTESTED`
+
+**And** CI derives Commit B as the first commit introducing `ATTESTED`
+
+**And** Commit B changes only the allowed attestation and evidence paths
+
+**And** a failed attestation blocks merge or release without revoking Commit
+A's already published grant.
 
 ### AC-010 — MS-001 closes on integrated main
 

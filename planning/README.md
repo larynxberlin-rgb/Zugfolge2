@@ -11,7 +11,7 @@ implemented, and accepted one milestone at a time.
 - [`../docs/ROADMAP.md`](../docs/ROADMAP.md) explains the plan for humans.
 - [`MS-002-KICKOFF.md`](MS-002-KICKOFF.md) records the active preparation
   package for the next technical milestone, including its human security gate.
-- [`MS-001-KICKOFF.md`](MS-001-KICKOFF.md) is the prepared rights, license,
+- [`MS-001-KICKOFF.md`](MS-001-KICKOFF.md) is the active rights, license,
   brand, source, service, and privacy work contract.
 
 The delivery plan schedules work. It does not define product behavior and never

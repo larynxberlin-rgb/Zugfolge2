@@ -26,7 +26,12 @@
       "$ref": "#/$defs/date"
     },
     "repositoryStatus": {
-      "enum": ["PREPARATION", "ACTIVE", "SUSPENDED"]
+      "enum": [
+        "PREPARATION",
+        "LICENSED_REVIEW_PENDING",
+        "ACTIVE",
+        "SUSPENDED"
+      ]
     },
     "statusRules": {
       "type": "object",
@@ -94,6 +99,9 @@
         "status",
         "rightsHolderRole",
         "externalContributions",
+        "selectedContributionModel",
+        "contributionModelStatus",
+        "claActivationStatus",
         "aiAssistedWorkReview",
         "evidenceRefs",
         "nextAction"
@@ -108,6 +116,21 @@
         },
         "externalContributions": {
           "enum": ["CLOSED", "PERMITTED_DCO", "PERMITTED_CLA"]
+        },
+        "selectedContributionModel": {
+          "enum": ["NONE", "DCO", "CLA"]
+        },
+        "contributionModelStatus": {
+          "enum": [
+            "UNDECIDED",
+            "OWNER_SELECTED_COUNSEL_PENDING",
+            "COUNSEL_REVIEWED_NOT_ACTIVE",
+            "ACTIVE",
+            "REJECTED"
+          ]
+        },
+        "claActivationStatus": {
+          "enum": ["NOT_APPLICABLE", "NOT_ACTIVE", "ACTIVE", "SUSPENDED"]
         },
         "aiAssistedWorkReview": {
           "enum": ["PENDING", "COMPLETE"]
@@ -126,22 +149,116 @@
       "additionalProperties": false,
       "required": [
         "status",
-        "currentRootLicense",
-        "firstLicensedCommit",
+        "ownerDecision",
+        "publicationStatus",
+        "rootLicenseModel",
+        "firstLicensePublication",
         "components",
-        "ownerQuestions",
+        "openReviewQuestions",
         "nextAction"
       ],
       "properties": {
         "status": {
-          "$ref": "#/$defs/decisionStatus"
+          "$ref": "#/$defs/licenseDecisionStatus"
         },
-        "currentRootLicense": {
-          "const": "UNLICENSED"
+        "ownerDecision": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "status",
+            "deciderRole",
+            "decidedAt",
+            "evidenceRefs"
+          ],
+          "properties": {
+            "status": {
+              "enum": ["NOT_RECORDED", "RECORDED"]
+            },
+            "deciderRole": {
+              "type": "string",
+              "minLength": 1
+            },
+            "decidedAt": {
+              "$ref": "#/$defs/dateTime"
+            },
+            "evidenceRefs": {
+              "$ref": "#/$defs/evidenceRefs"
+            }
+          }
         },
-        "firstLicensedCommit": {
-          "type": ["string", "null"],
-          "pattern": "^[0-9a-f]{40}$"
+        "publicationStatus": {
+          "enum": ["NOT_PUBLISHED", "ACTIVE", "SUSPENDED_PROSPECTIVELY"]
+        },
+        "rootLicenseModel": {
+          "enum": ["UNLICENSED", "SINGLE_LICENSE", "LICENSE_MOSAIC"]
+        },
+        "firstLicensePublication": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "protocol",
+            "state",
+            "grantCommit",
+            "attestedAt",
+            "evidenceRefs"
+          ],
+          "properties": {
+            "protocol": {
+              "const": "TWO_COMMIT_PARENT_ATTESTATION_V1"
+            },
+            "state": {
+              "enum": ["PENDING_ATTESTATION", "ATTESTED"]
+            },
+            "grantCommit": {
+              "type": ["string", "null"],
+              "pattern": "^[0-9a-f]{40}$"
+            },
+            "attestedAt": {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/dateTime"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "evidenceRefs": {
+              "$ref": "#/$defs/evidenceRefs"
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "state": {
+                    "const": "PENDING_ATTESTATION"
+                  }
+                }
+              },
+              "then": {
+                "properties": {
+                  "grantCommit": {
+                    "type": "null"
+                  },
+                  "attestedAt": {
+                    "type": "null"
+                  }
+                }
+              },
+              "else": {
+                "properties": {
+                  "grantCommit": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{40}$"
+                  },
+                  "attestedAt": {
+                    "$ref": "#/$defs/dateTime"
+                  }
+                }
+              }
+            }
+          ]
         },
         "components": {
           "type": "array",
@@ -149,15 +266,40 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["scope", "candidate", "status", "humanGate"],
+            "required": [
+              "id",
+              "scope",
+              "selectedTreatment",
+              "publicationStatus",
+              "status",
+              "humanGate"
+            ],
             "properties": {
+              "id": {
+                "enum": [
+                  "game-code",
+                  "public-contracts-sdks",
+                  "original-documentation",
+                  "synthetic-fixtures",
+                  "osm-derived-database",
+                  "brand-premium-media"
+                ]
+              },
               "scope": {
                 "type": "string",
                 "minLength": 1
               },
-              "candidate": {
+              "selectedTreatment": {
                 "type": "string",
                 "minLength": 1
+              },
+              "publicationStatus": {
+                "enum": [
+                  "ACTIVE",
+                  "EXCLUDED_FROM_LICENSE_GRANT",
+                  "POLICY_ONLY_NO_ARTIFACT",
+                  "RIGHTS_RESERVATION_ACTIVE"
+                ]
               },
               "status": {
                 "$ref": "#/$defs/decisionStatus"
@@ -166,10 +308,123 @@
                 "type": "string",
                 "minLength": 1
               }
-            }
+            },
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "id": {
+                      "const": "game-code"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "selectedTreatment": {
+                      "const": "AGPL-3.0-or-later"
+                    },
+                    "publicationStatus": {
+                      "const": "ACTIVE"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "id": {
+                      "const": "public-contracts-sdks"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "selectedTreatment": {
+                      "const": "Apache-2.0"
+                    },
+                    "publicationStatus": {
+                      "const": "ACTIVE"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "id": {
+                      "const": "original-documentation"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "selectedTreatment": {
+                      "const": "CC-BY-4.0"
+                    },
+                    "publicationStatus": {
+                      "const": "ACTIVE"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "id": {
+                      "const": "synthetic-fixtures"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "selectedTreatment": {
+                      "const": "LicenseRef-Zugfolge-Provenance-Pending"
+                    },
+                    "publicationStatus": {
+                      "const": "EXCLUDED_FROM_LICENSE_GRANT"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "id": {
+                      "const": "osm-derived-database"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "selectedTreatment": {
+                      "const": "ODbL-1.0"
+                    },
+                    "publicationStatus": {
+                      "const": "POLICY_ONLY_NO_ARTIFACT"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "id": {
+                      "const": "brand-premium-media"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "publicationStatus": {
+                      "const": "RIGHTS_RESERVATION_ACTIVE"
+                    }
+                  }
+                }
+              }
+            ]
           }
         },
-        "ownerQuestions": {
+        "openReviewQuestions": {
           "type": "array",
           "minItems": 1,
           "items": {
@@ -282,10 +537,125 @@
       }
     }
   },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "repositoryStatus": {
+            "const": "LICENSED_REVIEW_PENDING"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "ownership": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "const": "HUMAN_REVIEW_REQUIRED"
+              }
+            }
+          },
+          "licensing": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "const": "OWNER_DECIDED_COUNSEL_PENDING"
+              },
+              "publicationStatus": {
+                "const": "ACTIVE"
+              },
+              "rootLicenseModel": {
+                "const": "LICENSE_MOSAIC"
+              },
+              "ownerDecision": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "const": "RECORDED"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "ownership": {
+            "type": "object",
+            "required": [
+              "selectedContributionModel",
+              "externalContributions"
+            ],
+            "properties": {
+              "selectedContributionModel": {
+                "const": "CLA"
+              },
+              "externalContributions": {
+                "const": "CLOSED"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "ownership": {
+            "type": "object",
+            "properties": {
+              "claActivationStatus": {
+                "enum": ["NOT_ACTIVE", "SUSPENDED"]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "ownership": {
+            "type": "object",
+            "required": ["externalContributions"],
+            "properties": {
+              "externalContributions": {
+                "const": "PERMITTED_CLA"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "ownership": {
+            "type": "object",
+            "properties": {
+              "selectedContributionModel": {
+                "const": "CLA"
+              },
+              "contributionModelStatus": {
+                "const": "ACTIVE"
+              },
+              "claActivationStatus": {
+                "const": "ACTIVE"
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
   "$defs": {
     "date": {
       "type": "string",
       "format": "date"
+    },
+    "dateTime": {
+      "type": "string",
+      "format": "date-time"
     },
     "dateOrNull": {
       "oneOf": [
@@ -354,6 +724,14 @@
     },
     "decisionStatus": {
       "enum": ["HUMAN_REVIEW_REQUIRED", "APPROVED", "REJECTED"]
+    },
+    "licenseDecisionStatus": {
+      "enum": [
+        "HUMAN_REVIEW_REQUIRED",
+        "OWNER_DECIDED_COUNSEL_PENDING",
+        "COUNSEL_REVIEWED",
+        "REJECTED"
+      ]
     },
     "sourceStatus": {
       "enum": [

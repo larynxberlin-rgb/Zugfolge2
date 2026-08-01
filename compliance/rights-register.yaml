@@ -1,6 +1,6 @@
 schemaVersion: 1
 statusAsOf: "2026-07-30"
-repositoryStatus: PREPARATION
+repositoryStatus: LICENSED_REVIEW_PENDING
 
 statusRules:
   productionEligibleSourceStatuses: [APPROVED, APPROVED_WITH_CONDITIONS]
@@ -38,46 +38,81 @@ ownership:
   status: HUMAN_REVIEW_REQUIRED
   rightsHolderRole: PROJECT_OWNER_TO_BE_LEGALLY_IDENTIFIED
   externalContributions: CLOSED
+  selectedContributionModel: CLA
+  contributionModelStatus: OWNER_SELECTED_COUNSEL_PENDING
+  claActivationStatus: NOT_ACTIVE
   aiAssistedWorkReview: PENDING
-  evidenceRefs: []
-  nextAction: Record the accountable natural or legal person and review the human, AI-assisted, employment, and contractor rights chain outside the public repository.
+  evidenceRefs:
+    - id: license-owner-decision-2026-07-30
+      documentRole: LICENSE_DECISION
+      digestSha256: 3BB30988DFA5772B135F7A5D15569F417E80372C9BE278F1A1DBA8C2DE6F7173
+      decisionDate: "2026-07-30"
+      reviewerRole: PROJECT_OWNER
+  nextAction: Complete the private rights-chain and qualified CLA review; keep external contributions closed until the CLA process, privacy handling, and required branch protection are active.
 
 licensing:
-  status: HUMAN_REVIEW_REQUIRED
-  currentRootLicense: UNLICENSED
-  firstLicensedCommit: null
+  status: OWNER_DECIDED_COUNSEL_PENDING
+  ownerDecision:
+    status: RECORDED
+    deciderRole: PROJECT_OWNER
+    decidedAt: "2026-07-30T17:40:42Z"
+    evidenceRefs:
+      - id: license-owner-decision-2026-07-30
+        documentRole: LICENSE_DECISION
+        digestSha256: 3BB30988DFA5772B135F7A5D15569F417E80372C9BE278F1A1DBA8C2DE6F7173
+        decisionDate: "2026-07-30"
+        reviewerRole: PROJECT_OWNER
+  publicationStatus: ACTIVE
+  rootLicenseModel: LICENSE_MOSAIC
+  firstLicensePublication:
+    protocol: TWO_COMMIT_PARENT_ATTESTATION_V1
+    state: PENDING_ATTESTATION
+    grantCommit: null
+    attestedAt: null
+    evidenceRefs: []
   components:
-    - scope: Original runtime code, web client, game server, simulation, data pipeline, live gateway, and Odoo bridge
-      candidate: AGPL-3.0-or-later; EUPL-1.2 is the EU-oriented alternative
+    - id: game-code
+      scope: Original program code, tests, build and runtime configuration, except paths assigned a different file-level treatment
+      selectedTreatment: AGPL-3.0-or-later
+      publicationStatus: ACTIVE
       status: HUMAN_REVIEW_REQUIRED
-      humanGate: Project owner and qualified software-license counsel
-    - scope: Public OpenAPI, AsyncAPI, JSON Schemas, and generated public SDKs
-      candidate: Apache-2.0
+      humanGate: Qualified software-license counsel and rights-chain review
+    - id: public-contracts-sdks
+      scope: Public OpenAPI, AsyncAPI, JSON Schemas, contract examples, and generated public SDKs
+      selectedTreatment: Apache-2.0
+      publicationStatus: ACTIVE
       status: HUMAN_REVIEW_REQUIRED
-      humanGate: Project owner and qualified software-license counsel
-    - scope: Specifications, ADRs, planning, and original documentation
-      candidate: CC-BY-4.0
+      humanGate: Qualified software-license and patent/NOTICE review
+    - id: original-documentation
+      scope: Original specifications, ADRs, planning, and documentation
+      selectedTreatment: CC-BY-4.0
+      publicationStatus: ACTIVE
       status: HUMAN_REVIEW_REQUIRED
-      humanGate: Project owner and qualified software-license counsel
-    - scope: Original synthetic fixtures explicitly approved for redistribution
-      candidate: CC0-1.0
+      humanGate: Rights-chain, attribution, and code-example review
+    - id: synthetic-fixtures
+      scope: Synthetic fixtures that have not completed origin and redistribution review
+      selectedTreatment: LicenseRef-Zugfolge-Provenance-Pending
+      publicationStatus: EXCLUDED_FROM_LICENSE_GRANT
       status: HUMAN_REVIEW_REQUIRED
       humanGate: Rights-holder and asset-provenance review
-    - scope: OSM-derived infrastructure database
-      candidate: ODbL-1.0 with attribution and database-offer obligations
+    - id: osm-derived-database
+      scope: Future separately approved OSM-derived infrastructure database releases
+      selectedTreatment: ODbL-1.0
+      publicationStatus: POLICY_ONLY_NO_ARTIFACT
       status: HUMAN_REVIEW_REQUIRED
-      humanGate: Qualified data-license review
-    - scope: Zugfolge name, Block-Z, claim, logos, cosmetics, soundtrack, and premium art
-      candidate: All rights reserved with a separate trademark and asset policy
+      humanGate: Qualified data-license and database-classification review
+    - id: brand-premium-media
+      scope: Provenance-pending brand images, premium media, names, source identifiers, endorsement, and official-world presentation
+      selectedTreatment: LicenseRef-Zugfolge-Provenance-Pending plus separate trademark policy
+      publicationStatus: RIGHTS_RESERVATION_ACTIVE
       status: HUMAN_REVIEW_REQUIRED
-      humanGate: Rights-holder and trademark counsel
-  ownerQuestions:
-    - May a third party operate a public commercial fork if it complies with network copyleft?
-    - Is AGPL-3.0-or-later or AGPL-3.0-only intended?
-    - Is a later proprietary or OEM dual-license channel genuinely required?
-    - Which natural or legal person is the licensor, trademark owner, and contracting party?
-    - Will contributions use inbound-equals-outbound plus DCO, or is a CLA required before any external contribution?
-  nextAction: Keep every package UNLICENSED and contributions closed until the owner answers these questions and the rights chain is approved.
+      humanGate: Rights-holder, trademark, and asset review
+  openReviewQuestions:
+    - Which natural or legal person is the accountable licensor, trademark owner, and contracting party?
+    - Does the historic rights chain support every active grant, and which files require replacement?
+    - Which qualified CLA text and signing/privacy process will govern future contributions?
+    - Which generated or imported artifacts require additional attribution, notices, or source offers?
+  nextAction: Complete qualified license, rights-chain, brand, asset, data, and CLA reviews without representing any open gate as approved.
 
 brands:
   - id: zugfolge-word
@@ -185,7 +220,7 @@ assets:
     ownerRole: FUTURE_ZUGFOLGE_ASSET_OWNER
     origin: Repository-created Block-Z vector asset; creator, tool, references, and rights transfer have not yet been evidenced.
     aiAssistance: UNKNOWN
-    licenseDecision: UNLICENSED; intended trademark/brand asset treatment requires owner and counsel approval
+    licenseDecision: LicenseRef-Zugfolge-Provenance-Pending; excluded from the standard repository grants until provenance and asset review are complete
     evidenceRefs: []
     approvedUses: []
     reviewerRole: ASSET_RIGHTS_REVIEWER
@@ -201,7 +236,7 @@ assets:
     ownerRole: FUTURE_ZUGFOLGE_ASSET_OWNER
     origin: Repository-created social preview; constituent assets and generation history have not yet been evidenced.
     aiAssistance: UNKNOWN
-    licenseDecision: UNLICENSED; social-preview distribution and constituent rights require review
+    licenseDecision: LicenseRef-Zugfolge-Provenance-Pending; excluded from the standard repository grants until provenance and constituent-rights review are complete
     evidenceRefs: []
     approvedUses: []
     reviewerRole: ASSET_RIGHTS_REVIEWER
@@ -217,7 +252,7 @@ assets:
     ownerRole: FUTURE_ZUGFOLGE_ASSET_OWNER
     origin: Repository-authored React rendering of the Block-Z; human authorship and AI-assistance evidence remain open.
     aiAssistance: AI_ASSISTED
-    licenseDecision: UNLICENSED; future code and trademark boundaries require separate decisions
+    licenseDecision: LicenseRef-Zugfolge-Provenance-Pending; source code and displayed device mark remain excluded from the standard grants until provenance review is complete
     evidenceRefs: []
     approvedUses: []
     reviewerRole: ASSET_RIGHTS_REVIEWER
@@ -233,7 +268,7 @@ assets:
     ownerRole: FUTURE_ZUGFOLGE_FIXTURE_OWNER
     origin: Synthetic repository fixture; names, topology, train numbers, and values are illustrative and are not imported from a railway provider.
     aiAssistance: AI_ASSISTED
-    licenseDecision: UNLICENSED; CC0-1.0 is only a candidate after origin review
+    licenseDecision: LicenseRef-Zugfolge-Provenance-Pending; excluded from the standard repository grants, with CC0-1.0 only a future option after origin review
     evidenceRefs: []
     approvedUses: []
     reviewerRole: FIXTURE_RIGHTS_REVIEWER
@@ -1110,7 +1145,7 @@ sources:
     officialUrls:
       - https://github.com/larynxberlin-rgb/Zugfolge
     terms:
-      licenseOrPermission: Repository remains UNLICENSED; fixture license decision pending
+      licenseOrPermission: LicenseRef-Zugfolge-Provenance-Pending; fixture remains excluded from standard grants while origin review is pending
       termsUrl: https://github.com/larynxberlin-rgb/Zugfolge
       termsVersion: Repository state 2026-07-30
       retrievedAt: "2026-07-30"

@@ -2,6 +2,8 @@
 name = "zugfolge-data-pipeline"
 version = "0.1.0"
 description = "Versioned railway data provenance and release pipeline for Zugfolge"
+license = "AGPL-3.0-or-later"
+license-files = ["LICENSE"]
 requires-python = ">=3.12"
 dependencies = []
 

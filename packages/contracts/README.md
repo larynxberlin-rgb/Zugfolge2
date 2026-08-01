@@ -3,6 +3,14 @@
 **Contract version:** v1  
 **Status:** Foundation for FEAT-0001
 
+## License
+
+The original OpenAPI, AsyncAPI, JSON Schema, contract examples, and generated
+public SDKs in this package are licensed under
+[`Apache-2.0`](../../LICENSES/Apache-2.0.txt). This permissive contract boundary
+does not relicense server implementations, imported provider material, or
+provenance-pending fixtures.
+
 ## Canonical artifacts
 
 - `openapi/openapi.yaml` defines authenticated HTTP commands and recovery
