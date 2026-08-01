@@ -10,3 +10,4 @@ gradlew.bat text eol=crlf
 gradle/wrapper/gradle-wrapper.jar binary
 *.gradle.kts text eol=lf
 gradle/*.toml text eol=lf
+*.mjs text eol=lf

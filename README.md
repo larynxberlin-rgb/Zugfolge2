@@ -48,6 +48,20 @@ pnpm run test:unit
 pnpm test
 ```
 
+Der vollständige, plattformneutrale Repository-Nachweis startet mit einem
+Vorabcheck aller exakt freigegebenen Werkzeuge und führt danach dieselben acht
+Phasen unter Windows und Linux aus:
+
+```bash
+node tools/preflight.mjs
+node --test tests/cross-platform-policy.test.mjs
+pnpm verify
+git diff --exit-code
+```
+
+Die ausführliche Bootstrap-Anleitung und die erzeugten, ignorierten
+Nachweisdateien stehen in [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
+
 `pnpm test` baut die Cloudflare-/vinext-Ausgabe und prüft anschließend sowohl den
 gerenderten HTML-Vertical-Slice als auch Verträge, Domäneninvarianten,
 Lizenzmetadaten und erkennbare Credential-Leaks. GitHub Actions ergänzt

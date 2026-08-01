@@ -302,7 +302,10 @@ R3 workflow change.
   `/tests/cross-platform-policy.test.mjs`, `/README.md`,
   `/docs/DEVELOPMENT.md`, `/apps/data-pipeline/README.md`,
   `/apps/game-server/README.md`, `/integrations/odoo/README.md`, and
-  `/.gitattributes`.
+  `/.gitattributes`. The first Windows root run additionally proved three
+  required compliance paths omitted from the initial allowlist:
+  `/REUSE.toml`, `/tests/compliance.test.mjs`, and
+  `/tests/tooling-policy.test.mjs`.
 - **Forbidden:** application/domain behavior, public contracts, mutable
   `*-latest` runner labels, secrets, deployment, and production services.
 - **Acceptance:** AC-001 through AC-010 pass from fresh Windows and Linux

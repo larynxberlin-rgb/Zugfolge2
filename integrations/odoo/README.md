@@ -5,6 +5,12 @@ simulation hot path. This directory starts with a dependency-free, executable
 trust-boundary kernel for signed webhooks and idempotent message reception.
 
 ```bash
+pnpm verify
+```
+
+For an isolated Python development check after the locked workspace sync:
+
+```bash
 python -m unittest discover -s integrations/odoo/tests -v
 ```
 

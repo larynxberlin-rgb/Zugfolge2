@@ -47,6 +47,8 @@ path = [
   "tools/run-supply-chain.mjs",
   "tools/verify-sbom.mjs",
   "tools/verify-workflows.mjs",
+  "tools/preflight.mjs",
+  "tools/verify.mjs",
   "tsconfig.json",
   "uv.lock",
   "vite.config.ts",

@@ -464,7 +464,7 @@ test("distributed packages and Python build dependencies stay explicit", async (
     "utf8",
   );
   assert.match(rootPythonProject, /^requires-python = "==3\.13\.14"$/m);
-  assert.match(rootPythonProject, /^dev = \[\n {2}"coverage==7\.15\.2",/m);
+  assert.match(rootPythonProject, /^dev = \[\r?\n {2}"coverage==7\.15\.2",/m);
   assert.match(rootPythonProject, /^ {2}"cyclonedx-bom==7\.3\.1",$/m);
   assert.doesNotMatch(rootPythonProject, /^no-build-isolation\s*=/m);
   for (const constraint of constrainedPackages.keys()) {

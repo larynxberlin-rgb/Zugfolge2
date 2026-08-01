@@ -9,6 +9,12 @@ approved under `ADR-0003`.
 Run its tests from the repository root:
 
 ```bash
+pnpm verify
+```
+
+For an isolated Python development check after the locked workspace sync:
+
+```bash
 python -m unittest discover -s apps/data-pipeline/tests -v
 ```
 
