@@ -371,6 +371,7 @@ test("distributed packages and Python build dependencies stay explicit", async (
   assert.equal(python.buildConstraintFile, "build-constraints.txt");
   assert.equal(python.status, "LOCKED_REVIEW_PENDING");
   assert.deepEqual(python.runtimeDependencies, []);
+  assert.deepEqual(python.developmentDependencies, ["coverage==7.15.2"]);
   assert.deepEqual(python.buildDependencies, [
     "editables==0.6",
     "hatchling==1.27.0",
@@ -441,14 +442,16 @@ test("distributed packages and Python build dependencies stay explicit", async (
         return [name, { version, hashes }];
       }),
   );
-  assert.deepEqual(
-    [...constrainedPackages.keys()].sort(),
-    [...registryPackages.keys()].sort(),
-    "every registry package in the Python lock needs a hashed build constraint",
-  );
   for (const [name, constraint] of constrainedPackages) {
     assert.deepEqual(constraint, registryPackages.get(name));
   }
+  assert.deepEqual(
+    [...registryPackages.keys()]
+      .filter((name) => !constrainedPackages.has(name))
+      .sort(),
+    ["coverage"],
+    "only the approved S05 test tool may sit outside the hashed PEP 517 closure",
+  );
   const pythonVersion = await readFile(
     new URL("../.python-version", import.meta.url),
     "utf8",
@@ -459,6 +462,7 @@ test("distributed packages and Python build dependencies stay explicit", async (
     "utf8",
   );
   assert.match(rootPythonProject, /^requires-python = "==3\.13\.14"$/m);
+  assert.match(rootPythonProject, /^dev = \["coverage==7\.15\.2", /m);
   assert.doesNotMatch(rootPythonProject, /^no-build-isolation\s*=/m);
   for (const constraint of constrainedPackages.keys()) {
     assert.match(
@@ -473,6 +477,81 @@ test("distributed packages and Python build dependencies stay explicit", async (
     assert.match(project, /^dependencies = \[\]$/m);
     if (path !== "pyproject.toml") {
       assert.match(project, /^requires = \["hatchling==1\.27\.0"\]$/m);
+    }
+  }
+
+  uniqueBy(dependencies.coverageTools, "name", "coverage tools");
+  assert.deepEqual(
+    dependencies.coverageTools.map(({ name }) => name),
+    ["node-v8-coverage", "coverage.py", "JaCoCo"],
+  );
+  for (const dependency of dependencies.coverageTools) {
+    assert.equal(dependency.scope, "TEST");
+    assert.equal(dependency.owningSlice, "MS-002-S05");
+    assert.match(dependency.officialSource, /^https:\/\//);
+    for (const field of [
+      "purpose",
+      "licenseExpression",
+      "trustBoundary",
+      "updateMethod",
+      "rollback",
+    ]) {
+      assert.ok(dependency[field], `${dependency.name} needs ${field}`);
+    }
+  }
+
+  const coverageRecord = dependencies.coverageTools.find(
+    ({ name }) => name === "coverage.py",
+  );
+  assert.equal(registryPackages.get("coverage").version, coverageRecord.version);
+
+  const [gameBuild, gameLock, gradleVerification] = await Promise.all([
+    readFile(new URL("../apps/game-server/build.gradle.kts", import.meta.url), "utf8"),
+    readFile(new URL("../apps/game-server/gradle.lockfile", import.meta.url), "utf8"),
+    readFile(new URL("../gradle/verification-metadata.xml", import.meta.url), "utf8"),
+  ]);
+  assert.match(gameBuild, /toolVersion = "0\.8\.15"/);
+  assert.match(gameLock, /^org\.jacoco:org\.jacoco\.agent:0\.8\.15=/m);
+  assert.match(gameLock, /^org\.jacoco:org\.jacoco\.report:0\.8\.15=/m);
+  assert.match(
+    gradleVerification,
+    /<component group="org\.jacoco" name="org\.jacoco\.agent" version="0\.8\.15">[\s\S]*?<sha256 value="[0-9a-f]{64}"/,
+  );
+
+  uniqueBy(dependencies.contractValidators, "name", "contract validators");
+  assert.deepEqual(
+    dependencies.contractValidators.map(({ name }) => name).sort(),
+    ["@asyncapi/specs", "@redocly/cli"],
+  );
+  for (const validator of dependencies.contractValidators) {
+    const direct = dependencies.directPackages.find(({ name }) => name === validator.name);
+    assert.ok(direct, `${validator.name} needs a direct package record`);
+    assert.equal(validator.scope, "DEVELOPMENT");
+    assert.equal(validator.owningSlice, "MS-002-S05");
+    assert.equal(String(validator.version), String(direct.version));
+    assert.equal(validator.licenseExpression, direct.licenseExpression);
+    assert.match(validator.officialSource, /^https:\/\//);
+    for (const field of ["purpose", "trustBoundary", "updateMethod", "rollback"]) {
+      assert.ok(validator[field], `${validator.name} needs ${field}`);
+    }
+  }
+
+  uniqueBy(dependencies.sourceValidators, "name", "source validators");
+  assert.deepEqual(
+    dependencies.sourceValidators.map(({ name }) => name),
+    ["typescript"],
+  );
+  for (const validator of dependencies.sourceValidators) {
+    const direct = dependencies.directPackages.find(({ name }) => name === validator.name);
+    assert.ok(direct, `${validator.name} needs a direct package record`);
+    assert.equal(validator.scope, "DEVELOPMENT");
+    assert.equal(validator.owningSlice, "MS-002-S05");
+    assert.equal(String(validator.version), String(direct.version));
+    assert.equal(validator.licenseExpression, direct.licenseExpression);
+    assert.match(validator.officialSource, /^https:\/\//);
+    assert.match(direct.purpose, /syntax-tree parsing/i);
+    for (const field of ["purpose", "trustBoundary", "updateMethod", "rollback"]) {
+      assert.ok(validator[field], `${validator.name} needs ${field}`);
     }
   }
 });

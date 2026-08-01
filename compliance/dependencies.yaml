@@ -18,19 +18,20 @@ resolvedGraphs:
   - ecosystem: npm
     manifest: package.json
     lockfile: pnpm-lock.yaml
-    canonicalSha256: 844D5D8FB51D0781C64B9AF7890CC29F22F19DEF3A75494DEBFCC06E766DAEE5
-    packageCountExcludingRoot: 430
+    canonicalSha256: FF674E57BABC164CA8050BE9A67203F6A2E67700E314FF76CFD11556C355EEA9
+    packageCountExcludingRoot: 432
     missingLicenseMetadata: 0
     exactResolution: true
     status: LOCKED_REVIEW_PENDING
   - ecosystem: python
     manifests: [pyproject.toml, apps/data-pipeline/pyproject.toml, integrations/odoo/pyproject.toml]
     runtimeDependencies: []
+    developmentDependencies: [coverage==7.15.2]
     buildDependencies: [editables==0.6, hatchling==1.27.0]
     lockfile: uv.lock
     buildConstraintFile: build-constraints.txt
-    canonicalSha256: 9E767AC68AA886B926DF61B30DFBAD7FDDA9EAEC0FADCC31DEDD0C7A88CE18E5
-    packageCountIncludingWorkspace: 9
+    canonicalSha256: B990AC44FF6F16F1FB3B392FF939072E4CABCA5BC67F1278023E11C77B70E740
+    packageCountIncludingWorkspace: 10
     exactResolution: true
     status: LOCKED_REVIEW_PENDING
 
@@ -56,9 +57,76 @@ pythonBuildPackages:
     updateMethod: Review the upstream release and license, update its exact root/build-constraint pin and hashes, regenerate uv.lock, then repeat clean sync, import, and build verification.
     rollback: Restore version 0.6 with its recorded hashes or revert the complete S03 workspace change.
 
+coverageTools:
+  - name: node-v8-coverage
+    version: 24.18.0
+    scope: TEST
+    owningSlice: MS-002-S05
+    licenseExpression: MIT
+    purpose: Produce relative machine-readable function and range coverage for Node tests without another package
+    officialSource: https://nodejs.org/api/cli.html#node_v8_coverage-dir
+    trustBoundary: Executes repository tests in child Node processes and sanitizes raw absolute V8 paths before evidence is retained.
+    updateMethod: Update only with the approved exact Node toolchain and re-verify the summary schema on Windows and Linux.
+    rollback: Remove the S05 Node coverage script and package command while retaining native tests.
+  - name: coverage.py
+    version: 7.15.2
+    scope: TEST
+    owningSlice: MS-002-S05
+    licenseExpression: Apache-2.0
+    purpose: Produce branch and line coverage JSON/XML for both Python workspace packages
+    officialSource: https://pypi.org/project/coverage/7.15.2/
+    trustBoundary: Executes both repository unittest suites from the locked uv environment and writes only ignored local evidence.
+    updateMethod: Review upstream release/license, update the exact uv pin and dependency record, regenerate uv.lock, then repeat both coverage suites.
+    rollback: Remove the exact dev dependency and Python coverage runner, regenerate uv.lock, and retain native unittest commands.
+  - name: JaCoCo
+    version: 0.8.15
+    scope: TEST
+    owningSlice: MS-002-S05
+    licenseExpression: EPL-2.0
+    purpose: Produce branch and line coverage XML/HTML for the game-server JVM tests
+    officialSource: https://www.jacoco.org/jacoco/
+    trustBoundary: Instruments and executes repository JVM test bytecode through Gradle; it is absent from production runtime configurations.
+    updateMethod: Review upstream release/license, update the exact toolVersion, locks and verification metadata, then repeat the warning-free clean build.
+    rollback: Remove the JaCoCo plugin/report task and restore the prior app lock and verification metadata while retaining JUnit tests.
+
+contractValidators:
+  - name: "@redocly/cli"
+    version: 2.42.0
+    scope: DEVELOPMENT
+    owningSlice: MS-002-S05
+    licenseExpression: MIT
+    purpose: Validate the OpenAPI 3.1 contract with the pinned spec ruleset and local-reference resolution
+    officialSource: https://github.com/Redocly/redocly-cli/releases/tag/%40redocly%2Fcli%402.42.0
+    trustBoundary: Executes only after repository-owned reference confinement rejects escaping or remote references; receives contract files but no credentials or production data.
+    updateMethod: Review the exact upstream release, npm integrity, license, advisories, OpenAPI 3.1 behavior, and release-age quarantine before changing the pin and lock.
+    rollback: Remove the S05 OpenAPI validator invocation and exact development dependency while retaining JSON Schema and reference checks.
+  - name: "@asyncapi/specs"
+    version: 6.11.1
+    scope: DEVELOPMENT
+    owningSlice: MS-002-S05
+    licenseExpression: Apache-2.0
+    purpose: Supply the official bundled AsyncAPI 3.0 JSON Schema used by the locked Ajv validator
+    officialSource: https://github.com/asyncapi/spec-json-schemas/releases/tag/v6.11.1
+    trustBoundary: Loads a data-only bundled schema from the integrity-pinned npm artifact; it runs no lifecycle script and receives no credentials or production data.
+    updateMethod: Never float this pin; review npm provenance, upstream advisories and incident history, schema changes, license, and integrity before an isolated update.
+    rollback: Remove the S05 AsyncAPI schema import and exact development dependency while retaining repository reference checks.
+
+sourceValidators:
+  - name: typescript
+    version: 5.9.3
+    scope: DEVELOPMENT
+    owningSlice: MS-002-S05
+    licenseExpression: Apache-2.0
+    purpose: Parse untrusted JavaScript and TypeScript repository source into syntax trees for deterministic module-boundary validation
+    officialSource: https://github.com/microsoft/TypeScript/releases/tag/v5.9.3
+    trustBoundary: Parses repository-controlled but untrusted source text in the local and CI lint process without executing that source; receives no credentials or production data.
+    updateMethod: Review the exact upstream release, npm integrity, license, advisories, parser changes, and adversarial boundary fixtures before changing the pin and lock.
+    rollback: Revert the parser integration and exact dependency record together only after an independently reviewed fail-closed replacement preserves the module-boundary tests.
+
 directPackages:
   - { name: react, scope: RUNTIME, version: 19.2.8, licenseExpression: MIT, purpose: Browser and server UI runtime }
   - { name: react-dom, scope: RUNTIME, version: 19.2.8, licenseExpression: MIT, purpose: DOM and server rendering }
+  - { name: "@asyncapi/specs", scope: DEVELOPMENT, version: 6.11.1, licenseExpression: Apache-2.0, purpose: Official AsyncAPI 3.0 structural schema validation }
   - { name: "@cloudflare/vite-plugin", scope: DEVELOPMENT, version: 1.50.0, licenseExpression: MIT, purpose: Cloudflare-compatible evaluation build }
   - { name: "@eslint/js", scope: DEVELOPMENT, version: 9.39.4, licenseExpression: MIT, purpose: JavaScript lint rules }
   - { name: "@tailwindcss/postcss", scope: DEVELOPMENT, version: 4.2.1, licenseExpression: MIT, purpose: Tailwind PostCSS integration }
@@ -67,6 +135,7 @@ directPackages:
   - { name: "@types/react-dom", scope: DEVELOPMENT, version: 19.2.3, licenseExpression: MIT, purpose: React DOM type declarations }
   - { name: "@vitejs/plugin-react", scope: DEVELOPMENT, version: 6.0.2, licenseExpression: MIT, purpose: React compilation in Vite }
   - { name: "@vitejs/plugin-rsc", scope: DEVELOPMENT, version: 0.5.26, licenseExpression: MIT, purpose: React Server Components build support }
+  - { name: "@redocly/cli", scope: DEVELOPMENT, version: 2.42.0, licenseExpression: MIT, purpose: OpenAPI 3.1 spec validation }
   - { name: ajv, scope: DEVELOPMENT, version: 8.20.0, licenseExpression: MIT, purpose: JSON Schema validation }
   - { name: ajv-formats, scope: DEVELOPMENT, version: 3.0.1, licenseExpression: MIT, purpose: Standard JSON Schema formats }
   - { name: eslint, scope: DEVELOPMENT, version: 9.39.4, licenseExpression: MIT, purpose: Static analysis }
@@ -74,7 +143,7 @@ directPackages:
   - { name: globals, scope: DEVELOPMENT, version: 17.8.0, licenseExpression: MIT, purpose: Lint environment globals }
   - { name: react-server-dom-webpack, scope: DEVELOPMENT, version: 19.2.8, licenseExpression: MIT, purpose: React Server Components runtime emitted by the build }
   - { name: tailwindcss, scope: DEVELOPMENT, version: 4.2.1, licenseExpression: MIT, purpose: Design-system CSS generation }
-  - { name: typescript, scope: DEVELOPMENT, version: 5.9.3, licenseExpression: Apache-2.0, purpose: Type checking and compilation }
+  - { name: typescript, scope: DEVELOPMENT, version: 5.9.3, licenseExpression: Apache-2.0, purpose: "Type checking, compilation, and syntax-tree parsing for module-boundary validation" }
   - { name: typescript-eslint, scope: DEVELOPMENT, version: 8.65.0, licenseExpression: MIT, purpose: TypeScript-aware linting }
   - { name: vinext, scope: DEVELOPMENT, version: 0.0.50, licenseExpression: MIT, purpose: Web application build and server adapter }
   - { name: vite, scope: DEVELOPMENT, version: 8.2.0, licenseExpression: MIT, purpose: Web bundling }

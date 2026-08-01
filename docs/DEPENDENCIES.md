@@ -1,6 +1,6 @@
 # Dependency and supply-chain register
 
-**Status:** MS-002-S03 JavaScript and Python locks; JVM remains policy-only
+**Status:** MS-002-S05 locked polyglot baseline and local evidence
 **Last reviewed:** 2026-08-01
 **Security approval:** accepted — [human decision record](https://github.com/larynxberlin-rgb/Zugfolge/issues/3#issuecomment-5150191133)
 
@@ -85,7 +85,7 @@ The S02 candidate replaces the vulnerable graph with exact React and
 `react-server-dom-webpack` `19.2.8`, Vite `8.2.0`,
 `@cloudflare/vite-plugin` `1.50.0`, and Wrangler `4.118.0` pins. A frozen pnpm
 audit on 1 August 2026 reports zero known Low, Moderate, High, or Critical
-findings across 430 resolved dependencies. No force-update or advisory
+findings across 432 resolved dependencies. No force-update or advisory
 suppression is used. Public deployment remains independently blocked by the
 asset-provenance gate.
 
@@ -110,6 +110,8 @@ the S02 rollback.
 | Gradle wrapper | `9.5.0` | `MS-002-S04` | Kotlin multi-project build | Apache-2.0 | [Gradle distributions](https://services.gradle.org/versions/all) | committed wrapper code downloads and executes the reviewed distribution; update both official SHA-256 values and regenerate wrapper files in isolation; remove the additive JVM build on rollback |
 | Kotlin JVM plugin | `2.4.10` | `MS-002-S04` | Kotlin compilation | Apache-2.0 | [Kotlin releases](https://kotlinlang.org/docs/releases.html) | executes during Gradle configuration/compilation under strict dependency verification; update the catalog, lock, and verification metadata together; revert the plugin pin and metadata on rollback |
 | JUnit Jupiter/BOM | `6.1.2` | `MS-002-S04` | JVM tests | EPL-2.0 | [JUnit 6.1.2](https://docs.junit.org/6.1.2/overview.html) | executes repository-authored tests only and remains test-scoped; update the catalog, lock, and verification metadata together; remove the test-only dependency on rollback |
+| Redocly CLI | `2.42.0` | `MS-002-S05` | OpenAPI 3.1 structural/spec validation | MIT | [Redocly CLI release](https://github.com/Redocly/redocly-cli/releases/tag/%40redocly%2Fcli%402.42.0) | runs only after local-reference confinement; exact integrity-pinned npm artifact; review release, advisories and OpenAPI behavior before update; remove validator and pin on rollback |
+| AsyncAPI schemas | `6.11.1` | `MS-002-S05` | official AsyncAPI 3.0 structural schema | Apache-2.0 | [AsyncAPI schema release](https://github.com/asyncapi/spec-json-schemas/releases/tag/v6.11.1) | data-only schema with no lifecycle script; never float the pin and review npm provenance, incident/advisory history, integrity and schema changes before update; remove schema import and pin on rollback |
 
 Approved bootstrap channels:
 
@@ -213,12 +215,12 @@ approved for `MS-002`.
 
 ## Approved coverage, secret scan, and retention
 
-| Tool | Approved version | License | Purpose and trust boundary |
-|---|---|---|---|
-| Node.js test coverage | built into Node `24.18.0` | MIT | initial machine-readable JavaScript test coverage without another package |
-| coverage.py | `7.15.2` | Apache-2.0 | Python branch/line coverage from the locked uv environment |
-| JaCoCo | `0.8.15` | EPL-2.0 | JVM branch/line coverage through verified Gradle dependencies |
-| Gitleaks CLI | `8.30.1` | MIT | scan worktree and Git history from official checksummed release binaries |
+| Tool | Approved version | Owner | License | Official source | Purpose, trust, update, and rollback |
+|---|---|---|---|---|---|
+| Node.js test coverage | built into Node `24.18.0` | `MS-002-S05` | MIT | [Node CLI](https://nodejs.org/api/cli.html#node_v8_coverage-dir) | executes repository tests in child processes; raw absolute V8 paths are reduced to relative machine evidence and deleted; update only with the exact Node toolchain and restore native tests on rollback |
+| coverage.py | `7.15.2` | `MS-002-S05` | Apache-2.0 | [PyPI release](https://pypi.org/project/coverage/7.15.2/) | executes both unittest suites from the locked uv environment and writes ignored JSON/XML; update the exact pin, lock, and record together; remove only coverage tooling on rollback |
+| JaCoCo | `0.8.15` | `MS-002-S05` | EPL-2.0 | [JaCoCo](https://www.jacoco.org/jacoco/) | instruments repository JVM test bytecode through verified Gradle dependencies and never enters production runtime; update toolVersion, lock, and verification metadata together; retain JUnit on rollback |
+| Gitleaks CLI | `8.30.1` | `MS-002-S06` | MIT | [Gitleaks releases](https://github.com/gitleaks/gitleaks/releases) | scans repository content/history as untrusted input from a checksummed binary; update as an isolated security slice and remove the S06 scanner path on rollback |
 
 Test, coverage, and CycloneDX artifacts use
 `retention-days: 30`. Their SHA-256 artifact digests enter milestone evidence;

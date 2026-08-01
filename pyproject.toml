@@ -8,7 +8,7 @@ requires-python = "==3.13.14"
 dependencies = []
 
 [dependency-groups]
-dev = ["editables==0.6", "hatchling==1.27.0"]
+dev = ["coverage==7.15.2", "editables==0.6", "hatchling==1.27.0"]
 
 [tool.uv]
 build-constraint-dependencies = [
@@ -25,3 +25,6 @@ required-version = "==0.12.0"
 
 [tool.uv.workspace]
 members = ["apps/data-pipeline", "integrations/odoo"]
+
+[tool.coverage.run]
+relative_files = true
