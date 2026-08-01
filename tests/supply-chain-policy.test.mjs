@@ -78,6 +78,7 @@ test("workflow policy rejects weak dependency review and evidence retention", as
   for (const [fileName, before, after] of [
     ["security.yml", "fail-on-severity: high", "fail-on-severity: moderate"],
     ["supply-chain.yml", "retention-days: 30", "retention-days: 29"],
+    ["supply-chain.yml", "fetch-depth: 0", "fetch-depth: 1"],
   ]) {
     const copy = structuredClone(fixture);
     copy.workflowSources[fileName] = copy.workflowSources[fileName].replace(before, after);

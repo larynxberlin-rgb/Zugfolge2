@@ -85,6 +85,14 @@ export function validateWorkflowPolicy({
   );
   const supplyChainSource = workflowSources["supply-chain.yml"];
   const supplyChain = YAML.parse(supplyChainSource);
+  const supplyCheckout = supplyChain.jobs.evidence.steps.find(
+    (step) => step.uses?.startsWith("actions/checkout@"),
+  );
+  assert.equal(
+    supplyCheckout?.with?.["fetch-depth"],
+    0,
+    "supply-chain evidence requires the complete Git history",
+  );
   const upload = supplyChain.jobs.evidence.steps.find(
     (step) => step.uses?.startsWith("actions/upload-artifact@"),
   );
