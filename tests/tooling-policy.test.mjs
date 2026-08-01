@@ -154,6 +154,28 @@ test("module-boundary lint rejects generated, private, and undeclared workspace 
       ),
     /private source tree/,
   );
+  for (const privateSpecifier of [
+    "apps/data-pipeline/src/private.js",
+    "packages/domain/src/private.js",
+    "node_modules/private/index.js",
+  ]) {
+    assert.throws(
+      () =>
+        validateJavaScriptModuleSource(
+          `import privateModule from "${privateSpecifier}";`,
+          "app/private.ts",
+        ),
+      /forbidden generated\/private path|private source tree|declared package export/,
+    );
+  }
+  assert.throws(
+    () =>
+      validateJavaScriptModuleSource(
+        'const privateModule = import("apps/" + moduleName);',
+        "app/private.ts",
+      ),
+    /non-literal dynamic import/,
+  );
   const pythonBoundary = {
     declaredWorkspaceDependencies: new Set(),
     ownerImport: "zugfolge_data",
@@ -172,6 +194,26 @@ test("module-boundary lint rejects generated, private, and undeclared workspace 
       ),
     /undeclared workspace edge zugfolge-data-pipeline -> zugfolge-odoo-bridge/,
   );
+  for (const pythonSource of [
+    `from zugfolge_odoo_bridge \\
+ import sign_webhook`,
+    "if True: import zugfolge_odoo_bridge",
+  ]) {
+    assert.throws(
+      () => validatePythonModuleSource(pythonSource, pythonBoundary),
+      /undeclared workspace edge zugfolge-data-pipeline -> zugfolge-odoo-bridge/,
+    );
+  }
+  for (const dynamicPythonSource of [
+    '__import__("zugfolge_odoo_bridge")',
+    'importlib.import_module("zugfolge_odoo_bridge")',
+    'from importlib import import_module; import_module("zugfolge_odoo_bridge")',
+  ]) {
+    assert.throws(
+      () => validatePythonModuleSource(dynamicPythonSource, pythonBoundary),
+      /dynamic Python imports are forbidden/,
+    );
+  }
   assert.throws(
     () => validateKotlinSource("import de.zugfolge.other.internal.Secret"),
     /private or framework boundary/,

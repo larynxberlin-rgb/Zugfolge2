@@ -258,9 +258,27 @@ function assertSafeImportPath(specifier, sourcePath) {
 }
 
 export function validateJavaScriptModuleSource(source, sourcePath = "JavaScript source") {
+  for (const dynamicImport of source.matchAll(/\b(?:import|require)\s*\(([^)]*)\)/g)) {
+    assert.match(
+      dynamicImport[1].trim(),
+      /^(?:"[^"\r\n]+"|'[^'\r\n]+')$/,
+      `${sourcePath} uses a non-literal dynamic import that cannot be boundary-checked`,
+    );
+  }
   for (const specifier of importSpecifiers(source)) {
     assert.ok(!path.isAbsolute(specifier), `${sourcePath} imports absolute path ${specifier}`);
-    if (specifier.startsWith(".") || specifier.includes("\\")) {
+    assert.doesNotMatch(
+      specifier,
+      /^(?:apps|integrations|packages)(?:\/|$)/,
+      `${sourcePath} imports bare repository path ${specifier}; use a declared package export`,
+    );
+    if (
+      specifier.startsWith(".") ||
+      specifier.includes("\\") ||
+      /^(?:apps|integrations|packages|node_modules|outputs|work|\.gradle-build|\.pnpm|\.venv)(?:\/|$)/.test(
+        specifier,
+      )
+    ) {
       assertSafeImportPath(specifier, sourcePath);
     }
   }
@@ -268,16 +286,30 @@ export function validateJavaScriptModuleSource(source, sourcePath = "JavaScript 
 
 function pythonImportRoots(source) {
   const roots = [];
-  for (const line of source.split(/\r?\n/)) {
-    const from = line.match(/^\s*from\s+([A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*)\s+import\b/);
-    if (from) roots.push({ module: from[1], root: from[1].split(".")[0] });
-    const imported = line.match(/^\s*import\s+(.+)$/);
-    if (imported) {
-      for (const entry of imported[1].split(",")) {
-        const module = entry.trim().split(/\s+as\s+/)[0];
-        if (/^[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*$/.test(module)) {
-          roots.push({ module, root: module.split(".")[0] });
-        }
+  const normalized = source.replace(/\\\r?\n/g, " ");
+  assert.doesNotMatch(
+    normalized,
+    /\b(?:__import__|importlib)\b/,
+    "dynamic Python imports are forbidden because their module edge is not statically reviewable",
+  );
+  assert.doesNotMatch(
+    normalized,
+    /\b(?:eval|exec)\s*\(/,
+    "dynamic Python execution is forbidden because imports cannot be boundary-checked",
+  );
+  for (const from of normalized.matchAll(
+    /\bfrom\s+([A-Za-z_]\w*(?:\s*\.\s*[A-Za-z_]\w*)*)\s+import\b/g,
+  )) {
+    const module = from[1].replaceAll(/\s/g, "");
+    roots.push({ module, root: module.split(".")[0] });
+  }
+  for (const imported of normalized.matchAll(
+    /(?:^|[;:\n])\s*import\s+([^;\r\n]+)/g,
+  )) {
+    for (const entry of imported[1].split(",")) {
+      const module = entry.trim().split(/\s+as\s+/)[0];
+      if (/^[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*$/.test(module)) {
+        roots.push({ module, root: module.split(".")[0] });
       }
     }
   }
