@@ -157,7 +157,14 @@ test("all tracked media, fonts, audio, and containers are inventoried", async ()
       uiExtensions.has(`.${file.split(".").at(-1)?.toLowerCase()}`),
   );
   const remoteFontPattern =
-    /@font-face|https?:\/\/[^\s"'`)<>]*(?:font|typekit)[^\s"'`)<>]*|https?:\/\/[^\s"'`)<>]+\.(?:woff2?|ttf|otf|eot)(?:\?[^\s"'`)<>]*)?/i;
+    /@font-face|@import\s+(?:url\(\s*)?["']?\s*https?:\/\/|url\(\s*["']?\s*https?:\/\/|<link\b[^>]*\bhref\s*=\s*["']https?:\/\/|https?:\/\/[^\s"'`)<>]*(?:font|typekit)[^\s"'`)<>]*|https?:\/\/[^\s"'`)<>]+\.(?:css|woff2?|ttf|otf|eot)(?:\?[^\s"'`)<>]*)?/i;
+  for (const prohibitedReference of [
+    '<link rel="stylesheet" href="https://rsms.me/inter/inter.css">',
+    '@import url("https://cdn.example.invalid/type.css");',
+    'src: url(https://cdn.example.invalid/asset);',
+  ]) {
+    assert.match(prohibitedReference, remoteFontPattern);
+  }
   for (const file of uiSources) {
     const source = await readFile(new URL(`../${file}`, import.meta.url), "utf8");
     assert.doesNotMatch(source, remoteFontPattern, `${file} references an external font`);
