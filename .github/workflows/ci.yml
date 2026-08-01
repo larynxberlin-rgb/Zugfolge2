@@ -81,3 +81,9 @@ jobs:
 
       - name: Test Odoo trust boundary
         run: uv run python -m unittest discover -s integrations/odoo/tests -v
+
+      - name: Build data pipeline with hashed backend closure
+        run: uv build --package zugfolge-data-pipeline --build-constraints build-constraints.txt --require-hashes
+
+      - name: Build Odoo bridge with hashed backend closure
+        run: uv build --package zugfolge-odoo-bridge --build-constraints build-constraints.txt --require-hashes

@@ -15,6 +15,7 @@ path = [
   "apps/data-pipeline/src/**",
   "apps/data-pipeline/tests/**",
   "build/**",
+  "build-constraints.txt",
   "eslint.config.mjs",
   "integrations/odoo/pyproject.toml",
   "integrations/odoo/src/**",

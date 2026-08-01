@@ -37,9 +37,14 @@ uv sync --all-packages --locked
 uv run python -m compileall -q apps/data-pipeline/src integrations/odoo/src
 uv run python -m unittest discover -s apps/data-pipeline/tests -v
 uv run python -m unittest discover -s integrations/odoo/tests -v
-uv build --package zugfolge-data-pipeline
-uv build --package zugfolge-odoo-bridge
+uv build --package zugfolge-data-pipeline --build-constraints build-constraints.txt --require-hashes
+uv build --package zugfolge-odoo-bridge --build-constraints build-constraints.txt --require-hashes
 ```
+
+Root policy constrains every package in the isolated Hatchling build closure to
+an exact version during `uv sync`. Standalone distribution builds additionally
+consume `build-constraints.txt` with `--require-hashes`, so their independent
+PEP 517 environments accept only the artifacts recorded by `uv.lock`.
 
 GitHub Actions is the clean Ubuntu reference. If `node`, `pnpm`, or `python`
 cannot be found locally, install the declared official runtime; do not use the

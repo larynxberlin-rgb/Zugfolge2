@@ -39,9 +39,17 @@ verified against installed metadata, lock integrity and exact notice bytes.
 
 Both Python packages have no runtime dependency or dependency on one another.
 They share `uv.lock` under exact CPython `3.13.14` and uv `0.12.0`; the root
-development group locks `hatchling==1.27.0` plus its build-tool closure. uv is
-configured for system Python only, so it cannot silently substitute an
-unapproved managed interpreter.
+development group locks `hatchling==1.27.0`, `editables==0.6`, and their
+build-tool closure. uv is configured for system Python only, so it cannot
+silently substitute an unapproved managed interpreter. Root build constraints
+pin the complete isolated editable-build closure. Standalone wheel/sdist builds
+also require every artifact hash in `build-constraints.txt`, whose values are
+checked against `uv.lock`.
+
+| Python build dependency | Purpose | License | Official source | Execution and trust boundary | Update method | Rollback |
+|---|---|---|---|---|---|---|
+| `hatchling==1.27.0` | PEP 517 sdist, wheel, and editable backend | MIT | [PyPI release](https://pypi.org/project/hatchling/1.27.0/) | Executes downloaded backend code in an isolated environment while building both first-party packages; it does not enter either runtime dependency set | Review upstream release/license, change the exact root/member pins and every transitive build constraint, regenerate `uv.lock`, refresh verified hashes, then repeat clean sync/build tests | Revert the S03 workspace, lock, constraints, and member build metadata together |
+| `editables==0.6` | Hatchling helper for editable workspace installation | MIT | [PyPI release](https://pypi.org/project/editables/0.6/) | Executes as part of isolated editable installation during `uv sync`; it is build-only and must not appear in a shipped runtime dependency set | Review upstream release/license, update its exact root/build-constraint pin and hashes, regenerate `uv.lock`, then repeat clean sync/import/build tests | Restore version `0.6` plus its recorded hashes, or revert the complete S03 workspace change |
 
 The current web production dependency closure is `react`, `react-dom`, and
 `scheduler`. The emitted browser/server artifact also carries code or generated
