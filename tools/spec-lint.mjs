@@ -265,6 +265,7 @@ export function validateJavaScriptModuleSource(source, sourcePath = "JavaScript 
     "create" + "Require",
     "ev" + "al",
     "Fun" + "ction",
+    "getBuiltin" + "Module",
     "requ" + "ire",
   ]);
   const staticStringValue = (node) => {
