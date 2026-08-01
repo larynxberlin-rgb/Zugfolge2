@@ -261,16 +261,18 @@ R3 workflow change.
 - **Outcome:** immutable dependencies, a real secret scanner, and validated
   ecosystem CycloneDX documents are enforced before cross-platform CI rollout.
 - **Risk:** R3.
-- **Allowed paths:** `/.github/workflows/security.yml`,
-  `/.github/workflows/supply-chain.yml`, `/.github/dependabot.yml`,
+- **Allowed paths:** `/.github/workflows/ci.yml`,
+  `/.github/workflows/security.yml`, `/.github/workflows/supply-chain.yml`,
+  `/.github/dependabot.yml`,
   `/.gitleaks.toml`, `/package.json`, `/pnpm-lock.yaml`, `/pyproject.toml`,
   `/uv.lock`, `/build.gradle.kts`, `/gradle/libs.versions.toml`,
   `/gradle/verification-metadata.xml`, `/gradle.lockfile`,
   `/apps/game-server/build.gradle.kts`, `/apps/game-server/gradle.lockfile`,
   `/tools/run-supply-chain.mjs`, `/tools/verify-workflows.mjs`,
   `/tools/verify-sbom.mjs`, `/tests/supply-chain-policy.test.mjs`,
-  `/tests/repository-policy.test.mjs`, `/docs/DEPENDENCIES.md`, and
-  `/docs/DEVELOPMENT.md`.
+  `/tests/repository-policy.test.mjs`, `/tests/compliance.test.mjs`,
+  `/tests/tooling-policy.test.mjs`, `/compliance/dependencies.yaml`,
+  `/REUSE.toml`, `/docs/DEPENDENCIES.md`, and `/docs/DEVELOPMENT.md`.
 - **Forbidden:** `pull_request_target`, repository secrets, write permissions
   outside the existing CodeQL need, deployment, application behavior, and
   production services.

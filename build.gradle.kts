@@ -1,5 +1,6 @@
 plugins {
     base
+    alias(libs.plugins.cyclonedx)
     alias(libs.plugins.kotlin.jvm) apply false
 }
 
@@ -34,4 +35,13 @@ subprojects {
         lockAllConfigurations()
     }
 
+}
+
+tasks.cyclonedxBom {
+    componentName = rootProject.name
+    componentVersion = project.version.toString()
+    includeBomSerialNumber = false
+    includeBuildSystem = false
+    jsonOutput.set(layout.projectDirectory.file("outputs/sbom/jvm.cdx.json"))
+    xmlOutput.unsetConvention()
 }

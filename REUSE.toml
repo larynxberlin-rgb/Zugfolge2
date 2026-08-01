@@ -3,6 +3,7 @@ version = 1
 [[annotations]]
 path = [
   ".github/**",
+  ".gitleaks.toml",
   ".gitattributes",
   ".gitignore",
   ".node-version",
@@ -43,6 +44,9 @@ path = [
   "tools/run-node-coverage.mjs",
   "tools/run-python-coverage.py",
   "tools/verify-local-evidence.mjs",
+  "tools/run-supply-chain.mjs",
+  "tools/verify-sbom.mjs",
+  "tools/verify-workflows.mjs",
   "tsconfig.json",
   "uv.lock",
   "vite.config.ts",

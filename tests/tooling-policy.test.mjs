@@ -24,7 +24,7 @@ test("accepted specification and contract tree passes deterministic lint", async
   const result = await verifySpecificationTree(REPOSITORY_PATH);
   assert.deepEqual(result, {
     asyncApiDocuments: 1,
-    javaScriptSources: 15,
+    javaScriptSources: 18,
     jsonSchemas: 5,
     kotlinSources: 1,
     openApiDocuments: 1,
