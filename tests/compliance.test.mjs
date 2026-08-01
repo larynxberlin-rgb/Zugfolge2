@@ -71,9 +71,15 @@ async function recursiveFiles(directory) {
   return files.flat();
 }
 
+function directoryEntryNames(entries) {
+  return entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
+}
+
 async function installedPnpmMetadata() {
   const virtualStore = path.join(REPOSITORY_PATH, "node_modules", ".pnpm");
-  const virtualEntries = await readdir(virtualStore);
+  const virtualEntries = directoryEntryNames(
+    await readdir(virtualStore, { withFileTypes: true }),
+  );
   const packages = new Map();
 
   async function collect(packageDirectory) {
@@ -115,6 +121,14 @@ async function installedPnpmMetadata() {
 
   return [...packages.values()];
 }
+
+test("pnpm metadata files are never traversed as virtual package directories", () => {
+  const entries = [
+    { name: "lock.yaml", isDirectory: () => false },
+    { name: "react@19.2.8", isDirectory: () => true },
+  ];
+  assert.deepEqual(directoryEntryNames(entries), ["react@19.2.8"]);
+});
 
 test("S04 asset inventory fails closed and matches registered bytes", async () => {
   assert.equal(assets.schemaVersion, 1);
