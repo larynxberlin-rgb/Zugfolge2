@@ -29,6 +29,13 @@ function normalizeText(value) {
   return value.replaceAll("\r\n", "\n").trimEnd();
 }
 
+export function normalizedTextSha256(value) {
+  return createHash("sha256")
+    .update(value.replaceAll("\r\n", "\n").replaceAll("\r", "\n"))
+    .digest("hex")
+    .toUpperCase();
+}
+
 async function findLicenseFile(packageDirectory) {
   const candidates = (await readdir(packageDirectory))
     .filter((name) => /^LICEN[CS]E(?:\..*)?$/i.test(name))
@@ -45,10 +52,7 @@ export async function generateThirdPartyNotices() {
     "utf8",
   );
   const lock = JSON.parse(lockSource);
-  const lockDigest = createHash("sha256")
-    .update(lockSource)
-    .digest("hex")
-    .toUpperCase();
+  const lockDigest = normalizedTextSha256(lockSource);
   const packages = [];
 
   for (const name of DISTRIBUTED_WEB_PACKAGES) {

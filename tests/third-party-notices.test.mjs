@@ -6,6 +6,7 @@ import {
   checkThirdPartyNotices,
   DISTRIBUTED_WEB_PACKAGES,
   generateThirdPartyNotices,
+  normalizedTextSha256,
 } from "../scripts/generate-third-party-notices.mjs";
 
 const lockSource = await readFile(
@@ -31,10 +32,7 @@ function productionClosure() {
 test("web notice is deterministic and covers runtime plus emitted build code", async () => {
   await checkThirdPartyNotices();
   const notice = await generateThirdPartyNotices();
-  const lockDigest = createHash("sha256")
-    .update(lockSource)
-    .digest("hex")
-    .toUpperCase();
+  const lockDigest = normalizedTextSha256(lockSource);
 
   assert.deepEqual(productionClosure(), ["react", "react-dom", "scheduler"]);
   assert.ok(notice.includes(`package-lock.json SHA-256: ${lockDigest}`));
@@ -59,6 +57,20 @@ test("web notice is deterministic and covers runtime plus emitted build code", a
   ]) {
     assert.ok(notice.includes(expected), `${expected} is missing from notices`);
   }
+});
+
+test("notice lock digest is invariant across platform line endings", () => {
+  const lf = '{\n  "name": "zugfolge"\n}\n';
+  const crlf = lf.replaceAll("\n", "\r\n");
+  const cr = lf.replaceAll("\n", "\r");
+
+  assert.equal(normalizedTextSha256(crlf), normalizedTextSha256(lf));
+  assert.equal(normalizedTextSha256(cr), normalizedTextSha256(lf));
+  assert.notEqual(
+    createHash("sha256").update(crlf).digest("hex"),
+    createHash("sha256").update(lf).digest("hex"),
+    "the fixture must exercise distinct raw bytes",
+  );
 });
 
 test("built web artifact ships notices and retains upstream license banners", async () => {
