@@ -4,7 +4,7 @@
 **Release gate:** `RG-0`\
 **Risk:** `R3`\
 **Effort:** `M`\
-**Preparation status:** awaiting human security approval\
+**Preparation status:** human security approval recorded; S01 acceptance in progress\
 **GitHub milestone:** [MS-002](https://github.com/larynxberlin-rgb/Zugfolge/milestone/1)
 **Coordinating issue:** [#2](https://github.com/larynxberlin-rgb/Zugfolge/issues/2)
 
@@ -50,12 +50,12 @@ contract changes are authorized by this milestone.
 | Coverage | no shared machine-readable output contract | one generated evidence layout per ecosystem |
 | Services | no runtime service dependency | remain service-free in MS-002 |
 
-## Proposed version baseline
+## Approved version baseline
 
-These are preparation candidates as of 30 July 2026, not approved dependency
-changes:
+These policy pins were approved on 1 August 2026. They are introduced only by
+their owning implementation slices and remain absent until then:
 
-| Toolchain | Candidate | Rationale |
+| Toolchain | Policy pin | Rationale |
 |---|---|---|
 | Node.js | `24.18.0` LTS | current official LTS patch; pnpm 11 supports Node 24 |
 | pnpm | `11.18.0` | current stable 11.x release |
@@ -70,9 +70,9 @@ changes:
 | Secret scan | Gitleaks CLI `8.30.1` | official checksummed MIT release; no Action wrapper |
 | Evidence retention | 30 days | review window with permanent digests in milestone evidence |
 
-Before any candidate is committed, its exact artifact, license, checksum or
-lock mechanism, compatibility, and update path MUST enter the dependency
-record and receive the required review.
+Before any approved dependency is committed, its exact artifact, license,
+checksum or lock mechanism, compatibility, and update path MUST match the
+dependency record and pass the owning slice's verification.
 
 ## Bounded delivery slices
 
@@ -98,8 +98,8 @@ R3 workflow change.
 - **Allowed paths:** `/spec/features/FEAT-0002-reproducible-polyglot-baseline.md`,
   `/spec/adr/ADR-0005-polyglot-build-and-supply-chain-policy.md`,
   `/spec/README.md`, `/tests/ms002-preparation.test.mjs`,
-  `/planning/MS-002-KICKOFF.md`, `/docs/DEVELOPMENT.md`, and
-  `/docs/DEPENDENCIES.md`.
+  `/planning/MS-002-KICKOFF.md`, `/planning/milestones.yaml`,
+  `/docs/DEVELOPMENT.md`, `/docs/DEPENDENCIES.md`, and `/docs/ROADMAP.md`.
 - **Forbidden:** package manifests, lockfiles, workflows, application code,
   public contracts, and repository settings.
 - **Acceptance:** the human security approval covers every item under
@@ -322,16 +322,17 @@ R3 workflow change.
 
 ## Human preparation gate
 
-The following approval is still missing and intentionally blocks completion of
-S01 as well as the start of S02–S08:
+The repository owner explicitly assumed and approved the human Security
+Reviewer decision on 1 August 2026. The permanent record is linked from
+[S01 issue #3](https://github.com/larynxberlin-rgb/Zugfolge/issues/3#issuecomment-5150191133)
+and the [coordinating issue #2](https://github.com/larynxberlin-rgb/Zugfolge/issues/2#issuecomment-5150191185).
 
-> A human Security Reviewer approves the proposed toolchain/dependency set,
-> bootstrap channels, immutable GitHub Action SHAs, least-privilege workflow
-> permissions, secret-scan and SBOM tooling, supported runner images, and
-> artifact retention.
-
-An AI agent or implementation test cannot substitute for this approval.
-Until it is linked, `MS-002` remains `ready` rather than `in-progress`.
+The decision covers the exact toolchain/dependency set, bootstrap channels,
+immutable Action SHAs, least-privilege permissions, runner images,
+secret-scan/coverage/SBOM tooling, 30-day artifact retention, full-SHA setting,
+and non-auto-merged Dependabot updates. It was made by the human owner rather
+than substituted by an AI agent or test. `MS-002` moves to `in-progress` with
+S01; S02–S08 remain governed by their own dependencies and acceptance gates.
 
 ## Exact checks planned for milestone exit
 

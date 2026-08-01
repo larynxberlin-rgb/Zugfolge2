@@ -74,7 +74,7 @@ flowchart LR
 |---|---|---|
 | `MS-000` | Repository and product foundation | completed |
 | `MS-001` | Rights, license, brand, and source clearance | in-progress |
-| `MS-002` | Reproducible polyglot engineering baseline | ready |
+| `MS-002` | Reproducible polyglot engineering baseline | in-progress |
 | `MS-003` | Walking Skeleton runtime and determinism architecture | planned |
 
 Exit: product and delivery rules, ownership path, reproducible TypeScript,

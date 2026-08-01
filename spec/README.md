@@ -15,14 +15,13 @@ product owners, domain specialists, engineers, and AI agents.
 Current feature documents:
 
 - `FEAT-0001` defines the accepted contract-first Walking Skeleton behavior.
-- `FEAT-0002` proposes the reproducible TypeScript/Kotlin/Python engineering
-  baseline for `MS-002`. It remains non-normative until its required human
-  security review is recorded.
+- `FEAT-0002` defines the accepted reproducible TypeScript/Kotlin/Python
+  engineering baseline for `MS-002`; its human security decision is linked in
+  the specification and coordinating issue.
 - `FEAT-0003` proposes rights, license, brand, and source clearance rules. It
   grants no rights until its human gate accepts it.
 
-`ADR-0005` records the matching proposed build and supply-chain decision. It is
-not accepted until the same security gate is complete.
+`ADR-0005` records the matching accepted build and supply-chain decision.
 
 Delivery order and completion evidence live under `../planning/`. A milestone
 may schedule specification work, but it is not itself a product rule and cannot

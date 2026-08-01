@@ -1,9 +1,11 @@
 # ADR-0005: Polyglot build and supply-chain baseline
 
-**Status:** Proposed\
+**Status:** Accepted\
 **Date:** 2026-07-30\
 **Milestone:** MS-002\
-**Deciders:** Architecture Steward, Human Security Reviewer
+**Deciders:** Architecture Steward, repository owner acting as Human Security Reviewer\
+**Accepted:** 2026-08-01\
+**Approval evidence:** [MS-002-S01 decision](https://github.com/larynxberlin-rgb/Zugfolge/issues/3#issuecomment-5150191133)
 
 ## Context
 
@@ -20,9 +22,9 @@ repositories. Mutable versions, automatic lock updates, broad token
 permissions, or multiple supported installers would make AI-generated changes
 hard to reproduce or review.
 
-## Proposed decision
+## Decision
 
-Subject to the required human security review, Zugfolge will use:
+Zugfolge will use:
 
 | Area | Decision |
 |---|---|
@@ -37,14 +39,16 @@ Subject to the required human security review, Zugfolge will use:
 | Linux CI | `ubuntu-24.04` |
 | Windows CI | `windows-2025` |
 
-Gradle `9.5.0`, rather than the newer `9.6.1`, is proposed because Kotlin
+Gradle `9.5.0`, rather than the newer `9.6.1`, is selected because Kotlin
 `2.4.10` documents full Gradle support only through `9.5.0`. The version may be
 raised only after the Kotlin compatibility matrix covers it.
 
 CPython `3.13.14`, rather than the source-only `3.12.13` security release, is
-proposed because Python.org publishes both source and signed Windows artifacts
-for the exact release. S01 must still prove that both current packages and the
-planned GDAL/osmium/Polars toolchain support this line before accepting it.
+selected because Python.org publishes source and signed Windows artifacts for
+the exact release. Current package metadata supports this interpreter line;
+osmium and Polars explicitly publish Python 3.13-compatible artifacts. GDAL's
+native distribution remains a later source-specific integration gate and is
+not introduced by `MS-002`.
 
 The existing web application will stay at the repository root during MS-002.
 Moving it to `apps/web` would mix a hosting/layout migration with the
@@ -57,7 +61,8 @@ Gradle default MUST NOT overwrite or cause `/build` to be ignored.
 
 ### Bootstrap
 
-Local developers may install the pinned pnpm through an official pnpm method.
+Local developers install `pnpm@11.18.0` from the official npm registry after
+installing the pinned official Node.js runtime.
 CI will use the reviewed, SHA-pinned `pnpm/action-setup` release and MUST NOT
 depend on Corepack being bundled with Node. Corepack is experimental, is not
 bundled with newer Node releases, and has had stale-signature failures.
@@ -80,18 +85,19 @@ not supported.
   comment.
 - Default workflow permissions are `contents: read`; exceptional permissions
   are job-local and documented.
-- Repository enforcement of full-SHA Action pins is recommended, subject to
-  the human security decision.
+- Repository enforcement of full-SHA Action pins is required before the S06
+  workflow is accepted when the repository setting supports it. Repository
+  policy tests remain mandatory in every case.
 
 ### SBOM
 
-The proposed CycloneDX path is:
+The accepted CycloneDX path is:
 
 - TypeScript: the native pnpm SBOM command;
 - Python: `cyclonedx-bom` `7.3.1` against the frozen synchronized environment;
 - JVM: `org.cyclonedx.bom` Gradle plugin `3.3.0`;
-- optional validation/merge: CycloneDX CLI `0.33.1` only if review shows a
-  combined document is needed.
+- no cross-ecosystem validation/merge CLI in `MS-002`; a later accepted change
+  is required before adding one.
 
 The first baseline will retain three ecosystem-specific CycloneDX JSON
 documents in one artifact. It will not introduce an unreviewed dependency-
@@ -111,7 +117,7 @@ submission Action merely to obtain a combined view.
 
 Dependabot may open weekly pull requests for GitHub Action and package-manager
 updates, but MUST NOT auto-merge them. Full-SHA Action enforcement at repository
-level remains recommended.
+level is required before S06 acceptance when supported.
 
 ## Options considered
 
@@ -161,17 +167,16 @@ later deployment decision.
 - No production service, public contract, game behavior, or persistence format
   changes.
 
-## Approval conditions
+## Approval record
 
-This ADR remains `Proposed`. Before it may become `Accepted`, the human Security
-Reviewer MUST:
+The repository owner explicitly assumed the human Security Reviewer decision
+on 1 August 2026. The accepted record verifies the exact cross-platform
+CPython and Temurin artifacts, supported runner images, bootstrap channels,
+tool and plugin identities, Action tag-to-commit SHAs, licenses, least-privilege
+permissions, Gitleaks and coverage tools, CycloneDX strategy, 30-day retention,
+full-SHA enforcement, and non-auto-merged weekly Dependabot updates.
 
-1. approve CPython `3.13.14` after current-package and planned GIS compatibility
-   evidence, including the official Windows artifact and integrity record;
-2. approve the proposed Eclipse Temurin `21.0.12+8` distribution and its
-   platform checksums;
-3. verify each proposed tool, plugin, Action SHA, official checksum, and license;
-4. approve Gitleaks `8.30.1`, built-in Node coverage, coverage.py `7.15.2`,
-   JaCoCo `0.8.15`, 30-day artifact retention, and workflow permissions;
-5. decide whether full-SHA Action enforcement and automated Action updates are
-   enabled in repository settings.
+Exact artifact hashes and the implementation trust/rollback record are in
+`docs/DEPENDENCIES.md`. The approval permits bounded implementation; it does
+not waive lock, checksum, permission, license, clean-checkout, or independent
+review evidence in later slices.

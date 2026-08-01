@@ -1,6 +1,6 @@
 # Development and verification
 
-**Status:** current foundation plus proposed MS-002 target
+**Status:** current foundation plus accepted MS-002 target
 **Supported production services:** none required for this stage
 
 This guide deliberately separates commands that work on the current foundation
@@ -35,9 +35,9 @@ cloud account is needed for the current checks. Planned self-hosted runtime
 services and their introduction milestones are documented in
 [SERVICES.md](SERVICES.md).
 
-## MS-002 target — not yet executable
+## MS-002 target — accepted, not yet executable
 
-The proposed accepted sequence will be:
+The accepted sequence will be introduced by S02–S07:
 
 ```text
 pnpm install --frozen-lockfile
@@ -72,13 +72,14 @@ versions and candidate sources are in [DEPENDENCIES.md](DEPENDENCIES.md).
 - Generated output stays in ignored, dedicated directories. In particular,
   Gradle MUST NOT use or ignore the tracked `/build` source directory.
 
-## Why implementation is paused
+## Implementation order
 
-`MS-002` is risk class R3. Its preparation package is complete enough for
-review, but its required human Security Reviewer has not yet approved the
-toolchains, bootstrap channels, CI permissions, scanner/SBOM tools, and artifact
-retention. Until that approval is linked, `FEAT-0002` and `ADR-0005` remain
-`Proposed` and no dependency or workflow migration may start.
+The human Security Reviewer decision is recorded in
+[MS-002-S01](https://github.com/larynxberlin-rgb/Zugfolge/issues/3#issuecomment-5150191133),
+and `FEAT-0002` plus `ADR-0005` are accepted. S02 may migrate JavaScript only
+after S01 merges; S03 and S04 then introduce the Python and Kotlin foundations
+independently. No command in the target sequence is claimed executable before
+its owning slice has merged and passed its rollback and clean-install checks.
 
 See [planning/MS-002-KICKOFF.md](../planning/MS-002-KICKOFF.md) for the eight
 independently mergeable delivery slices.
