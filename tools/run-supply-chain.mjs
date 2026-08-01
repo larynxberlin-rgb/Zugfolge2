@@ -13,7 +13,7 @@ const OUTPUT_ROOT = path.join(REPOSITORY_ROOT, "outputs");
 const SBOM_ROOT = path.join(OUTPUT_ROOT, "sbom");
 
 function executable(name) {
-  if (process.platform !== "win32") return name;
+  if (process.platform !== "win32") return name === "gradlew" ? "./gradlew" : name;
   if (name === "gradlew") return "gradlew.bat";
   if (name === "pnpm") return "pnpm.cmd";
   return name;
