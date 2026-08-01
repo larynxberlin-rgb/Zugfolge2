@@ -1,13 +1,30 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { readFile, readdir } from "node:fs/promises";
+import os from "node:os";
 import path from "node:path";
+import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 
+import AsyncApiSpecs from "@asyncapi/specs";
+import Ajv from "ajv";
 import Ajv2020 from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
 import YAML from "yaml";
 
 const ALLOWED_SPEC_STATUSES = new Set(["Accepted", "Proposed", "Superseded"]);
+const ASYNCAPI_VALIDATOR = new Ajv({
+  allErrors: true,
+  strict: false,
+  validateFormats: false,
+}).compile(AsyncApiSpecs.schemasWithoutId["3.0.0"]);
+const require = createRequire(import.meta.url);
+const REDOCLY_CLI = path.join(
+  path.dirname(require.resolve("@redocly/cli/package.json")),
+  "bin",
+  "cli.js",
+);
 
 async function filesBelow(directory, predicate = () => true) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -33,6 +50,68 @@ function walk(value, visitor) {
   }
 }
 
+function isRecord(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function requireRecord(value, label) {
+  assert.ok(isRecord(value), `${label} must be an object`);
+  return value;
+}
+
+function validateJsonSchemaShape(schema, label) {
+  requireRecord(schema, label);
+  const ajv = new Ajv2020({ allErrors: true, strict: true, strictRequired: false });
+  addFormats(ajv);
+  assert.equal(
+    ajv.validateSchema(schema),
+    true,
+    `${label} is not valid JSON Schema 2020-12: ${ajv.errorsText(ajv.errors)}`,
+  );
+}
+
+function schemaErrors(label, errors) {
+  return `${label} violates its official schema: ${(errors ?? [])
+    .map(({ instancePath, message }) => `${instancePath || "/"} ${message}`)
+    .join("; ")}`;
+}
+
+function redoclyErrors(report) {
+  return (report?.problems ?? [])
+    .map(({ ruleId, message, location }) => {
+      const pointer = location?.[0]?.pointer ?? "/";
+      return `${ruleId ?? "struct"} ${pointer}: ${message}`;
+    })
+    .join("; ");
+}
+
+export function validateOpenApiFile(filePath) {
+  const result = spawnSync(
+    process.execPath,
+    [REDOCLY_CLI, "lint", "--extends=spec", "--format=json", filePath],
+    {
+      cwd: path.dirname(filePath),
+      encoding: "utf8",
+      env: { ...process.env, NO_COLOR: "1" },
+      timeout: 30_000,
+    },
+  );
+  assert.ifError(result.error);
+  let report;
+  try {
+    report = JSON.parse(result.stdout);
+  } catch {
+    assert.fail("OpenAPI validator did not emit machine-readable JSON");
+  }
+  assert.equal(
+    result.status,
+    0,
+    `OpenAPI 3.1 violates the pinned spec validator: ${redoclyErrors(report)}`,
+  );
+  assert.equal(report?.totals?.errors, 0, "OpenAPI validation reported errors");
+  return report;
+}
+
 export function validateSpecificationIdentity(fileName, source) {
   const expected = fileName.match(/^(FEAT-\d{4}|ADR-\d{4})-/)?.[1];
   assert.ok(expected, `${fileName} needs an FEAT-nnnn or ADR-nnnn prefix`);
@@ -49,35 +128,48 @@ export function validateSpecificationIdentity(fileName, source) {
 export function compileJsonSchemas(schemas) {
   const ajv = new Ajv2020({ allErrors: true, strict: true, strictRequired: false });
   addFormats(ajv);
-  for (const schema of schemas) ajv.addSchema(schema);
+  for (const [index, schema] of schemas.entries()) {
+    validateJsonSchemaShape(schema, `JSON Schema ${schema?.$id ?? index}`);
+    ajv.addSchema(schema);
+  }
+  for (const [index, schema] of schemas.entries()) {
+    const compiled = schema.$id ? ajv.getSchema(schema.$id) : ajv.compile(schema);
+    assert.ok(compiled, `JSON Schema ${schema.$id ?? index} could not be compiled`);
+  }
   return ajv;
 }
 
 export function validateOpenApi(document) {
+  requireRecord(document, "OpenAPI document");
   assert.equal(document.openapi, "3.1.0", "OpenAPI must remain 3.1.0");
-  assert.equal(document.jsonSchemaDialect, "https://json-schema.org/draft/2020-12/schema");
-  assert.ok(document.info?.title && document.info?.version, "OpenAPI info is incomplete");
-  assert.ok(document.paths && typeof document.paths === "object", "OpenAPI paths are missing");
-  const operationIds = [];
-  for (const [route, item] of Object.entries(document.paths)) {
-    assert.match(route, /^\//, `OpenAPI path ${route} must start with /`);
-    for (const method of ["get", "put", "post", "delete", "patch", "head", "options", "trace"]) {
-      const operation = item?.[method];
-      if (!operation) continue;
-      assert.ok(operation.operationId, `${method.toUpperCase()} ${route} needs operationId`);
-      assert.ok(operation.responses && typeof operation.responses === "object", `${operation.operationId} needs responses`);
-      operationIds.push(operation.operationId);
-    }
+  assert.equal(
+    document.jsonSchemaDialect,
+    "https://json-schema.org/draft/2020-12/schema",
+    "OpenAPI must use JSON Schema 2020-12",
+  );
+  const temporaryRoot = mkdtempSync(path.join(os.tmpdir(), "zugfolge-openapi-"));
+  try {
+    const filePath = path.join(temporaryRoot, "openapi.yaml");
+    writeFileSync(filePath, YAML.stringify(document), "utf8");
+    return validateOpenApiFile(filePath);
+  } finally {
+    rmSync(temporaryRoot, { force: true, recursive: true });
   }
-  assert.equal(new Set(operationIds).size, operationIds.length, "OpenAPI operationId values must be unique");
 }
 
 export function validateAsyncApi(document) {
+  requireRecord(document, "AsyncAPI document");
   assert.equal(document.asyncapi, "3.0.0", "AsyncAPI must remain 3.0.0");
-  assert.ok(document.info?.title && document.info?.version, "AsyncAPI info is incomplete");
-  assert.ok(document.channels && Object.keys(document.channels).length > 0, "AsyncAPI channels are missing");
-  assert.ok(document.operations && Object.keys(document.operations).length > 0, "AsyncAPI operations are missing");
-  assert.ok(document.components?.schemas, "AsyncAPI component schemas are missing");
+  assert.equal(
+    ASYNCAPI_VALIDATOR(document),
+    true,
+    schemaErrors("AsyncAPI 3.0", ASYNCAPI_VALIDATOR.errors),
+  );
+  requireRecord(document.channels, "AsyncAPI channels");
+  assert.ok(Object.keys(document.channels).length > 0, "AsyncAPI channels are missing");
+  requireRecord(document.operations, "AsyncAPI operations");
+  assert.ok(Object.keys(document.operations).length > 0, "AsyncAPI operations are missing");
+  requireRecord(document.components?.schemas, "AsyncAPI component schemas");
 }
 
 function resolvePointer(document, fragment, reference) {
@@ -105,6 +197,15 @@ async function validateReferences(document, documentPath, contractRoot) {
   const rootPrefix = `${path.resolve(contractRoot)}${path.sep}`;
   for (const reference of references) {
     const [relativeFile, fragment = ""] = reference.split("#", 2);
+    assert.doesNotMatch(
+      relativeFile,
+      /^[A-Za-z][A-Za-z0-9+.-]*:/,
+      `${documentPath} reference escapes packages/contracts: ${reference}`,
+    );
+    assert.ok(
+      !path.isAbsolute(relativeFile),
+      `${documentPath} reference escapes packages/contracts: ${reference}`,
+    );
     const targetPath = relativeFile
       ? path.resolve(path.dirname(documentPath), relativeFile)
       : path.resolve(documentPath);
@@ -121,9 +222,118 @@ async function validateReferences(document, documentPath, contractRoot) {
   }
 }
 
+const FORBIDDEN_IMPORT_SEGMENTS = new Set([
+  ".cache",
+  ".gradle-build",
+  ".next",
+  ".pnpm",
+  ".venv",
+  ".vinext",
+  "dist",
+  "node_modules",
+  "outputs",
+  "out",
+  "work",
+]);
+
+function importSpecifiers(source) {
+  return [
+    ...source.matchAll(
+      /(?:\bfrom\s+|\bimport\s*\(\s*|\brequire\s*\(\s*|\bimport\s+)["']([^"']+)["']/g,
+    ),
+  ].map((match) => match[1]);
+}
+
+function assertSafeImportPath(specifier, sourcePath) {
+  const segments = specifier.replaceAll("\\", "/").split("/");
+  assert.ok(
+    !segments.some((segment) => FORBIDDEN_IMPORT_SEGMENTS.has(segment)),
+    `${sourcePath} imports forbidden generated/private path ${specifier}`,
+  );
+  assert.doesNotMatch(
+    specifier.replaceAll("\\", "/"),
+    /(?:^|\/)(?:apps|integrations|packages)\/[^/]+\/src(?:\/|$)/,
+    `${sourcePath} imports another module's private source tree ${specifier}`,
+  );
+}
+
+export function validateJavaScriptModuleSource(source, sourcePath = "JavaScript source") {
+  for (const specifier of importSpecifiers(source)) {
+    assert.ok(!path.isAbsolute(specifier), `${sourcePath} imports absolute path ${specifier}`);
+    if (specifier.startsWith(".") || specifier.includes("\\")) {
+      assertSafeImportPath(specifier, sourcePath);
+    }
+  }
+}
+
+function pythonImportRoots(source) {
+  const roots = [];
+  for (const line of source.split(/\r?\n/)) {
+    const from = line.match(/^\s*from\s+([A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*)\s+import\b/);
+    if (from) roots.push({ module: from[1], root: from[1].split(".")[0] });
+    const imported = line.match(/^\s*import\s+(.+)$/);
+    if (imported) {
+      for (const entry of imported[1].split(",")) {
+        const module = entry.trim().split(/\s+as\s+/)[0];
+        if (/^[A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*$/.test(module)) {
+          roots.push({ module, root: module.split(".")[0] });
+        }
+      }
+    }
+  }
+  return roots;
+}
+
+export function validatePythonModuleSource(
+  source,
+  {
+    declaredWorkspaceDependencies = new Set(),
+    ownerImport,
+    ownerPackage,
+    sourcePath = "Python source",
+    workspaceImports = new Map(),
+  },
+) {
+  for (const { module, root } of pythonImportRoots(source)) {
+    const targetPackage = workspaceImports.get(root);
+    if (!targetPackage || root === ownerImport) continue;
+    assert.ok(
+      declaredWorkspaceDependencies.has(targetPackage),
+      `${sourcePath} creates undeclared workspace edge ${ownerPackage} -> ${targetPackage} via ${module}`,
+    );
+    assert.ok(
+      !module.split(".").some((segment) => segment.startsWith("_")),
+      `${sourcePath} imports private API ${module} from ${targetPackage}`,
+    );
+  }
+}
+
 export function validateKotlinSource(source, sourcePath = "Kotlin source") {
-  const forbidden = /^(?:import\s+)(?:apps\.|integrations\.|src\.main\.|org\.springframework\.|io\.ktor\.|io\.micronaut\.)/m;
+  const forbidden = /^(?:import\s+)(?:apps\.|integrations\.|src\.main\.|.*\.internal\.|org\.springframework\.|io\.ktor\.|io\.micronaut\.)/m;
   assert.doesNotMatch(source, forbidden, `${sourcePath} crosses a private or framework boundary`);
+}
+
+export async function validateContractDocuments({
+  asyncApi,
+  asyncApiPath,
+  contractRoot,
+  openApi,
+  openApiPath,
+  openApiValidator = validateOpenApiFile,
+}) {
+  await Promise.all([
+    validateReferences(openApi, openApiPath, contractRoot),
+    validateReferences(asyncApi, asyncApiPath, contractRoot),
+  ]);
+  requireRecord(openApi, "OpenAPI document");
+  assert.equal(openApi.openapi, "3.1.0", "OpenAPI must remain 3.1.0");
+  assert.equal(
+    openApi.jsonSchemaDialect,
+    "https://json-schema.org/draft/2020-12/schema",
+    "OpenAPI must use JSON Schema 2020-12",
+  );
+  openApiValidator(openApiPath);
+  validateAsyncApi(asyncApi);
 }
 
 export async function verifySpecificationTree(repositoryPath) {
@@ -154,12 +364,92 @@ export async function verifySpecificationTree(repositoryPath) {
     readDocument(openApiPath),
     readDocument(asyncApiPath),
   ]);
-  validateOpenApi(openApi);
-  validateAsyncApi(asyncApi);
-  await Promise.all([
-    validateReferences(openApi, openApiPath, contractRoot),
-    validateReferences(asyncApi, asyncApiPath, contractRoot),
-  ]);
+  await validateContractDocuments({
+    asyncApi,
+    asyncApiPath,
+    contractRoot,
+    openApi,
+    openApiPath,
+  });
+
+  const rootPackage = JSON.parse(
+    await readFile(path.join(repositoryPath, "package.json"), "utf8"),
+  );
+  assert.equal(rootPackage.name, "zugfolge", "root JavaScript package identity is missing");
+  assert.equal(
+    rootPackage.exports?.["./domain"],
+    "./packages/domain/index.mjs",
+    "domain kernel needs a declared root-package export",
+  );
+  const javaScriptRoots = ["app", "build", "packages/domain", "scripts", "tools", "worker"];
+  const javaScriptSources = (
+    await Promise.all(
+      javaScriptRoots.map((directory) =>
+        filesBelow(path.join(repositoryPath, directory), (file) =>
+          /\.(?:js|mjs|ts|tsx)$/.test(file),
+        ),
+      ),
+    )
+  ).flat();
+  javaScriptSources.push(
+    path.join(repositoryPath, "eslint.config.mjs"),
+    path.join(repositoryPath, "vite.config.ts"),
+  );
+  for (const sourcePath of javaScriptSources) {
+    validateJavaScriptModuleSource(await readFile(sourcePath, "utf8"), sourcePath);
+  }
+
+  const pythonMembers = [
+    { directory: "apps/data-pipeline", importName: "zugfolge_data" },
+    { directory: "integrations/odoo", importName: "zugfolge_odoo_bridge" },
+  ];
+  for (const member of pythonMembers) {
+    const projectSource = await readFile(
+      path.join(repositoryPath, member.directory, "pyproject.toml"),
+      "utf8",
+    );
+    member.projectName = projectSource.match(/^name = "([^"]+)"$/m)?.[1];
+    assert.ok(member.projectName, `${member.directory} needs a Python package identity`);
+    const dependencyBlock = projectSource.match(/^dependencies = \[([\s\S]*?)\]$/m)?.[1] ?? "";
+    member.dependencies = new Set(
+      [...dependencyBlock.matchAll(/"([A-Za-z0-9_.-]+)/g)].map((match) => match[1]),
+    );
+  }
+  assert.equal(
+    new Set(pythonMembers.map(({ projectName }) => projectName)).size,
+    pythonMembers.length,
+    "Python workspace package identities must be unique",
+  );
+  const workspaceImports = new Map(
+    pythonMembers.map(({ importName, projectName }) => [importName, projectName]),
+  );
+  const pythonSources = [];
+  for (const member of pythonMembers) {
+    const memberSources = await filesBelow(
+      path.join(repositoryPath, member.directory, "src"),
+      (file) => file.endsWith(".py"),
+    );
+    pythonSources.push(...memberSources);
+    for (const sourcePath of memberSources) {
+      validatePythonModuleSource(await readFile(sourcePath, "utf8"), {
+        declaredWorkspaceDependencies: member.dependencies,
+        ownerImport: member.importName,
+        ownerPackage: member.projectName,
+        sourcePath,
+        workspaceImports,
+      });
+    }
+  }
+
+  const settingsSource = await readFile(
+    path.join(repositoryPath, "settings.gradle.kts"),
+    "utf8",
+  );
+  assert.match(
+    settingsSource,
+    /include\(":apps:game-server"\)/,
+    "game-server needs an explicit Gradle project identity",
+  );
 
   const kotlinSources = await filesBelow(
     path.join(repositoryPath, "apps", "game-server", "src", "main", "kotlin"),
@@ -172,9 +462,12 @@ export async function verifySpecificationTree(repositoryPath) {
 
   return {
     asyncApiDocuments: 1,
+    javaScriptSources: javaScriptSources.length,
     jsonSchemas: schemas.length,
     kotlinSources: kotlinSources.length,
     openApiDocuments: 1,
+    pythonPackages: pythonMembers.length,
+    pythonSources: pythonSources.length,
     specifications: identities.length,
   };
 }
@@ -184,6 +477,6 @@ if (invokedPath === fileURLToPath(import.meta.url)) {
   const repositoryPath = path.resolve(fileURLToPath(new URL("../", import.meta.url)));
   const evidence = await verifySpecificationTree(repositoryPath);
   console.log(
-    `Verified ${evidence.specifications} specs/ADRs, ${evidence.jsonSchemas} JSON Schemas, OpenAPI, AsyncAPI, and ${evidence.kotlinSources} Kotlin source(s).`,
+    `Verified ${evidence.specifications} specs/ADRs, ${evidence.jsonSchemas} JSON Schemas, OpenAPI, AsyncAPI, and ${evidence.javaScriptSources + evidence.pythonSources + evidence.kotlinSources} module source(s).`,
   );
 }

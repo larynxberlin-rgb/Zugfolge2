@@ -235,7 +235,8 @@ R3 workflow change.
   `/tools/spec-lint.mjs`, `/tools/run-node-coverage.mjs`,
   `/tools/run-python-coverage.py`, `/tools/verify-local-evidence.mjs`,
   `/tests/tooling-policy.test.mjs`, `/tests/repository-policy.test.mjs`,
-  `/docs/DEVELOPMENT.md`, and `/docs/DEPENDENCIES.md`.
+  `/public/legal/THIRD-PARTY-NOTICES.txt`, `/docs/DEVELOPMENT.md`, and
+  `/docs/DEPENDENCIES.md`.
 - **Forbidden:** changes to accepted product behavior, weakening existing
   contract tests, workflows, or production telemetry.
 - **Acceptance:** invalid specification IDs, invalid OpenAPI/AsyncAPI/JSON

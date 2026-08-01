@@ -64,8 +64,10 @@ TypeScript source directory `/build`.
 
 ## Local S05 specification and test evidence
 
-The S05 checks validate accepted specifications and contracts before producing
-machine-readable test and coverage evidence for all three language stacks:
+The S05 checks validate accepted specifications, official OpenAPI 3.1 and
+AsyncAPI 3.0 structure, local contract references, and JavaScript/Python/Kotlin
+module boundaries before producing machine-readable test and coverage evidence
+for all three language stacks:
 
 ```text
 pnpm run verify:spec
@@ -83,8 +85,8 @@ below ignored output directories:
   `outputs/coverage/node/test-results.xml`
 - Python: `outputs/coverage/python/coverage.json`, `coverage.xml`, and
   `test-results.json`
-- JVM: `.gradle-build/reports/jacoco/test/jacocoTestReport.xml` and
-  `.gradle-build/test-results/test/TEST-dev.zugfolge.game.FoundationTest.xml`
+- JVM: `.gradle-build/apps/game-server/reports/jacoco/test/jacocoTestReport.xml`
+  and `.gradle-build/apps/game-server/test-results/test/`
 
 S05 deliberately introduces no coverage threshold. The evidence verifier checks
 the exact coverage-tool versions, successful suites, relative source paths, and

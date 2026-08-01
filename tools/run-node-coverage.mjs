@@ -42,7 +42,14 @@ for (const rawFile of rawFiles) {
     if (!script.url?.startsWith("file:")) continue;
     const absolutePath = fileURLToPath(script.url);
     const relativePath = path.relative(repositoryPath, absolutePath).replaceAll("\\", "/");
-    if (relativePath.startsWith("../") || relativePath.includes("/node_modules/")) continue;
+    if (
+      relativePath.startsWith("../") ||
+      relativePath === "node_modules" ||
+      relativePath.startsWith("node_modules/") ||
+      relativePath.includes("/node_modules/")
+    ) {
+      continue;
+    }
     const current = files.get(relativePath) ?? {
       functionsCovered: 0,
       functionsTotal: 0,

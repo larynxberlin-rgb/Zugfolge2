@@ -18,8 +18,8 @@ resolvedGraphs:
   - ecosystem: npm
     manifest: package.json
     lockfile: pnpm-lock.yaml
-    canonicalSha256: 844D5D8FB51D0781C64B9AF7890CC29F22F19DEF3A75494DEBFCC06E766DAEE5
-    packageCountExcludingRoot: 430
+    canonicalSha256: FF674E57BABC164CA8050BE9A67203F6A2E67700E314FF76CFD11556C355EEA9
+    packageCountExcludingRoot: 432
     missingLicenseMetadata: 0
     exactResolution: true
     status: LOCKED_REVIEW_PENDING
@@ -89,9 +89,32 @@ coverageTools:
     updateMethod: Review upstream release/license, update the exact toolVersion, locks and verification metadata, then repeat the warning-free clean build.
     rollback: Remove the JaCoCo plugin/report task and restore the prior app lock and verification metadata while retaining JUnit tests.
 
+contractValidators:
+  - name: "@redocly/cli"
+    version: 2.42.0
+    scope: DEVELOPMENT
+    owningSlice: MS-002-S05
+    licenseExpression: MIT
+    purpose: Validate the OpenAPI 3.1 contract with the pinned spec ruleset and local-reference resolution
+    officialSource: https://github.com/Redocly/redocly-cli/releases/tag/%40redocly%2Fcli%402.42.0
+    trustBoundary: Executes only after repository-owned reference confinement rejects escaping or remote references; receives contract files but no credentials or production data.
+    updateMethod: Review the exact upstream release, npm integrity, license, advisories, OpenAPI 3.1 behavior, and release-age quarantine before changing the pin and lock.
+    rollback: Remove the S05 OpenAPI validator invocation and exact development dependency while retaining JSON Schema and reference checks.
+  - name: "@asyncapi/specs"
+    version: 6.11.1
+    scope: DEVELOPMENT
+    owningSlice: MS-002-S05
+    licenseExpression: Apache-2.0
+    purpose: Supply the official bundled AsyncAPI 3.0 JSON Schema used by the locked Ajv validator
+    officialSource: https://github.com/asyncapi/spec-json-schemas/releases/tag/v6.11.1
+    trustBoundary: Loads a data-only bundled schema from the integrity-pinned npm artifact; it runs no lifecycle script and receives no credentials or production data.
+    updateMethod: Never float this pin; review npm provenance, upstream advisories and incident history, schema changes, license, and integrity before an isolated update.
+    rollback: Remove the S05 AsyncAPI schema import and exact development dependency while retaining repository reference checks.
+
 directPackages:
   - { name: react, scope: RUNTIME, version: 19.2.8, licenseExpression: MIT, purpose: Browser and server UI runtime }
   - { name: react-dom, scope: RUNTIME, version: 19.2.8, licenseExpression: MIT, purpose: DOM and server rendering }
+  - { name: "@asyncapi/specs", scope: DEVELOPMENT, version: 6.11.1, licenseExpression: Apache-2.0, purpose: Official AsyncAPI 3.0 structural schema validation }
   - { name: "@cloudflare/vite-plugin", scope: DEVELOPMENT, version: 1.50.0, licenseExpression: MIT, purpose: Cloudflare-compatible evaluation build }
   - { name: "@eslint/js", scope: DEVELOPMENT, version: 9.39.4, licenseExpression: MIT, purpose: JavaScript lint rules }
   - { name: "@tailwindcss/postcss", scope: DEVELOPMENT, version: 4.2.1, licenseExpression: MIT, purpose: Tailwind PostCSS integration }
@@ -100,6 +123,7 @@ directPackages:
   - { name: "@types/react-dom", scope: DEVELOPMENT, version: 19.2.3, licenseExpression: MIT, purpose: React DOM type declarations }
   - { name: "@vitejs/plugin-react", scope: DEVELOPMENT, version: 6.0.2, licenseExpression: MIT, purpose: React compilation in Vite }
   - { name: "@vitejs/plugin-rsc", scope: DEVELOPMENT, version: 0.5.26, licenseExpression: MIT, purpose: React Server Components build support }
+  - { name: "@redocly/cli", scope: DEVELOPMENT, version: 2.42.0, licenseExpression: MIT, purpose: OpenAPI 3.1 spec validation }
   - { name: ajv, scope: DEVELOPMENT, version: 8.20.0, licenseExpression: MIT, purpose: JSON Schema validation }
   - { name: ajv-formats, scope: DEVELOPMENT, version: 3.0.1, licenseExpression: MIT, purpose: Standard JSON Schema formats }
   - { name: eslint, scope: DEVELOPMENT, version: 9.39.4, licenseExpression: MIT, purpose: Static analysis }

@@ -517,6 +517,24 @@ test("distributed packages and Python build dependencies stay explicit", async (
     gradleVerification,
     /<component group="org\.jacoco" name="org\.jacoco\.agent" version="0\.8\.15">[\s\S]*?<sha256 value="[0-9a-f]{64}"/,
   );
+
+  uniqueBy(dependencies.contractValidators, "name", "contract validators");
+  assert.deepEqual(
+    dependencies.contractValidators.map(({ name }) => name).sort(),
+    ["@asyncapi/specs", "@redocly/cli"],
+  );
+  for (const validator of dependencies.contractValidators) {
+    const direct = dependencies.directPackages.find(({ name }) => name === validator.name);
+    assert.ok(direct, `${validator.name} needs a direct package record`);
+    assert.equal(validator.scope, "DEVELOPMENT");
+    assert.equal(validator.owningSlice, "MS-002-S05");
+    assert.equal(String(validator.version), String(direct.version));
+    assert.equal(validator.licenseExpression, direct.licenseExpression);
+    assert.match(validator.officialSource, /^https:\/\//);
+    for (const field of ["purpose", "trustBoundary", "updateMethod", "rollback"]) {
+      assert.ok(validator[field], `${validator.name} needs ${field}`);
+    }
+  }
 });
 
 test("workflow actions use inventoried immutable SHAs", async () => {
