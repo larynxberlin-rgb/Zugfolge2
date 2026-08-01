@@ -22,7 +22,14 @@ const REQUIRED_MEDIA_EXTENSIONS = new Set([
   ".opus", ".flac", ".aac", ".m4a", ".mp4", ".m4v", ".webm", ".mov",
   ".mkv", ".avi",
 ]);
-const [assets, dependencies, rightsRegister, packageJson, lockSource] =
+const [
+  assets,
+  dependencies,
+  rightsRegister,
+  packageJson,
+  lockSource,
+  buildConstraintSource,
+] =
   await Promise.all([
     readFile(new URL("../compliance/assets.yaml", import.meta.url), "utf8").then(
       parse,
@@ -39,6 +46,7 @@ const [assets, dependencies, rightsRegister, packageJson, lockSource] =
       JSON.parse,
     ),
     readFile(new URL("../pnpm-lock.yaml", import.meta.url), "utf8"),
+    readFile(new URL("../build-constraints.txt", import.meta.url), "utf8"),
   ]);
 const lock = parse(lockSource);
 
@@ -358,15 +366,114 @@ test("distributed packages and Python build dependencies stay explicit", async (
     ({ ecosystem }) => ecosystem === "python",
   );
   assert.ok(python);
-  assert.equal(python.exactResolution, false);
-  assert.equal(python.lockfile, null);
-  assert.equal(python.status, "RELEASE_BLOCKED_NO_LOCK");
+  assert.equal(python.exactResolution, true);
+  assert.equal(python.lockfile, "uv.lock");
+  assert.equal(python.buildConstraintFile, "build-constraints.txt");
+  assert.equal(python.status, "LOCKED_REVIEW_PENDING");
   assert.deepEqual(python.runtimeDependencies, []);
-  assert.deepEqual(python.buildDependencies, ["hatchling==1.27.0"]);
+  assert.deepEqual(python.buildDependencies, [
+    "editables==0.6",
+    "hatchling==1.27.0",
+  ]);
+  const uvLock = await readFile(new URL("../uv.lock", import.meta.url), "utf8");
+  assert.equal(normalizedTextSha256(uvLock), python.canonicalSha256);
+  assert.equal(
+    [...uvLock.matchAll(/^\[\[package\]\]$/gm)].length,
+    python.packageCountIncludingWorkspace,
+  );
+  assert.match(uvLock, /^requires-python = "==3\.13\.14"$/m);
+  assert.match(uvLock, /^name = "hatchling"$/m);
+  assert.match(uvLock, /^version = "1\.27\.0"$/m);
+  assert.match(uvLock, /^name = "editables"$/m);
+  assert.match(uvLock, /^version = "0\.6"$/m);
+
+  uniqueBy(dependencies.pythonBuildPackages, "name", "Python build packages");
+  assert.deepEqual(
+    dependencies.pythonBuildPackages.map(({ name }) => name).sort(),
+    ["editables", "hatchling"],
+  );
+  for (const dependency of dependencies.pythonBuildPackages) {
+    assert.equal(dependency.scope, "BUILD");
+    assert.equal(dependency.owningSlice, "MS-002-S03");
+    assert.equal(dependency.licenseExpression, "MIT");
+    assert.match(dependency.officialSource, /^https:\/\/pypi\.org\/project\//);
+    for (const field of [
+      "purpose",
+      "trustBoundary",
+      "updateMethod",
+      "rollback",
+    ]) {
+      assert.ok(dependency[field], `${dependency.name} needs ${field}`);
+    }
+  }
+
+  const constrainedLines = buildConstraintSource
+    .replace(/\\\r?\n\s*/g, " ")
+    .trim()
+    .split(/\r?\n/);
+  const constrainedPackages = new Map(
+    constrainedLines.map((line) => {
+      const [requirement, ...hashArguments] = line.trim().split(/\s+/);
+      const [name, version] = requirement.split("==");
+      assert.ok(name && version, `${requirement} is not an exact constraint`);
+      const hashes = hashArguments.map((argument) => {
+        assert.match(argument, /^--hash=sha256:[a-f0-9]{64}$/);
+        return argument.slice("--hash=".length);
+      });
+      assert.ok(hashes.length > 0, `${requirement} needs at least one hash`);
+      return [name, { version, hashes: hashes.sort() }];
+    }),
+  );
+  assert.equal(constrainedPackages.size, constrainedLines.length);
+
+  const registryPackages = new Map(
+    uvLock
+      .split("[[package]]")
+      .slice(1)
+      .filter((block) => /^source = \{ registry = /m.test(block))
+      .map((block) => {
+        const name = block.match(/^name = "([^"]+)"$/m)?.[1];
+        const version = block.match(/^version = "([^"]+)"$/m)?.[1];
+        const hashes = [...block.matchAll(/hash = "(sha256:[a-f0-9]{64})"/g)]
+          .map((match) => match[1])
+          .sort();
+        assert.ok(name && version && hashes.length > 0);
+        return [name, { version, hashes }];
+      }),
+  );
+  assert.deepEqual(
+    [...constrainedPackages.keys()].sort(),
+    [...registryPackages.keys()].sort(),
+    "every registry package in the Python lock needs a hashed build constraint",
+  );
+  for (const [name, constraint] of constrainedPackages) {
+    assert.deepEqual(constraint, registryPackages.get(name));
+  }
+  const pythonVersion = await readFile(
+    new URL("../.python-version", import.meta.url),
+    "utf8",
+  );
+  assert.equal(pythonVersion.trim(), "3.13.14");
+  const rootPythonProject = await readFile(
+    new URL("../pyproject.toml", import.meta.url),
+    "utf8",
+  );
+  assert.match(rootPythonProject, /^requires-python = "==3\.13\.14"$/m);
+  assert.doesNotMatch(rootPythonProject, /^no-build-isolation\s*=/m);
+  for (const constraint of constrainedPackages.keys()) {
+    assert.match(
+      rootPythonProject,
+      new RegExp(`^  "${constraint.replaceAll("-", "\\-")}==` , "m"),
+    );
+  }
+  assert.match(rootPythonProject, /^required-version = "==0\.12\.0"$/m);
+  assert.match(rootPythonProject, /^python-preference = "only-system"$/m);
   for (const path of python.manifests) {
     const project = await readFile(new URL(`../${path}`, import.meta.url), "utf8");
     assert.match(project, /^dependencies = \[\]$/m);
-    assert.match(project, /^requires = \["hatchling==1\.27\.0"\]$/m);
+    if (path !== "pyproject.toml") {
+      assert.match(project, /^requires = \["hatchling==1\.27\.0"\]$/m);
+    }
   }
 });
 
@@ -398,6 +505,13 @@ test("workflow actions use inventoried immutable SHAs", async () => {
     assert.equal(action.licenseExpression, "MIT");
     assert.equal(action.status, "PINNED_CURRENT_USE_REVIEW_PENDING");
     assert.ok(action.purpose);
+  }
+  for (const repository of ["actions/setup-python", "astral-sh/setup-uv"]) {
+    assert.equal(
+      dependencies.githubActions.find((action) => action.repository === repository)
+        ?.owningSlice,
+      "MS-002-S03",
+    );
   }
   assert.deepEqual(dependencies.containers, []);
   assert.deepEqual(dependencies.fonts, []);

@@ -1,0 +1,27 @@
+[project]
+name = "zugfolge-python-workspace"
+version = "0.0.0"
+description = "Service-free Python workspace for the Zugfolge engineering baseline"
+license = "AGPL-3.0-or-later"
+license-files = ["LICENSE"]
+requires-python = "==3.13.14"
+dependencies = []
+
+[dependency-groups]
+dev = ["editables==0.6", "hatchling==1.27.0"]
+
+[tool.uv]
+build-constraint-dependencies = [
+  "editables==0.6",
+  "hatchling==1.27.0",
+  "packaging==26.2",
+  "pathspec==1.1.1",
+  "pluggy==1.6.0",
+  "trove-classifiers==2026.6.1.19",
+]
+package = false
+python-preference = "only-system"
+required-version = "==0.12.0"
+
+[tool.uv.workspace]
+members = ["apps/data-pipeline", "integrations/odoo"]

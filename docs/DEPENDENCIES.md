@@ -1,6 +1,6 @@
 # Dependency and supply-chain register
 
-**Status:** MS-002-S02 JavaScript lock candidate; later ecosystems remain policy-only
+**Status:** MS-002-S03 JavaScript and Python locks; JVM remains policy-only
 **Last reviewed:** 2026-08-01
 **Security approval:** accepted — [human decision record](https://github.com/larynxberlin-rgb/Zugfolge/issues/3#issuecomment-5150191133)
 
@@ -37,9 +37,19 @@ package-manager-specific lockfile field, while the shipped package set is
 verified against installed metadata, lock integrity and exact notice bytes.
 `package-lock.json` and npm project-resolution commands are no longer accepted.
 
-Both current Python packages have no runtime dependency. Their pinned
-`hatchling==1.27.0` build backend is a build-time dependency. They do not yet
-share a resolved lock.
+Both Python packages have no runtime dependency or dependency on one another.
+They share `uv.lock` under exact CPython `3.13.14` and uv `0.12.0`; the root
+development group locks `hatchling==1.27.0`, `editables==0.6`, and their
+build-tool closure. uv is configured for system Python only, so it cannot
+silently substitute an unapproved managed interpreter. Root build constraints
+pin the complete isolated editable-build closure. Standalone wheel/sdist builds
+also require every artifact hash in `build-constraints.txt`, whose values are
+checked against `uv.lock`.
+
+| Python build dependency | Owning slice | Purpose | License | Official source | Execution and trust boundary | Update method | Rollback |
+|---|---|---|---|---|---|---|---|
+| `hatchling==1.27.0` | `MS-002-S03` | PEP 517 sdist, wheel, and editable backend | MIT | [PyPI release](https://pypi.org/project/hatchling/1.27.0/) | Executes downloaded backend code in an isolated environment while building both first-party packages; it does not enter either runtime dependency set | Review upstream release/license, change the exact root/member pins and every transitive build constraint, regenerate `uv.lock`, refresh verified hashes, then repeat clean sync/build tests | Revert the S03 workspace, lock, constraints, and member build metadata together |
+| `editables==0.6` | `MS-002-S03` | Hatchling helper for editable workspace installation | MIT | [PyPI release](https://pypi.org/project/editables/0.6/) | Executes as part of isolated editable installation during `uv sync`; it is build-only and must not appear in a shipped runtime dependency set | Review upstream release/license, update its exact root/build-constraint pin and hashes, regenerate `uv.lock`, then repeat clean sync/import/build tests | Restore version `0.6` plus its recorded hashes, or revert the complete S03 workspace change |
 
 The current web production dependency closure is `react`, `react-dom`, and
 `scheduler`. The emitted browser/server artifact also carries code or generated
@@ -60,13 +70,14 @@ Current workflows use only immutable Action SHAs:
 | `actions/checkout` | v5 | materialize repository source | untrusted PR source; `contents: read` |
 | `actions/setup-node` | v7.0.0 | install/cache Node.js `24.18.0` | downloads official Node distribution; `contents: read` |
 | `pnpm/action-setup` | v6.0.9 | install pnpm `11.18.0` | executes only in the existing web job; `contents: read` |
-| `actions/setup-python` | v6 | install the declared Python runtime | downloads official Python distribution; `contents: read` |
+| `actions/setup-python` | v7.0.0 | install CPython `3.13.14` | downloads official Python distribution; `contents: read` |
+| `astral-sh/setup-uv` | v9.0.0 | install uv `0.12.0` | executes only in the existing Python job; `contents: read` |
 | `github/codeql-action` | v3 | initialize, build, and upload SAST results | job-local `security-events: write` |
 | `actions/dependency-review-action` | pinned main commit | reject vulnerable dependency deltas | pull requests only; `contents: read`; Dependency Graph required |
 
-S02 changes only the existing web job to the approved setup-node and pnpm
-references. Python and security workflows remain unchanged until their owning
-slices.
+S02 changes only the existing web job; S03 changes only the existing Python
+job to the approved setup-python and setup-uv references. Security workflows
+and the cross-platform matrix remain unchanged until their owning slices.
 
 ### S02 advisory disposition
 

@@ -154,28 +154,33 @@ R3 workflow change.
   environment without gaining a runtime dependency on one another.
 - **Risk:** R3 because the workspace lock and build backend execute downloaded
   code.
-- **Allowed paths:** `/pyproject.toml`, `/uv.lock`, `/.python-version`,
+- **Allowed paths:** `/pyproject.toml`, `/uv.lock`, `/build-constraints.txt`, `/.python-version`,
+  `/.github/workflows/ci.yml`, `/compliance/dependencies.yaml`,
+  `/tests/compliance.test.mjs`, `/REUSE.toml`,
+  `/planning/MS-002-KICKOFF.md`,
   `/apps/data-pipeline/pyproject.toml`,
   `/apps/data-pipeline/tests/test_provenance.py`,
   `/integrations/odoo/pyproject.toml`,
   `/integrations/odoo/tests/test_webhook.py`, `/.gitignore`, `/README.md`,
   `/docs/DEVELOPMENT.md`, and `/docs/DEPENDENCIES.md`.
 - **Forbidden:** Python domain behavior, provider code/data, Odoo runtime
-  integration, workflows, and public contracts.
+  integration, security/supply-chain workflows, web/Kotlin jobs, runner-matrix
+  rollout, and public contracts. The existing Python CI job may change only
+  enough to execute the approved exact Python/uv workspace and current tests.
 - **Acceptance:** AC-003, AC-004, AC-010 for Python;
   `uv sync --all-packages --locked` and both existing test suites pass from an
   empty environment.
-- **Rollback:** remove the root workspace/lock and restore independent
+- **Rollback:** remove the root workspace/lock/constraint set and restore independent
   build-system metadata.
 - **Observability:** phase-labelled local command output only.
 - **Verification:** run `uv sync --all-packages --locked`,
   `uv run python -m compileall -q apps/data-pipeline/src integrations/odoo/src`,
   `uv run python -m unittest discover -s apps/data-pipeline/tests -v`,
   `uv run python -m unittest discover -s integrations/odoo/tests -v`,
-  `uv build --package zugfolge-data-pipeline`,
-  `uv build --package zugfolge-odoo-bridge`,
+  `uv build --package zugfolge-data-pipeline --build-constraints build-constraints.txt --require-hashes`,
+  `uv build --package zugfolge-odoo-bridge --build-constraints build-constraints.txt --require-hashes`,
   `uv sync --all-packages --locked` a second time, and
-  `git diff --exit-code -- pyproject.toml uv.lock apps/data-pipeline/pyproject.toml integrations/odoo/pyproject.toml`.
+  `git diff --exit-code -- pyproject.toml uv.lock build-constraints.txt apps/data-pipeline/pyproject.toml integrations/odoo/pyproject.toml`.
 
 ### MS-002-S04 — Add the JVM 21 Gradle/Kotlin foundation
 
