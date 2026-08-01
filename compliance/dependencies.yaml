@@ -26,11 +26,12 @@ resolvedGraphs:
   - ecosystem: python
     manifests: [pyproject.toml, apps/data-pipeline/pyproject.toml, integrations/odoo/pyproject.toml]
     runtimeDependencies: []
+    developmentDependencies: [coverage==7.15.2]
     buildDependencies: [editables==0.6, hatchling==1.27.0]
     lockfile: uv.lock
     buildConstraintFile: build-constraints.txt
-    canonicalSha256: 9E767AC68AA886B926DF61B30DFBAD7FDDA9EAEC0FADCC31DEDD0C7A88CE18E5
-    packageCountIncludingWorkspace: 9
+    canonicalSha256: B990AC44FF6F16F1FB3B392FF939072E4CABCA5BC67F1278023E11C77B70E740
+    packageCountIncludingWorkspace: 10
     exactResolution: true
     status: LOCKED_REVIEW_PENDING
 
@@ -55,6 +56,38 @@ pythonBuildPackages:
     trustBoundary: Executes during isolated editable installation in uv sync and must remain absent from shipped runtime dependency sets.
     updateMethod: Review the upstream release and license, update its exact root/build-constraint pin and hashes, regenerate uv.lock, then repeat clean sync, import, and build verification.
     rollback: Restore version 0.6 with its recorded hashes or revert the complete S03 workspace change.
+
+coverageTools:
+  - name: node-v8-coverage
+    version: 24.18.0
+    scope: TEST
+    owningSlice: MS-002-S05
+    licenseExpression: MIT
+    purpose: Produce relative machine-readable function and range coverage for Node tests without another package
+    officialSource: https://nodejs.org/api/cli.html#node_v8_coverage-dir
+    trustBoundary: Executes repository tests in child Node processes and sanitizes raw absolute V8 paths before evidence is retained.
+    updateMethod: Update only with the approved exact Node toolchain and re-verify the summary schema on Windows and Linux.
+    rollback: Remove the S05 Node coverage script and package command while retaining native tests.
+  - name: coverage.py
+    version: 7.15.2
+    scope: TEST
+    owningSlice: MS-002-S05
+    licenseExpression: Apache-2.0
+    purpose: Produce branch and line coverage JSON/XML for both Python workspace packages
+    officialSource: https://pypi.org/project/coverage/7.15.2/
+    trustBoundary: Executes both repository unittest suites from the locked uv environment and writes only ignored local evidence.
+    updateMethod: Review upstream release/license, update the exact uv pin and dependency record, regenerate uv.lock, then repeat both coverage suites.
+    rollback: Remove the exact dev dependency and Python coverage runner, regenerate uv.lock, and retain native unittest commands.
+  - name: JaCoCo
+    version: 0.8.15
+    scope: TEST
+    owningSlice: MS-002-S05
+    licenseExpression: EPL-2.0
+    purpose: Produce branch and line coverage XML/HTML for the game-server JVM tests
+    officialSource: https://www.jacoco.org/jacoco/
+    trustBoundary: Instruments and executes repository JVM test bytecode through Gradle; it is absent from production runtime configurations.
+    updateMethod: Review upstream release/license, update the exact toolVersion, locks and verification metadata, then repeat the warning-free clean build.
+    rollback: Remove the JaCoCo plugin/report task and restore the prior app lock and verification metadata while retaining JUnit tests.
 
 directPackages:
   - { name: react, scope: RUNTIME, version: 19.2.8, licenseExpression: MIT, purpose: Browser and server UI runtime }

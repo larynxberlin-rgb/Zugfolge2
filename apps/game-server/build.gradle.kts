@@ -2,7 +2,12 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JvmVendorSpec
 
 plugins {
+    jacoco
     alias(libs.plugins.kotlin.jvm)
+}
+
+jacoco {
+    toolVersion = "0.8.15"
 }
 
 kotlin {
@@ -34,6 +39,15 @@ tasks.test {
     }
 }
 
-tasks.check {
+tasks.jacocoTestReport {
     dependsOn(tasks.test)
+    reports {
+        xml.required = true
+        csv.required = false
+        html.required = true
+    }
+}
+
+tasks.check {
+    dependsOn(tasks.jacocoTestReport)
 }

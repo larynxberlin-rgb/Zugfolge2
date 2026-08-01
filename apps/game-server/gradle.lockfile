@@ -2,6 +2,10 @@
 # Manual edits can break the build and are not advised.
 # This file is expected to be part of source control.
 org.apiguardian:apiguardian-api:1.1.2=testCompileClasspath
+org.jacoco:org.jacoco.agent:0.8.15=jacocoAgent,jacocoAnt
+org.jacoco:org.jacoco.ant:0.8.15=jacocoAnt
+org.jacoco:org.jacoco.core:0.8.15=jacocoAnt
+org.jacoco:org.jacoco.report:0.8.15=jacocoAnt
 org.jetbrains.kotlin:kotlin-build-tools-api:2.4.0=kotlinAbiValidationCompatClasspath
 org.jetbrains.kotlin:kotlin-build-tools-api:2.4.10=kotlinBuildToolsApiClasspath,kotlinCompilerClasspath,kotlinKlibCommonizerClasspath
 org.jetbrains.kotlin:kotlin-build-tools-compat:2.4.10=kotlinAbiValidationCompatClasspath,kotlinBuildToolsApiClasspath,kotlinCompilerClasspath
@@ -40,4 +44,7 @@ org.junit.platform:junit-platform-engine:6.1.2=testRuntimeClasspath
 org.junit.platform:junit-platform-launcher:6.1.2=testRuntimeClasspath
 org.junit:junit-bom:6.1.2=testCompileClasspath,testRuntimeClasspath
 org.opentest4j:opentest4j:1.3.0=testCompileClasspath,testRuntimeClasspath
+org.ow2.asm:asm-commons:9.10.1=jacocoAnt
+org.ow2.asm:asm-tree:9.10.1=jacocoAnt
+org.ow2.asm:asm:9.10.1=jacocoAnt
 empty=annotationProcessor,implementationDependenciesMetadata,kotlinCompilerPluginClasspath,kotlinNativeCompilerPluginClasspath,kotlinScriptDefExtensions,testAnnotationProcessor,testImplementationDependenciesMetadata,testKotlinScriptDefExtensions

@@ -62,6 +62,35 @@ strict, dependency locks are committed, the Kotlin/JUnit versions are exact,
 and generated output is isolated below `/.gradle-build` rather than the tracked
 TypeScript source directory `/build`.
 
+## Local S05 specification and test evidence
+
+The S05 checks validate accepted specifications and contracts before producing
+machine-readable test and coverage evidence for all three language stacks:
+
+```text
+pnpm run verify:spec
+pnpm run coverage:node
+uv run python tools/run-python-coverage.py
+.\gradlew.bat --no-daemon --console=plain test jacocoTestReport
+node tools/verify-local-evidence.mjs
+node --test tests/tooling-policy.test.mjs tests/repository-policy.test.mjs
+```
+
+Linux uses `./gradlew` for the fourth command. Retained evidence is written only
+below ignored output directories:
+
+- Node.js: `outputs/coverage/node/coverage-summary.json` and
+  `outputs/coverage/node/test-results.xml`
+- Python: `outputs/coverage/python/coverage.json`, `coverage.xml`, and
+  `test-results.json`
+- JVM: `.gradle-build/reports/jacoco/test/jacocoTestReport.xml` and
+  `.gradle-build/test-results/test/TEST-dev.zugfolge.game.FoundationTest.xml`
+
+S05 deliberately introduces no coverage threshold. The evidence verifier checks
+the exact coverage-tool versions, successful suites, relative source paths, and
+absence of the local checkout path. A missing, malformed, stale-version, failed,
+or path-leaking artifact fails closed.
+
 GitHub Actions is the clean Ubuntu reference. If `node`, `pnpm`, `python`, or Java
 cannot be found locally, install the declared official runtime; do not use the
 presence of a cached `node_modules`, virtual environment, or system Gradle as

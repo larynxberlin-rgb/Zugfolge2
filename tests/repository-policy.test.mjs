@@ -163,3 +163,19 @@ test("tracked text files contain no recognizable credential material", async () 
 
   assert.deepEqual(findings, [], `possible credentials found: ${findings.join(", ")}`);
 });
+
+test("coverage, test evidence, and build output remain generated state", () => {
+  const trackedFiles = execFileSync("git", ["ls-files", "-z"], {
+    cwd: REPOSITORY_ROOT,
+    encoding: "utf8",
+  })
+    .split("\0")
+    .filter(Boolean)
+    .map((file) => file.replaceAll("\\", "/"));
+  assert.deepEqual(
+    trackedFiles.filter((file) =>
+      /^(?:outputs|coverage|\.gradle-build|\.gradle)(?:\/|$)/.test(file),
+    ),
+    [],
+  );
+});

@@ -230,7 +230,9 @@ R3 workflow change.
   `/uv.lock`, `/build.gradle.kts`, `/gradle/libs.versions.toml`,
   `/gradle/verification-metadata.xml`, `/gradle.lockfile`,
   `/apps/game-server/build.gradle.kts`, `/apps/game-server/gradle.lockfile`,
-  `/.gitignore`, `/tools/spec-lint.mjs`, `/tools/run-node-coverage.mjs`,
+  `/.gitignore`, `/REUSE.toml`, `/compliance/dependencies.yaml`,
+  `/tests/compliance.test.mjs`, `/planning/MS-002-KICKOFF.md`,
+  `/tools/spec-lint.mjs`, `/tools/run-node-coverage.mjs`,
   `/tools/run-python-coverage.py`, `/tools/verify-local-evidence.mjs`,
   `/tests/tooling-policy.test.mjs`, `/tests/repository-policy.test.mjs`,
   `/docs/DEVELOPMENT.md`, and `/docs/DEPENDENCIES.md`.

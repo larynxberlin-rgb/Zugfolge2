@@ -11,11 +11,13 @@
   "scripts": {
     "dev": "vinext dev",
     "build": "vinext build",
+    "coverage:node": "vinext build && node tools/run-node-coverage.mjs",
     "start": "vinext start",
     "test": "vinext build && node --test tests/*.test.mjs",
     "test:unit": "node --test tests/domain.test.mjs",
     "licenses:check": "node scripts/generate-third-party-notices.mjs --check",
-    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next"
+    "lint": "eslint . --ignore-pattern dist --ignore-pattern .next --ignore-pattern .gradle-build --ignore-pattern .venv --ignore-pattern outputs --ignore-pattern work",
+    "verify:spec": "node tools/spec-lint.mjs"
   },
   "dependencies": {
     "react": "19.2.8",

@@ -213,12 +213,12 @@ approved for `MS-002`.
 
 ## Approved coverage, secret scan, and retention
 
-| Tool | Approved version | License | Purpose and trust boundary |
-|---|---|---|---|
-| Node.js test coverage | built into Node `24.18.0` | MIT | initial machine-readable JavaScript test coverage without another package |
-| coverage.py | `7.15.2` | Apache-2.0 | Python branch/line coverage from the locked uv environment |
-| JaCoCo | `0.8.15` | EPL-2.0 | JVM branch/line coverage through verified Gradle dependencies |
-| Gitleaks CLI | `8.30.1` | MIT | scan worktree and Git history from official checksummed release binaries |
+| Tool | Approved version | Owner | License | Official source | Purpose, trust, update, and rollback |
+|---|---|---|---|---|---|
+| Node.js test coverage | built into Node `24.18.0` | `MS-002-S05` | MIT | [Node CLI](https://nodejs.org/api/cli.html#node_v8_coverage-dir) | executes repository tests in child processes; raw absolute V8 paths are reduced to relative machine evidence and deleted; update only with the exact Node toolchain and restore native tests on rollback |
+| coverage.py | `7.15.2` | `MS-002-S05` | Apache-2.0 | [PyPI release](https://pypi.org/project/coverage/7.15.2/) | executes both unittest suites from the locked uv environment and writes ignored JSON/XML; update the exact pin, lock, and record together; remove only coverage tooling on rollback |
+| JaCoCo | `0.8.15` | `MS-002-S05` | EPL-2.0 | [JaCoCo](https://www.jacoco.org/jacoco/) | instruments repository JVM test bytecode through verified Gradle dependencies and never enters production runtime; update toolVersion, lock, and verification metadata together; retain JUnit on rollback |
+| Gitleaks CLI | `8.30.1` | `MS-002-S06` | MIT | [Gitleaks releases](https://github.com/gitleaks/gitleaks/releases) | scans repository content/history as untrusted input from a checksummed binary; update as an isolated security slice and remove the S06 scanner path on rollback |
 
 Test, coverage, and CycloneDX artifacts use
 `retention-days: 30`. Their SHA-256 artifact digests enter milestone evidence;
