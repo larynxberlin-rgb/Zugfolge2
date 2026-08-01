@@ -204,11 +204,11 @@ function writeSummary(summary) {
 
 export function formatCiSummary(platformId, artifactDigest) {
   assert.match(platformId ?? "", /^(?:ubuntu-24\.04|windows-2025)$/, "CI_SUMMARY_PLATFORM_INVALID");
-  assert.match(artifactDigest ?? "", /^sha256:[a-f0-9]{64}$/, "CI_SUMMARY_DIGEST_INVALID");
+  assert.match(artifactDigest ?? "", /^[a-f0-9]{64}$/, "CI_SUMMARY_DIGEST_INVALID");
   return [
     `### MS-002 ${platformId}`,
     "- Retention: 30 days",
-    `- SHA-256 digest: ${artifactDigest}`,
+    `- SHA-256 digest: sha256:${artifactDigest}`,
     "",
   ].join("\n");
 }

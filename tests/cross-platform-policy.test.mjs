@@ -110,8 +110,8 @@ test("CI uses explicit Windows and Linux images and the accepted command sequenc
 });
 
 test("CI evidence summary validates and exposes the platform artifact digest", async () => {
-  const digest = `sha256:${"a".repeat(64)}`;
-  const expected = `### MS-002 ubuntu-24.04\n- Retention: 30 days\n- SHA-256 digest: ${digest}\n`;
+  const digest = "a".repeat(64);
+  const expected = `### MS-002 ubuntu-24.04\n- Retention: 30 days\n- SHA-256 digest: sha256:${digest}\n`;
   assert.equal(formatCiSummary("ubuntu-24.04", digest), expected);
   assert.throws(() => formatCiSummary("ubuntu-latest", digest), /CI_SUMMARY_PLATFORM_INVALID/);
   assert.throws(() => formatCiSummary("windows-2025", "not-a-digest"), /CI_SUMMARY_DIGEST_INVALID/);
