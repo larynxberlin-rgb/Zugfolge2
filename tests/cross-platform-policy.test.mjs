@@ -11,6 +11,7 @@ import { fileURLToPath } from "node:url";
 
 import { EXPECTED_TOOLS } from "../tools/preflight.mjs";
 import {
+  formatCiSummary,
   runVerification,
   sanitizeVerificationOutput,
   VERIFICATION_PHASES,
@@ -104,8 +105,34 @@ test("CI uses explicit Windows and Linux images and the accepted command sequenc
   }
   assert.match(workflow, /fetch-depth: 0/);
   assert.match(workflow, /zugfolge-ms002-\$\{\{ matrix\.id \}\}/);
-  assert.match(workflow, /appendFileSync\(process\.env\.GITHUB_STEP_SUMMARY/);
+  assert.match(workflow, /run: node tools\/verify\.mjs --write-ci-summary/);
   assert.doesNotMatch(workflow, /`/, "workflow shell commands must not contain backticks");
+});
+
+test("CI evidence summary validates and exposes the platform artifact digest", async () => {
+  const digest = `sha256:${"a".repeat(64)}`;
+  const expected = `### MS-002 ubuntu-24.04\n- Retention: 30 days\n- SHA-256 digest: ${digest}\n`;
+  assert.equal(formatCiSummary("ubuntu-24.04", digest), expected);
+  assert.throws(() => formatCiSummary("ubuntu-latest", digest), /CI_SUMMARY_PLATFORM_INVALID/);
+  assert.throws(() => formatCiSummary("windows-2025", "not-a-digest"), /CI_SUMMARY_DIGEST_INVALID/);
+  const sandbox = await mkdtemp(path.join(os.tmpdir(), "zugfolge-ci-summary-"));
+  const summaryPath = path.join(sandbox, "summary.md");
+  try {
+    const result = spawnSync(process.execPath, ["tools/verify.mjs", "--write-ci-summary"], {
+      cwd: REPOSITORY_ROOT,
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        ARTIFACT_DIGEST: digest,
+        GITHUB_STEP_SUMMARY: summaryPath,
+        PLATFORM_ID: "ubuntu-24.04",
+      },
+    });
+    assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
+    assert.equal(await readFile(summaryPath, "utf8"), expected);
+  } finally {
+    await rm(sandbox, { force: true, recursive: true });
+  }
 });
 
 test("verification output redacts repository, runner, and user-specific paths", () => {

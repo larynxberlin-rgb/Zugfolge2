@@ -122,7 +122,4 @@ jobs:
         env:
           ARTIFACT_DIGEST: ${{ steps.platform-evidence.outputs.artifact-digest }}
           PLATFORM_ID: ${{ matrix.id }}
-        run: >-
-          node -e 'require("node:fs").appendFileSync(process.env.GITHUB_STEP_SUMMARY,
-          "### MS-002 " + process.env.PLATFORM_ID + "\n- Retention: 30 days\n- SHA-256 digest: "
-          + process.env.ARTIFACT_DIGEST + "\n")'
+        run: node tools/verify.mjs --write-ci-summary

@@ -4,7 +4,7 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { appendFileSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { performance } from "node:perf_hooks";
 import { fileURLToPath } from "node:url";
@@ -202,6 +202,26 @@ function writeSummary(summary) {
   writeFileSync(SUMMARY_PATH, `${JSON.stringify(summary, null, 2)}\n`, "utf8");
 }
 
+export function formatCiSummary(platformId, artifactDigest) {
+  assert.match(platformId ?? "", /^(?:ubuntu-24\.04|windows-2025)$/, "CI_SUMMARY_PLATFORM_INVALID");
+  assert.match(artifactDigest ?? "", /^sha256:[a-f0-9]{64}$/, "CI_SUMMARY_DIGEST_INVALID");
+  return [
+    `### MS-002 ${platformId}`,
+    "- Retention: 30 days",
+    `- SHA-256 digest: ${artifactDigest}`,
+    "",
+  ].join("\n");
+}
+
+function writeCiSummary(environment) {
+  assert.ok(path.isAbsolute(environment.GITHUB_STEP_SUMMARY ?? ""), "CI_SUMMARY_PATH_INVALID");
+  appendFileSync(
+    environment.GITHUB_STEP_SUMMARY,
+    formatCiSummary(environment.PLATFORM_ID, environment.ARTIFACT_DIGEST),
+    "utf8",
+  );
+}
+
 export function runVerification(run = runCommand, { writeEvidence = true } = {}) {
   assert.ok(EVIDENCE_ROOT.startsWith(`${REPOSITORY_ROOT}${path.sep}`));
   if (writeEvidence) {
@@ -254,8 +274,12 @@ export function runVerification(run = runCommand, { writeEvidence = true } = {})
 const invokedPath = process.argv[1] ? path.resolve(process.argv[1]) : null;
 if (invokedPath === fileURLToPath(import.meta.url)) {
   try {
-    const result = runVerification();
-    console.log(`Verification passed: ${result.phases.length} phases.`);
+    if (process.argv[2] === "--write-ci-summary") {
+      writeCiSummary(process.env);
+    } else {
+      const result = runVerification();
+      console.log(`Verification passed: ${result.phases.length} phases.`);
+    }
   } catch (error) {
     console.error(error instanceof Error ? error.message : "VERIFY_FAILED");
     process.exitCode = 1;
