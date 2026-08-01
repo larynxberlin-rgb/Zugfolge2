@@ -38,6 +38,7 @@ pythonBuildPackages:
   - name: hatchling
     version: 1.27.0
     scope: BUILD
+    owningSlice: MS-002-S03
     licenseExpression: MIT
     purpose: PEP 517 sdist, wheel, and editable backend for both first-party Python packages
     officialSource: https://pypi.org/project/hatchling/1.27.0/
@@ -47,6 +48,7 @@ pythonBuildPackages:
   - name: editables
     version: 0.6
     scope: BUILD
+    owningSlice: MS-002-S03
     licenseExpression: MIT
     purpose: Hatchling helper used only to install both workspace packages in editable mode
     officialSource: https://pypi.org/project/editables/0.6/
@@ -108,8 +110,8 @@ githubActions:
   - { repository: actions/checkout, sha: fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09, release: v5, licenseExpression: MIT, purpose: Materialize repository source, status: PINNED_CURRENT_USE_REVIEW_PENDING }
   - { repository: actions/setup-node, sha: 820762786026740c76f36085b0efc47a31fe5020, release: v7.0.0, licenseExpression: MIT, purpose: Install and cache the exact Node runtime, status: PINNED_CURRENT_USE_REVIEW_PENDING }
   - { repository: pnpm/action-setup, sha: 0ebf47130e4866e96fce0953f49152a61190b271, release: v6.0.9, licenseExpression: MIT, purpose: Install the exact pnpm CLI for the web job, status: PINNED_CURRENT_USE_REVIEW_PENDING }
-  - { repository: actions/setup-python, sha: 5fda3b95a4ea91299a34e894583c3862153e4b97, release: v7.0.0, licenseExpression: MIT, purpose: Install exact CPython 3.13.14, status: PINNED_CURRENT_USE_REVIEW_PENDING }
-  - { repository: astral-sh/setup-uv, sha: c771a70e6277c0a99b617c7a806ffedaca235ff9, release: v9.0.0, licenseExpression: MIT, purpose: Install exact uv 0.12.0 for the Python job, status: PINNED_CURRENT_USE_REVIEW_PENDING }
+  - { repository: actions/setup-python, sha: 5fda3b95a4ea91299a34e894583c3862153e4b97, release: v7.0.0, licenseExpression: MIT, owningSlice: MS-002-S03, purpose: Install exact CPython 3.13.14, status: PINNED_CURRENT_USE_REVIEW_PENDING }
+  - { repository: astral-sh/setup-uv, sha: c771a70e6277c0a99b617c7a806ffedaca235ff9, release: v9.0.0, licenseExpression: MIT, owningSlice: MS-002-S03, purpose: Install exact uv 0.12.0 for the Python job, status: PINNED_CURRENT_USE_REVIEW_PENDING }
   - { repository: github/codeql-action, sha: a2983b8bed1923f44751c5c43237f479442827b3, release: v3, licenseExpression: MIT, purpose: Initialize build and analyze SAST results, status: PINNED_CURRENT_USE_REVIEW_PENDING }
   - { repository: actions/dependency-review-action, sha: 1e966ba708e4b64bb0c9bfb7abb5a232840be16a, release: pinned-main-commit, licenseExpression: MIT, purpose: Reject vulnerable dependency deltas, status: PINNED_CURRENT_USE_REVIEW_PENDING }
 

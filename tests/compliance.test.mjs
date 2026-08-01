@@ -394,6 +394,7 @@ test("distributed packages and Python build dependencies stay explicit", async (
   );
   for (const dependency of dependencies.pythonBuildPackages) {
     assert.equal(dependency.scope, "BUILD");
+    assert.equal(dependency.owningSlice, "MS-002-S03");
     assert.equal(dependency.licenseExpression, "MIT");
     assert.match(dependency.officialSource, /^https:\/\/pypi\.org\/project\//);
     for (const field of [
@@ -504,6 +505,13 @@ test("workflow actions use inventoried immutable SHAs", async () => {
     assert.equal(action.licenseExpression, "MIT");
     assert.equal(action.status, "PINNED_CURRENT_USE_REVIEW_PENDING");
     assert.ok(action.purpose);
+  }
+  for (const repository of ["actions/setup-python", "astral-sh/setup-uv"]) {
+    assert.equal(
+      dependencies.githubActions.find((action) => action.repository === repository)
+        ?.owningSlice,
+      "MS-002-S03",
+    );
   }
   assert.deepEqual(dependencies.containers, []);
   assert.deepEqual(dependencies.fonts, []);
