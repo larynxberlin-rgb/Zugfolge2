@@ -111,6 +111,18 @@ contractValidators:
     updateMethod: Never float this pin; review npm provenance, upstream advisories and incident history, schema changes, license, and integrity before an isolated update.
     rollback: Remove the S05 AsyncAPI schema import and exact development dependency while retaining repository reference checks.
 
+sourceValidators:
+  - name: typescript
+    version: 5.9.3
+    scope: DEVELOPMENT
+    owningSlice: MS-002-S05
+    licenseExpression: Apache-2.0
+    purpose: Parse untrusted JavaScript and TypeScript repository source into syntax trees for deterministic module-boundary validation
+    officialSource: https://github.com/microsoft/TypeScript/releases/tag/v5.9.3
+    trustBoundary: Parses repository-controlled but untrusted source text in the local and CI lint process without executing that source; receives no credentials or production data.
+    updateMethod: Review the exact upstream release, npm integrity, license, advisories, parser changes, and adversarial boundary fixtures before changing the pin and lock.
+    rollback: Revert the parser integration and exact dependency record together only after an independently reviewed fail-closed replacement preserves the module-boundary tests.
+
 directPackages:
   - { name: react, scope: RUNTIME, version: 19.2.8, licenseExpression: MIT, purpose: Browser and server UI runtime }
   - { name: react-dom, scope: RUNTIME, version: 19.2.8, licenseExpression: MIT, purpose: DOM and server rendering }
@@ -131,7 +143,7 @@ directPackages:
   - { name: globals, scope: DEVELOPMENT, version: 17.8.0, licenseExpression: MIT, purpose: Lint environment globals }
   - { name: react-server-dom-webpack, scope: DEVELOPMENT, version: 19.2.8, licenseExpression: MIT, purpose: React Server Components runtime emitted by the build }
   - { name: tailwindcss, scope: DEVELOPMENT, version: 4.2.1, licenseExpression: MIT, purpose: Design-system CSS generation }
-  - { name: typescript, scope: DEVELOPMENT, version: 5.9.3, licenseExpression: Apache-2.0, purpose: Type checking and compilation }
+  - { name: typescript, scope: DEVELOPMENT, version: 5.9.3, licenseExpression: Apache-2.0, purpose: "Type checking, compilation, and syntax-tree parsing for module-boundary validation" }
   - { name: typescript-eslint, scope: DEVELOPMENT, version: 8.65.0, licenseExpression: MIT, purpose: TypeScript-aware linting }
   - { name: vinext, scope: DEVELOPMENT, version: 0.0.50, licenseExpression: MIT, purpose: Web application build and server adapter }
   - { name: vite, scope: DEVELOPMENT, version: 8.2.0, licenseExpression: MIT, purpose: Web bundling }

@@ -535,6 +535,25 @@ test("distributed packages and Python build dependencies stay explicit", async (
       assert.ok(validator[field], `${validator.name} needs ${field}`);
     }
   }
+
+  uniqueBy(dependencies.sourceValidators, "name", "source validators");
+  assert.deepEqual(
+    dependencies.sourceValidators.map(({ name }) => name),
+    ["typescript"],
+  );
+  for (const validator of dependencies.sourceValidators) {
+    const direct = dependencies.directPackages.find(({ name }) => name === validator.name);
+    assert.ok(direct, `${validator.name} needs a direct package record`);
+    assert.equal(validator.scope, "DEVELOPMENT");
+    assert.equal(validator.owningSlice, "MS-002-S05");
+    assert.equal(String(validator.version), String(direct.version));
+    assert.equal(validator.licenseExpression, direct.licenseExpression);
+    assert.match(validator.officialSource, /^https:\/\//);
+    assert.match(direct.purpose, /syntax-tree parsing/i);
+    for (const field of ["purpose", "trustBoundary", "updateMethod", "rollback"]) {
+      assert.ok(validator[field], `${validator.name} needs ${field}`);
+    }
+  }
 });
 
 test("workflow actions use inventoried immutable SHAs", async () => {

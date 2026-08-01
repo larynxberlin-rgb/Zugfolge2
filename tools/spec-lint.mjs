@@ -267,6 +267,16 @@ export function validateJavaScriptModuleSource(source, sourcePath = "JavaScript 
     "Fun" + "ction",
     "requ" + "ire",
   ]);
+  const staticStringValue = (node) => {
+    if (ts.isStringLiteralLike(node)) return node.text;
+    if (ts.isParenthesizedExpression(node)) return staticStringValue(node.expression);
+    if (ts.isBinaryExpression(node) && node.operatorToken.kind === ts.SyntaxKind.PlusToken) {
+      const left = staticStringValue(node.left);
+      const right = staticStringValue(node.right);
+      return left === undefined || right === undefined ? undefined : left + right;
+    }
+    return undefined;
+  };
   const visit = (node) => {
     if (
       (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) &&
@@ -285,6 +295,14 @@ export function validateJavaScriptModuleSource(source, sourcePath = "JavaScript 
     if (ts.isIdentifier(node) && forbiddenRuntimeIdentifiers.has(node.text)) {
       assert.fail(
         `${sourcePath} uses a runtime loader or compiler that cannot be boundary-checked`,
+      );
+    }
+    if (
+      ts.isElementAccessExpression(node) &&
+      forbiddenRuntimeIdentifiers.has(staticStringValue(node.argumentExpression))
+    ) {
+      assert.fail(
+        `${sourcePath} uses a computed runtime loader or compiler that cannot be boundary-checked`,
       );
     }
     ts.forEachChild(node, visit);
