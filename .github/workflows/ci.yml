@@ -87,7 +87,7 @@ jobs:
         run: |
           $archive = Join-Path $env:RUNNER_TEMP "gitleaks.zip"
           $directory = Join-Path $env:RUNNER_TEMP "gitleaks"
-          $uri = "https://github.com/gitleaks/gitleaks/releases/download/v$env:GITLEAKS_VERSION/gitleaks_$env:GITLEAKS_VERSION`_windows_x64.zip"
+          $uri = "https://github.com/gitleaks/gitleaks/releases/download/v${env:GITLEAKS_VERSION}/gitleaks_${env:GITLEAKS_VERSION}_windows_x64.zip"
           Invoke-WebRequest -UseBasicParsing -Uri $uri -OutFile $archive
           $actual = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
           if ($actual -ne $env:GITLEAKS_SHA256) { throw "Gitleaks checksum mismatch" }
@@ -123,6 +123,6 @@ jobs:
           ARTIFACT_DIGEST: ${{ steps.platform-evidence.outputs.artifact-digest }}
           PLATFORM_ID: ${{ matrix.id }}
         run: >-
-          node -e "require('node:fs').appendFileSync(process.env.GITHUB_STEP_SUMMARY,
-          '### MS-002 ' + process.env.PLATFORM_ID + '\n- Retention: 30 days\n- SHA-256 digest: `'
-          + process.env.ARTIFACT_DIGEST + '`\n')"
+          node -e 'require("node:fs").appendFileSync(process.env.GITHUB_STEP_SUMMARY,
+          "### MS-002 " + process.env.PLATFORM_ID + "\n- Retention: 30 days\n- SHA-256 digest: "
+          + process.env.ARTIFACT_DIGEST + "\n")'

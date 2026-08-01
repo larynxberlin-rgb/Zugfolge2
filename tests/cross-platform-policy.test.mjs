@@ -10,7 +10,11 @@ import test from "node:test";
 import { fileURLToPath } from "node:url";
 
 import { EXPECTED_TOOLS } from "../tools/preflight.mjs";
-import { runVerification, VERIFICATION_PHASES } from "../tools/verify.mjs";
+import {
+  runVerification,
+  sanitizeVerificationOutput,
+  VERIFICATION_PHASES,
+} from "../tools/verify.mjs";
 
 const REPOSITORY_ROOT = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 
@@ -47,18 +51,17 @@ test("root verification exposes the eight accepted ordered phases", () => {
   assert.equal(calls.length, 2, "verification must stop on the first failed phase");
 });
 
-test("each supported tool mismatch fails in a child preflight", () => {
+test("each supported tool mismatch fails through the complete child preflight", () => {
   for (const name of Object.keys(EXPECTED_TOOLS)) {
-    const actual = { ...EXPECTED_TOOLS, platform: process.platform, [name]: "0.0.0-test" };
-    const script = [
-      "import { validateToolVersions } from './tools/preflight.mjs';",
-      `validateToolVersions(${JSON.stringify(actual)});`,
-    ].join("\n");
-    const result = spawnSync(
-      process.execPath,
-      ["--input-type=module", "--eval", script],
-      { cwd: REPOSITORY_ROOT, encoding: "utf8" },
-    );
+    const result = spawnSync(process.execPath, ["tools/preflight.mjs"], {
+      cwd: REPOSITORY_ROOT,
+      encoding: "utf8",
+      env: {
+        ...process.env,
+        NODE_ENV: "test",
+        ZUGFOLGE_PREFLIGHT_TEST_EXPECTED_MISMATCH: name,
+      },
+    });
     assert.notEqual(result.status, 0, `${name} mismatch was accepted`);
     assert.match(`${result.stdout}${result.stderr}`, new RegExp(`PREFLIGHT_VERSION_MISMATCH ${name}`));
   }
@@ -101,6 +104,22 @@ test("CI uses explicit Windows and Linux images and the accepted command sequenc
   }
   assert.match(workflow, /fetch-depth: 0/);
   assert.match(workflow, /zugfolge-ms002-\$\{\{ matrix\.id \}\}/);
+  assert.match(workflow, /appendFileSync\(process\.env\.GITHUB_STEP_SUMMARY/);
+  assert.doesNotMatch(workflow, /`/, "workflow shell commands must not contain backticks");
+});
+
+test("verification output redacts repository, runner, and user-specific paths", () => {
+  const source = [
+    `${REPOSITORY_ROOT}/outputs`,
+    "/home/runner/setup-pnpm/node_modules/.bin/store/v11",
+    "C:\\Users\\alice\\AppData\\Local\\pnpm\\store",
+    "file:///home/runner/work/Zugfolge/Zugfolge",
+    "/ci/private/cache/archive",
+  ].join("\n");
+  const sanitized = sanitizeVerificationOutput(source, { PNPM_HOME: "/ci/private/cache" });
+  assert.doesNotMatch(sanitized, /Bahnspiel|\/home\/runner|Users\\alice|\/ci\/private/);
+  assert.match(sanitized, /\.\/outputs/);
+  assert.match(sanitized, /<redacted-path>/);
 });
 
 test("documentation and package metadata expose one root interface", async () => {

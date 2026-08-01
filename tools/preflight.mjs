@@ -51,8 +51,8 @@ function runVersionCommand(name, args) {
   return `${result.stdout ?? ""}\n${result.stderr ?? ""}`.trim();
 }
 
-export function validateToolVersions(actual) {
-  for (const [name, expected] of Object.entries(EXPECTED_TOOLS)) {
+export function validateToolVersions(actual, expectedTools = EXPECTED_TOOLS) {
+  for (const [name, expected] of Object.entries(expectedTools)) {
     assert.equal(
       actual[name],
       expected,
@@ -66,7 +66,7 @@ export function validateToolVersions(actual) {
   return { ...actual };
 }
 
-export async function collectToolVersions() {
+export async function collectToolVersions(expectedTools = EXPECTED_TOOLS) {
   const pnpm = runVersionCommand("pnpm", ["--version"]);
   const uvOutput = runVersionCommand("uv", ["--version"]);
   const pythonOutput = runVersionCommand("python", ["--version"]);
@@ -80,13 +80,22 @@ export async function collectToolVersions() {
     pnpm: pnpm.trim(),
     python: pythonOutput.match(/Python\s+([^\s]+)/)?.[1],
     uv: uvOutput.match(/^uv\s+([^\s]+)/)?.[1],
-  });
+  }, expectedTools);
+}
+
+function cliExpectedTools(environment) {
+  const mismatch = environment.ZUGFOLGE_PREFLIGHT_TEST_EXPECTED_MISMATCH;
+  if (!mismatch) return EXPECTED_TOOLS;
+  if (environment.NODE_ENV !== "test" || !(mismatch in EXPECTED_TOOLS)) {
+    throw new Error("PREFLIGHT_TEST_OVERRIDE_REJECTED");
+  }
+  return Object.freeze({ ...EXPECTED_TOOLS, [mismatch]: "0.0.0-test" });
 }
 
 const invokedPath = process.argv[1] ? path.resolve(process.argv[1]) : null;
 if (invokedPath === fileURLToPath(import.meta.url)) {
   try {
-    const tools = await collectToolVersions();
+    const tools = await collectToolVersions(cliExpectedTools(process.env));
     console.log(JSON.stringify({ schemaVersion: 1, status: "PASSED", tools }));
   } catch (error) {
     console.error(error instanceof Error ? error.message : "PREFLIGHT_FAILED");

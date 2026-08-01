@@ -99,16 +99,46 @@ export const VERIFICATION_PHASES = Object.freeze([
   },
 ]);
 
-function sanitize(source) {
-  const candidates = [
-    REPOSITORY_ROOT,
-    REPOSITORY_ROOT.replaceAll("\\", "/"),
-    `file:///${REPOSITORY_ROOT.replaceAll("\\", "/")}`,
-  ].sort((left, right) => right.length - left.length);
-  return candidates.reduce(
-    (value, candidate) => value.replaceAll(candidate, "."),
-    String(source ?? ""),
-  );
+const PRIVATE_PATH_VARIABLES = Object.freeze([
+  "HOME",
+  "USERPROFILE",
+  "RUNNER_TEMP",
+  "RUNNER_TOOL_CACHE",
+  "GITHUB_WORKSPACE",
+  "PNPM_HOME",
+  "UV_CACHE_DIR",
+  "GRADLE_USER_HOME",
+  "JAVA_HOME",
+  "pythonLocation",
+  "Python_ROOT_DIR",
+  "AGENT_TOOLSDIRECTORY",
+  "LOCALAPPDATA",
+  "APPDATA",
+  "TMP",
+  "TEMP",
+  "TMPDIR",
+]);
+
+function pathForms(candidate) {
+  const slash = candidate.replaceAll("\\", "/");
+  return [candidate, slash, `file:///${slash.replace(/^\//, "")}`];
+}
+
+export function sanitizeVerificationOutput(source, environment = process.env) {
+  const replacements = new Map(pathForms(REPOSITORY_ROOT).map((candidate) => [candidate, "."]));
+  for (const name of PRIVATE_PATH_VARIABLES) {
+    const value = environment[name];
+    if (!value || !(path.isAbsolute(value) || /^[A-Za-z]:[\\/]/.test(value))) continue;
+    for (const candidate of pathForms(value)) replacements.set(candidate, "<redacted-path>");
+  }
+  let sanitized = [...replacements.entries()]
+    .sort(([left], [right]) => right.length - left.length)
+    .reduce((value, [candidate, replacement]) => value.replaceAll(candidate, replacement), String(source ?? ""));
+  sanitized = sanitized
+    .replace(/file:\/\/\/?(?:home|Users)\/[^\s"'<>]+/gi, "<redacted-path>")
+    .replace(/\/(?:home|Users)\/[^/\s]+(?:\/[^\s"'<>]*)?/g, "<redacted-path>")
+    .replace(/[A-Za-z]:[\\/]Users[\\/][^\\/\s]+(?:[\\/][^\s"'<>]*)?/gi, "<redacted-path>");
+  return sanitized;
 }
 
 function executable(name) {
@@ -134,8 +164,8 @@ function runCommand([name, ...args]) {
     env: process.env,
     shell: false,
   });
-  const stdout = sanitize(result.stdout);
-  const stderr = sanitize(result.stderr);
+  const stdout = sanitizeVerificationOutput(result.stdout);
+  const stderr = sanitizeVerificationOutput(result.stderr);
   if (stdout) process.stdout.write(stdout);
   if (stderr) process.stderr.write(stderr);
   if (result.error || result.status !== 0) {
