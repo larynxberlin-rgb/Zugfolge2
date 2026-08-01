@@ -151,10 +151,16 @@ test("owner license publication does not grant contribution, source, asset, or b
   );
   assert.equal(
     register.licensing.firstLicensePublication.state,
-    "PENDING_ATTESTATION",
+    "ATTESTED",
   );
-  assert.equal(register.licensing.firstLicensePublication.grantCommit, null);
-  assert.equal(register.licensing.firstLicensePublication.attestedAt, null);
+  assert.equal(
+    register.licensing.firstLicensePublication.grantCommit,
+    "f8c3cb1c58b3034da8f70e0664c1d398849b9e39",
+  );
+  assert.equal(
+    register.licensing.firstLicensePublication.attestedAt,
+    "2026-08-01T05:30:24Z",
+  );
   assert.equal(register.ownership.status, "HUMAN_REVIEW_REQUIRED");
   assert.equal(register.ownership.externalContributions, "CLOSED");
   assert.equal(register.ownership.selectedContributionModel, "CLA");

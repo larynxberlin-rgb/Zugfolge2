@@ -66,9 +66,9 @@ licensing:
   rootLicenseModel: LICENSE_MOSAIC
   firstLicensePublication:
     protocol: TWO_COMMIT_PARENT_ATTESTATION_V1
-    state: PENDING_ATTESTATION
-    grantCommit: null
-    attestedAt: null
+    state: ATTESTED
+    grantCommit: f8c3cb1c58b3034da8f70e0664c1d398849b9e39
+    attestedAt: "2026-08-01T05:30:24Z"
     evidenceRefs: []
   components:
     - id: game-code

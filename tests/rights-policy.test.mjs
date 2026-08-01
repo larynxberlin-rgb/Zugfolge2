@@ -7,6 +7,14 @@ import addFormats from "ajv-formats";
 import { parse } from "yaml";
 
 const REPOSITORY_ROOT = new URL("../", import.meta.url);
+const FIRST_LICENSED_COMMIT =
+  "f8c3cb1c58b3034da8f70e0664c1d398849b9e39";
+const ATTESTATION_PATHS = [
+  "compliance/rights-register.yaml",
+  "docs/legal/LICENSE-DECISION.md",
+  "tests/ms001-preparation.test.mjs",
+  "tests/rights-policy.test.mjs",
+];
 const [register, schema, reuse, pendingLicense] = await Promise.all([
   readFile(
     new URL("../compliance/rights-register.yaml", import.meta.url),
@@ -41,6 +49,25 @@ function assertRejected(mutator, label) {
   const candidate = structuredClone(register);
   mutator(candidate);
   assert.equal(validate(candidate), false, label);
+}
+
+function git(args) {
+  return execFileSync("git", args, {
+    cwd: REPOSITORY_ROOT,
+    encoding: "utf8",
+  }).trim();
+}
+
+function hasGitObject(object) {
+  try {
+    execFileSync("git", ["cat-file", "-e", object], {
+      cwd: REPOSITORY_ROOT,
+      stdio: "ignore",
+    });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function parseReuseAnnotations(source) {
@@ -98,6 +125,18 @@ test("owner publication and open review are separate machine states", () => {
   assert.equal(register.licensing.ownerDecision.status, "RECORDED");
   assert.equal(register.licensing.publicationStatus, "ACTIVE");
   assert.equal(register.licensing.rootLicenseModel, "LICENSE_MOSAIC");
+  assert.equal(
+    register.licensing.firstLicensePublication.state,
+    "ATTESTED",
+  );
+  assert.equal(
+    register.licensing.firstLicensePublication.grantCommit,
+    FIRST_LICENSED_COMMIT,
+  );
+  assert.equal(
+    register.licensing.firstLicensePublication.attestedAt,
+    "2026-08-01T05:30:24Z",
+  );
 
   const ids = register.licensing.components.map(({ id }) => id);
   assert.equal(new Set(ids).size, ids.length);
@@ -144,6 +183,58 @@ test("owner publication and open review are separate machine states", () => {
     reuse,
     /must not be publicly deployed or distributed until the file is approved, replaced, or excluded/,
   );
+});
+
+test("first licensed commit is attested by its immediate child", (context) => {
+  if (!hasGitObject(`${FIRST_LICENSED_COMMIT}^{commit}`)) {
+    context.skip("grant commit is unavailable in this shallow checkout");
+    return;
+  }
+
+  const attestationCommit = git([
+    "log",
+    "-S",
+    "state: ATTESTED",
+    "--format=%H",
+    "--",
+    "compliance/rights-register.yaml",
+  ])
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .at(-1);
+  assert.ok(attestationCommit, "attestation commit is absent from Git history");
+  assert.equal(
+    git(["rev-parse", `${attestationCommit}^`]),
+    FIRST_LICENSED_COMMIT,
+    "the attestation commit must be the immediate child of the grant commit",
+  );
+
+  const pendingRegister = git([
+    "show",
+    `${FIRST_LICENSED_COMMIT}:compliance/rights-register.yaml`,
+  ]);
+  assert.match(pendingRegister, /state: PENDING_ATTESTATION/);
+  assert.match(pendingRegister, /grantCommit: null/);
+  assert.match(pendingRegister, /attestedAt: null/);
+  for (const path of ["LICENSE", "REUSE.toml", "LICENSES/AGPL-3.0-or-later.txt"]) {
+    assert.equal(
+      hasGitObject(`${FIRST_LICENSED_COMMIT}:${path}`),
+      true,
+      `${path} is absent from the first licensed commit`,
+    );
+  }
+
+  const changedPaths = git([
+    "diff-tree",
+    "--no-commit-id",
+    "--name-only",
+    "-r",
+    attestationCommit,
+  ])
+    .split(/\r?\n/)
+    .filter(Boolean)
+    .sort();
+  assert.deepEqual(changedPaths, [...ATTESTATION_PATHS].sort());
 });
 
 test("schema rejects license publication states that imply unearned approval", () => {

@@ -72,6 +72,15 @@ Those open items continue to block MS-001 completion and any affected release.
 The license grant for a version already distributed under a valid public
 license is not silently revoked by a later repository change.
 
-The first licensed commit is recorded in the compliance register by a
-follow-up attestation commit so that the referenced Git object can be known
-without a circular self-hash.
+## First-publication attestation
+
+The first licensed repository state is commit
+`f8c3cb1c58b3034da8f70e0664c1d398849b9e39` (`Publish Zugfolge license
+mosaic`). It was attested at `2026-08-01T05:30:24Z` using
+`TWO_COMMIT_PARENT_ATTESTATION_V1`.
+
+This attestation is stored in the immediate child commit so that the referenced
+Git object can be known without a circular self-hash. Automated policy tests
+verify the parent relationship, the grant commit's pending state, and the
+attestation commit's restricted path set whenever the required Git history is
+available.
