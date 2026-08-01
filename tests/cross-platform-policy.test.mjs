@@ -3,7 +3,7 @@
 
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { access, mkdtemp, readFile, rm } from "node:fs/promises";
+import { access, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -82,6 +82,43 @@ test("child preflight does not create a Python environment or modify the uv lock
     assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
     await assert.rejects(access(environmentPath), { code: "ENOENT" });
     assert.deepEqual(await readFile(lockPath), lockBefore, "preflight modified uv.lock");
+  } finally {
+    await rm(sandbox, { force: true, recursive: true });
+  }
+});
+
+test("empty checkout enters the orchestrator before pnpm may install dependencies", async () => {
+  const sandbox = await mkdtemp(path.join(os.tmpdir(), "zugfolge-pnpm-entry-"));
+  try {
+    await Promise.all([
+      writeFile(
+        path.join(sandbox, "package.json"),
+        `${JSON.stringify({
+          dependencies: { "left-pad": "1.3.0" },
+          packageManager: "pnpm@11.18.0",
+          private: true,
+          scripts: { probe: "node probe.mjs" },
+        }, null, 2)}\n`,
+        "utf8",
+      ),
+      writeFile(path.join(sandbox, "probe.mjs"), 'console.log("ORCHESTRATOR_FIRST");\n', "utf8"),
+      readFile(path.join(REPOSITORY_ROOT, "pnpm-workspace.yaml"), "utf8").then((source) =>
+        writeFile(path.join(sandbox, "pnpm-workspace.yaml"), source, "utf8"),
+      ),
+    ]);
+    const batch = process.platform === "win32";
+    const result = spawnSync(batch ? process.env.ComSpec : "pnpm", batch
+      ? ["/d", "/s", "/c", "pnpm.cmd run probe"]
+      : ["run", "probe"], {
+      cwd: sandbox,
+      encoding: "utf8",
+      env: { ...process.env, npm_config_offline: "true" },
+      shell: false,
+    });
+    assert.equal(result.status, 0, `${result.stdout}${result.stderr}`);
+    assert.match(result.stdout, /ORCHESTRATOR_FIRST/);
+    assert.doesNotMatch(`${result.stdout}${result.stderr}`, /Packages:|Content-addressable store/);
+    await assert.rejects(access(path.join(sandbox, "node_modules")), { code: "ENOENT" });
   } finally {
     await rm(sandbox, { force: true, recursive: true });
   }
@@ -166,4 +203,6 @@ test("documentation and package metadata expose one root interface", async () =>
   assert.equal(packageJson.scripts.verify, "node tools/verify.mjs");
   const attributes = await readFile(path.join(REPOSITORY_ROOT, ".gitattributes"), "utf8");
   assert.match(attributes, /^\*\.mjs text eol=lf$/m);
+  const workspace = await readFile(path.join(REPOSITORY_ROOT, "pnpm-workspace.yaml"), "utf8");
+  assert.match(workspace, /^verifyDepsBeforeRun: false$/m);
 });

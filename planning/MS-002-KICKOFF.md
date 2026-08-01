@@ -299,6 +299,7 @@ R3 workflow change.
 - **Risk:** R3 because this slice changes CI execution and artifact flow.
 - **Allowed paths:** `/.github/workflows/ci.yml`, `/tools/preflight.mjs`,
   `/tools/verify.mjs`, `/package.json`, `/pnpm-lock.yaml`,
+  `/pnpm-workspace.yaml`,
   `/tests/cross-platform-policy.test.mjs`, `/README.md`,
   `/docs/DEVELOPMENT.md`, `/apps/data-pipeline/README.md`,
   `/apps/game-server/README.md`, `/integrations/odoo/README.md`, and
@@ -306,6 +307,9 @@ R3 workflow change.
   required compliance paths omitted from the initial allowlist:
   `/REUSE.toml`, `/tests/compliance.test.mjs`, and
   `/tests/tooling-policy.test.mjs`.
+  The fresh-checkout parity review added `/pnpm-workspace.yaml` because pnpm's
+  automatic dependency verification otherwise installs packages before the
+  root orchestrator can enter its toolchain-preflight phase.
 - **Forbidden:** application/domain behavior, public contracts, mutable
   `*-latest` runner labels, secrets, deployment, and production services.
 - **Acceptance:** AC-001 through AC-010 pass from fresh Windows and Linux
