@@ -27,7 +27,7 @@ tasks.test {
         html.required = true
     }
     doFirst {
-        val runtimeVersion = javaLauncher.get().metadata.javaRuntimeVersion.toString()
+        val runtimeVersion = javaLauncher.get().metadata.javaRuntimeVersion
         check(runtimeVersion == "21.0.12+8-LTS") {
             "Unsupported test JVM runtime '$runtimeVersion'. Expected 21.0.12+8-LTS."
         }
