@@ -184,10 +184,15 @@ test("module-boundary lint rejects generated, private, and undeclared workspace 
     'import module from "node:module"; const loader = module["createRequire"](import.meta.url); loader(target)',
     'globalThis["Fun" + "ction"](source)',
     'globalThis[`eval`](source)',
+    'module["createRequire" as string](import.meta.url)(target)',
+    'globalThis["eval" satisfies string](source)',
+    'const { ["createRequire"]: loader } = module; loader(import.meta.url)(target)',
+    'Reflect.get(module, "createRequire")(import.meta.url)(target)',
+    'import module from "node:module"; module.loader(target)',
   ]) {
     assert.throws(
       () => validateJavaScriptModuleSource(runtimeLoaderSource, "app/private.ts"),
-      /dynamic import|runtime loader or compiler/,
+      /dynamic import|runtime loader or compiler|runtime module-loader API/,
     );
   }
   const pythonBoundary = {

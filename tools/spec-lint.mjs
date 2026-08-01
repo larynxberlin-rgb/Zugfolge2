@@ -269,7 +269,15 @@ export function validateJavaScriptModuleSource(source, sourcePath = "JavaScript 
   ]);
   const staticStringValue = (node) => {
     if (ts.isStringLiteralLike(node)) return node.text;
-    if (ts.isParenthesizedExpression(node)) return staticStringValue(node.expression);
+    if (
+      ts.isParenthesizedExpression(node) ||
+      ts.isAsExpression(node) ||
+      ts.isSatisfiesExpression(node) ||
+      ts.isNonNullExpression(node) ||
+      ts.isTypeAssertionExpression(node)
+    ) {
+      return staticStringValue(node.expression);
+    }
     if (ts.isBinaryExpression(node) && node.operatorToken.kind === ts.SyntaxKind.PlusToken) {
       const left = staticStringValue(node.left);
       const right = staticStringValue(node.right);
@@ -305,6 +313,27 @@ export function validateJavaScriptModuleSource(source, sourcePath = "JavaScript 
         `${sourcePath} uses a computed runtime loader or compiler that cannot be boundary-checked`,
       );
     }
+    if (
+      ts.isComputedPropertyName(node) &&
+      forbiddenRuntimeIdentifiers.has(staticStringValue(node.expression))
+    ) {
+      assert.fail(
+        `${sourcePath} destructures a runtime loader or compiler that cannot be boundary-checked`,
+      );
+    }
+    if (
+      ts.isCallExpression(node) &&
+      ts.isPropertyAccessExpression(node.expression) &&
+      ts.isIdentifier(node.expression.expression) &&
+      node.expression.expression.text === "Reflect" &&
+      node.expression.name.text === "get" &&
+      node.arguments[1] &&
+      forbiddenRuntimeIdentifiers.has(staticStringValue(node.arguments[1]))
+    ) {
+      assert.fail(
+        `${sourcePath} reflects a runtime loader or compiler that cannot be boundary-checked`,
+      );
+    }
     ts.forEachChild(node, visit);
   };
   visit(syntaxTree);
@@ -314,6 +343,10 @@ export function validateJavaScriptModuleSource(source, sourcePath = "JavaScript 
       specifier,
       /^(?:apps|integrations|packages)(?:\/|$)/,
       `${sourcePath} imports bare repository path ${specifier}; use a declared package export`,
+    );
+    assert.ok(
+      specifier !== "module" && specifier !== "node:module",
+      `${sourcePath} imports the runtime module-loader API that cannot be boundary-checked`,
     );
     if (
       specifier.startsWith(".") ||
