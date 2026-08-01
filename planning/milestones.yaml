@@ -113,7 +113,7 @@ milestones:
 
   - id: MS-002
     release: RG-0
-    status: ready
+    status: in-progress
     risk: R3
     effort: M
     title: Reproducible polyglot engineering baseline

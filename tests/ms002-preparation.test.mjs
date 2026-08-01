@@ -7,29 +7,37 @@ const read = (path) =>
     content.replaceAll("\r\n", "\n"),
   );
 
-test("MS-002 preparation remains blocked on its human security gate", async () => {
-  const [milestones, feature, adr, kickoff] = await Promise.all([
-    read("planning/milestones.yaml"),
-    read("spec/features/FEAT-0002-reproducible-polyglot-baseline.md"),
-    read("spec/adr/ADR-0005-polyglot-build-and-supply-chain-policy.md"),
-    read("planning/MS-002-KICKOFF.md"),
-  ]);
+test("MS-002 records human security approval before implementation", async () => {
+  const [milestones, feature, adr, kickoff, dependencies, development] =
+    await Promise.all([
+      read("planning/milestones.yaml"),
+      read("spec/features/FEAT-0002-reproducible-polyglot-baseline.md"),
+      read("spec/adr/ADR-0005-polyglot-build-and-supply-chain-policy.md"),
+      read("planning/MS-002-KICKOFF.md"),
+      read("docs/DEPENDENCIES.md"),
+      read("docs/DEVELOPMENT.md"),
+    ]);
 
   const milestone = milestones.match(
     / {2}- id: MS-002\n(?<body>[\s\S]*?)(?=\n {2}- id: MS-003\n)/,
   );
   assert.ok(milestone, "MS-002 must remain in the machine-readable roadmap");
-  assert.match(milestone.groups.body, /status: ready/);
+  assert.match(milestone.groups.body, /status: in-progress/);
   assert.match(
     milestone.groups.body,
     /Security reviewer approves new CI permissions and dependency policy/,
   );
 
-  assert.match(feature, /\*\*Status:\*\* Proposed/);
-  assert.match(adr, /\*\*Status:\*\* Proposed/);
-  assert.match(kickoff, /awaiting human security approval/);
-  assert.match(kickoff, /AI agent or implementation test cannot substitute/);
-  assert.doesNotMatch(kickoff, /Preparation status:\*\* approved/);
+  assert.match(feature, /\*\*Status:\*\* Accepted/);
+  assert.match(adr, /\*\*Status:\*\* Accepted/);
+  assert.match(kickoff, /human security approval recorded/);
+  assert.match(kickoff, /repository owner explicitly assumed and approved/);
+  assert.match(dependencies, /\*\*Security approval:\*\* accepted/);
+  assert.match(development, /accepted MS-002 target/);
+  assert.doesNotMatch(
+    `${feature}\n${adr}\n${kickoff}\n${dependencies}\n${development}`,
+    /awaiting human security approval|Decisions still blocking implementation|remains `Proposed`/,
+  );
 });
 
 test("MS-002 is split into exactly eight bounded slices", async () => {
@@ -118,7 +126,7 @@ test("MS-002 is split into exactly eight bounded slices", async () => {
   });
 });
 
-test("the proposed baseline stays service-free and records reviewable cross-platform candidates", async () => {
+test("the accepted baseline stays service-free and records exact cross-platform evidence", async () => {
   const [feature, adr, dependencies, development, kickoff, docsIndex] =
     await Promise.all([
       read("spec/features/FEAT-0002-reproducible-polyglot-baseline.md"),
@@ -143,6 +151,34 @@ test("the proposed baseline stays service-free and records reviewable cross-plat
   assert.match(dependencies, /Eclipse Temurin \| `21\.0\.12\+8`/);
   assert.match(dependencies, /CPython \| `3\.13\.14`/);
   assert.match(dependencies, /python-31314/);
+  for (const digest of [
+    "55aa7153f9d88f28d765fcdad5ae6945b5c0f98a36881703817e4c450fa76742",
+    "c54d9b9bbb8a36e6489363ddd01139707fd781d72f1f9e90c7ec65d0061368e0",
+    "e4446ff06a276155697597cc0f1b15da004ff083f4964a35271ecee567177370",
+    "9ba963ee2371874a74185d18bc7bb2ab9407df7683300855ed7606e0662321d0",
+    "eaf842262aa1c418d8ecc5605f02ee1ebfd369124fa48548e85f9481a47831a9",
+    "d29144deff3a68aa93ced33dddf84b7fdc26070add4aa0f4513094c8332afc4e",
+  ]) {
+    assert.match(dependencies, new RegExp(digest));
+  }
+  for (const actionSha of [
+    "3d3c42e5aac5ba805825da76410c181273ba90b1",
+    "0ebf47130e4866e96fce0953f49152a61190b271",
+    "c771a70e6277c0a99b617c7a806ffedaca235ff9",
+    "f205ea1c3313d32999d8d6a48b4f6530d4437b38",
+  ]) {
+    assert.match(dependencies, new RegExp(actionSha));
+  }
+  assert.match(dependencies, /sha_pinning_required: false/);
+  assert.match(dependencies, /before S06 is accepted/);
+  assert.match(dependencies, /MUST NOT enable auto-merge/);
+  assert.match(dependencies, /No cross-ecosystem CycloneDX CLI is\napproved/);
+  assert.match(dependencies, /one Low and eight High findings/);
+  assert.match(dependencies, /react-server-dom-webpack` `19\.2\.8`/);
+  assert.match(dependencies, /Vite `8\.2\.0`/);
+  assert.match(dependencies, /@cloudflare\/vite-plugin` `1\.50\.0`/);
+  assert.match(dependencies, /S02 MUST resolve the High findings/);
+  assert.match(dependencies, /MUST NOT use `npm audit fix --force`/);
   assert.doesNotMatch(
     `${adr}\n${dependencies}\n${kickoff}`,
     /\| (?:Python runtime \| CPython|CPython|Python) \|? `3\.12\.13`/,
@@ -172,10 +208,7 @@ test("the proposed baseline stays service-free and records reviewable cross-plat
     "wrapper JAR verification must precede wrapper execution",
   );
 
-  assert.match(
-    kickoff,
-    /blocks completion of\nS01 as well as the start of S02–S08/,
-  );
+  assert.match(kickoff, /S02–S08 remain governed by their own dependencies/);
   assert.match(docsIndex, /Abhängigkeits- und Supply-Chain-Register/);
   assert.doesNotMatch(docsIndex, /Ã|â€”/);
 });

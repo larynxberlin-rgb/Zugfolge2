@@ -1,11 +1,13 @@
 # FEAT-0002: Reproducible polyglot engineering baseline
 
-**Status:** Proposed\
-**Version:** 0.1\
+**Status:** Accepted\
+**Version:** 1.0\
 **Milestone:** MS-002\
 **Release gate:** RG-0\
 **Owner:** Architecture Steward\
 **Required approver:** Human Security Reviewer
+**Accepted:** 2026-08-01\
+**Approval evidence:** [MS-002-S01 human security decision](https://github.com/larynxberlin-rgb/Zugfolge/issues/3#issuecomment-5150191133)
 
 ## Purpose
 
@@ -15,9 +17,12 @@ This feature specifies repository and build behavior only. It does not select
 production persistence, messaging, identity, deployment, mapping, or
 observability services.
 
-This specification remains `Proposed` until the dependency policy, GitHub
-Actions permissions, software-bill-of-materials tooling, and retention policy
-have received the human security approval required by `MS-002`.
+The repository owner explicitly assumed the human Security Reviewer decision
+for this baseline on 1 August 2026. The accepted decision covers the dependency
+policy, GitHub Actions permissions, software-bill-of-materials tooling, runner
+images, bootstrap channels, and retention policy. Acceptance authorizes only
+the bounded `MS-002` implementation slices; each slice must still prove the
+exact artifacts, locks, permissions, and rollback behavior it introduces.
 
 ## User and maintainer outcome
 
@@ -268,16 +273,30 @@ pass\
 
 ## Security approval record
 
-The human security review MUST decide and record:
+The accepted human security review decides:
 
-1. the exact supported runner images, cross-platform CPython release, and JDK
-   distribution/build, including integrity and compatibility evidence;
-2. the approved bootstrap channel for pnpm and uv;
-3. the direct coverage, secret-scan, and CycloneDX tooling and their licenses;
-4. the artifact retention period;
-5. every new GitHub Action SHA and job permission;
-6. whether repository settings should enforce immutable Action pins.
+1. `ubuntu-24.04` and `windows-2025` are the supported CI images; Node.js
+   `24.18.0`, pnpm `11.18.0`, CPython `3.13.14`, uv `0.12.0`, Eclipse Temurin
+   `21.0.12+8`, Gradle `9.5.0`, Kotlin `2.4.10`, and JUnit `6.1.2` are the
+   baseline toolchains;
+2. CI bootstraps pnpm and uv only through the approved immutable Actions, while
+   local bootstrap uses the exact official registry package or versioned
+   installer recorded in `docs/DEPENDENCIES.md`; Corepack is not the CI trust
+   root;
+3. built-in Node coverage, coverage.py `7.15.2`, JaCoCo `0.8.15`, Gitleaks CLI
+   `8.30.1`, native pnpm SBOM, `cyclonedx-bom==7.3.1`, and
+   `org.cyclonedx.bom` `3.3.0` are approved; an optional cross-ecosystem CLI is
+   not part of `MS-002`;
+4. temporary test, coverage, and CycloneDX artifacts are retained for 30 days,
+   while permanent evidence records only commit and artifact digests;
+5. every Action uses the exact tag-to-commit SHA recorded in
+   `docs/DEPENDENCIES.md`; permissions default to `contents: read`, with only
+   the CodeQL analysis job receiving `security-events: write`;
+6. repository full-SHA enforcement is enabled before the S06 workflow is
+   accepted when supported, repository policy tests remain mandatory, and
+   weekly Dependabot update pull requests never auto-merge.
 
-Until that record is linked from the `MS-002` coordinating issue, this
-specification MUST NOT be changed to `Accepted`, and implementation slices that
-add dependencies or alter CI MUST remain blocked.
+The permanent approval is linked from the
+[MS-002 coordinating issue](https://github.com/larynxberlin-rgb/Zugfolge/issues/2#issuecomment-5150191185).
+This record does not approve a production service, provider, deployment path,
+or game behavior.
