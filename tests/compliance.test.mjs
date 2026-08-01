@@ -1,16 +1,27 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { readFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 import { parse } from "yaml";
 import {
   checkThirdPartyNotices,
   DISTRIBUTED_WEB_PACKAGES,
+  LICENSE_TEXT_FALLBACKS,
   normalizedTextSha256,
 } from "../scripts/generate-third-party-notices.mjs";
 
 const REPOSITORY_ROOT = new URL("../", import.meta.url);
+const REPOSITORY_PATH = fileURLToPath(REPOSITORY_ROOT);
+const REQUIRED_MEDIA_EXTENSIONS = new Set([
+  ".png", ".svg", ".jpg", ".jpeg", ".jpe", ".jfif", ".gif", ".webp",
+  ".avif", ".ico", ".bmp", ".tif", ".tiff", ".apng", ".woff", ".woff2",
+  ".ttf", ".otf", ".eot", ".mp3", ".wav", ".wave", ".ogg", ".oga",
+  ".opus", ".flac", ".aac", ".m4a", ".mp4", ".m4v", ".webm", ".mov",
+  ".mkv", ".avi",
+]);
 const [assets, dependencies, rightsRegister, packageJson, lockSource] =
   await Promise.all([
     readFile(new URL("../compliance/assets.yaml", import.meta.url), "utf8").then(
@@ -47,6 +58,17 @@ function uniqueBy(items, key, label) {
     items.length,
     `${label} ${key} values must be unique`,
   );
+}
+
+async function recursiveFiles(directory) {
+  const entries = await readdir(directory, { withFileTypes: true });
+  const files = await Promise.all(
+    entries.map(async (entry) => {
+      const entryPath = path.join(directory, entry.name);
+      return entry.isDirectory() ? recursiveFiles(entryPath) : [entryPath];
+    }),
+  );
+  return files.flat();
 }
 
 test("S04 asset inventory fails closed and matches registered bytes", async () => {
@@ -91,6 +113,9 @@ test("S04 asset inventory fails closed and matches registered bytes", async () =
 test("all tracked media, fonts, audio, and containers are inventoried", async () => {
   const files = trackedFiles();
   const extensions = new Set(assets.discovery.trackedMediaExtensions);
+  for (const extension of REQUIRED_MEDIA_EXTENSIONS) {
+    assert.ok(extensions.has(extension), `${extension} must remain discoverable`);
+  }
   const trackedMedia = files.filter((path) =>
     extensions.has(`.${path.split(".").at(-1)?.toLowerCase()}`),
   );
@@ -98,14 +123,26 @@ test("all tracked media, fonts, audio, and containers are inventoried", async ()
     .map(({ path }) => path)
     .filter((path) =>
       extensions.has(`.${path.split(".").at(-1)?.toLowerCase()}`),
-    );
+  );
   assert.deepEqual(trackedMedia.sort(), inventoriedMedia.sort());
 
+  const publicExclusions = new Set(assets.discovery.publicAssetExclusions);
+  const distributedPublicAssets = files.filter(
+    (path) => path.startsWith("public/") && !publicExclusions.has(path),
+  );
+  assert.deepEqual(
+    distributedPublicAssets.sort(),
+    assets.assets
+      .map(({ path }) => path)
+      .filter((path) => path.startsWith("public/"))
+      .sort(),
+  );
+
   const trackedFonts = trackedMedia.filter((path) =>
-    /\.(?:woff2?|ttf|otf)$/i.test(path),
+    /\.(?:woff2?|ttf|otf|eot)$/i.test(path),
   );
   const trackedAudio = trackedMedia.filter((path) =>
-    /\.(?:mp3|wav|ogg)$/i.test(path),
+    /\.(?:mp3|wav|wave|ogg|oga|opus|flac|aac|m4a)$/i.test(path),
   );
   const containers = files.filter((path) => /(?:^|\/)Dockerfile$/i.test(path));
   assert.deepEqual(trackedFonts, assets.discovery.trackedFontFiles);
@@ -113,8 +150,18 @@ test("all tracked media, fonts, audio, and containers are inventoried", async ()
   assert.deepEqual(containers, assets.discovery.containerFiles);
   assert.deepEqual(assets.discovery.remoteFontProviders, []);
 
-  const css = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
-  assert.doesNotMatch(css, /@font-face|fonts\.(?:googleapis|gstatic)\.com/i);
+  const uiExtensions = new Set(assets.discovery.trackedUiSourceExtensions);
+  const uiSources = files.filter(
+    (file) =>
+      /^(?:app|public)\//.test(file) &&
+      uiExtensions.has(`.${file.split(".").at(-1)?.toLowerCase()}`),
+  );
+  const remoteFontPattern =
+    /@font-face|https?:\/\/[^\s"'`)<>]*(?:font|typekit)[^\s"'`)<>]*|https?:\/\/[^\s"'`)<>]+\.(?:woff2?|ttf|otf|eot)(?:\?[^\s"'`)<>]*)?/i;
+  for (const file of uiSources) {
+    const source = await readFile(new URL(`../${file}`, import.meta.url), "utf8");
+    assert.doesNotMatch(source, remoteFontPattern, `${file} references an external font`);
+  }
 });
 
 test("locked npm graph and every observed license expression are controlled", () => {
@@ -188,11 +235,37 @@ test("distributed packages and Python build dependencies stay explicit", async (
     dependencies.distributedWebPackages.packages,
     [...DISTRIBUTED_WEB_PACKAGES],
   );
+  assert.deepEqual(
+    dependencies.distributedWebPackages.licenseTextFallbacks,
+    LICENSE_TEXT_FALLBACKS,
+  );
   assert.equal(
     dependencies.distributedWebPackages.status,
     "NOTICE_GENERATED_COMPATIBILITY_REVIEW_PENDING",
   );
   await checkThirdPartyNotices();
+
+  const buildFiles = (await recursiveFiles(path.join(REPOSITORY_PATH, "dist"))).filter(
+    (file) => /\.(?:js|mjs|cjs|css|html)$/i.test(file),
+  );
+  const markedPackages = new Set();
+  for (const file of buildFiles) {
+    const source = await readFile(file, "utf8");
+    for (const match of source.matchAll(
+      /node_modules\/((?:@[^/]+\/)?[^/]+)\//g,
+    )) {
+      if (match[1] !== ".pnpm") markedPackages.add(match[1]);
+    }
+  }
+  const inventoriedPackages = new Set(
+    dependencies.distributedWebPackages.packages,
+  );
+  for (const packageName of markedPackages) {
+    assert.ok(
+      inventoriedPackages.has(packageName),
+      `${packageName} is present in build output but absent from distributedWebPackages`,
+    );
+  }
 
   const python = dependencies.resolvedGraphs.find(
     ({ ecosystem }) => ecosystem === "python",

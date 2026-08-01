@@ -15,7 +15,9 @@ releasePolicy:
   nextGate: Asset/IP reviewer and accountable rights holder must approve or replace every blocking item.
 
 discovery:
-  trackedMediaExtensions: [.png, .svg, .jpg, .jpeg, .webp, .woff, .woff2, .ttf, .otf, .mp3, .wav, .ogg]
+  trackedMediaExtensions: [.png, .svg, .jpg, .jpeg, .jpe, .jfif, .gif, .webp, .avif, .ico, .bmp, .tif, .tiff, .apng, .woff, .woff2, .ttf, .otf, .eot, .mp3, .wav, .wave, .ogg, .oga, .opus, .flac, .aac, .m4a, .mp4, .m4v, .webm, .mov, .mkv, .avi]
+  trackedUiSourceExtensions: [.css, .scss, .sass, .less, .pcss, .html, .htm, .tsx, .ts, .jsx, .js]
+  publicAssetExclusions: [public/legal/THIRD-PARTY-NOTICES.txt, public/manifest.webmanifest]
   trackedFontFiles: []
   trackedAudioFiles: []
   remoteFontProviders: []

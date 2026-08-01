@@ -76,7 +76,9 @@ licenseExpressionPolicies:
 distributedWebPackages:
   manifest: public/legal/THIRD-PARTY-NOTICES.txt
   generator: scripts/generate-third-party-notices.mjs
-  packages: [react, react-dom, scheduler, react-server-dom-webpack, tailwindcss, vinext, rolldown, vite]
+  packages: [react, react-dom, scheduler, react-server-dom-webpack, "@vitejs/plugin-rsc", tailwindcss, vinext, rolldown, vite]
+  licenseTextFallbacks:
+    "@vitejs/plugin-rsc": "@vitejs/plugin-react"
   status: NOTICE_GENERATED_COMPATIBILITY_REVIEW_PENDING
 
 githubActions:
