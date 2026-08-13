@@ -1,5 +1,5 @@
 [versions]
-cyclonedx = "3.3.0"
+cyclonedx = "3.4.0"
 junit = "6.1.2"
 kotlin = "2.4.10"
 
