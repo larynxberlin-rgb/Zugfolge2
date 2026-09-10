@@ -1,7 +1,7 @@
 [versions]
 cyclonedx = "3.3.0"
 junit = "6.1.2"
-kotlin = "2.4.10"
+kotlin = "2.4.20"
 
 [libraries]
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
